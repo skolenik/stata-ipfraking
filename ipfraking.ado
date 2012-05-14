@@ -1,11 +1,12 @@
 program define ipfraking, rclass
 
-	version 12
+	version 10
 
 	syntax [pw/] [if] [in] , [ CTOTal( namelist ) cmean( namelist ) ///
-		generate(name) replace ITERate(int 2000) TOLerance(passthru) loglevel(int 0) meta double ///
-		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) ]
-	
+		generate(name) replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double ///
+		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) ///
+		selfcheck ]
+
 	// syntax:
 	//   [pw=original weight variable]
 	//   ctotal        is the list of matrix names, each matrix is a e(b) of an appropriate -total y, over()- command
@@ -16,6 +17,11 @@ program define ipfraking, rclass
 	//   trimabs       is the maximum weight allowed
 	//   iterate       is the maximum number of iterations
 	//   tolerance     is the difference in weight adjustment ratios over an iteration cycle
+
+	if "`selfcheck'" != "" {
+		SelfCheck
+		exit
+	}
 	
 	tempvar oldweight currweight prevweight one
 	
@@ -61,7 +67,18 @@ program define ipfraking, rclass
 		display "{err}Warning: raking procedure did not converge"
 	}
 	return add
+
+	local badcontrols 0
 	
+	forvalues k=1/`nvars' {
+		CheckResults ,  target(`mat`k'') `ctrltolerance' : `total' `mean' `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
+		local badcontrols = `badcontrols' | r(badcontrols)
+	}
+	if `badcontrols' {
+		display "{err}Warning: raking procedure converged, but the control numbers did not match"
+	}
+	return scalar badcontrols = `badcontrols'
+
 	DiagDisplay `oldweight' `currweight'
 	return add
 	
@@ -75,7 +92,36 @@ program define ipfraking, rclass
 		}
 	}
 	
-end
+end // of ipfraking
+
+program define CheckResults, rclass
+
+	gettoken cropt rest  : 0    , parse(":")
+	gettoken colon torun : rest , parse(":")
+	
+	assert "`colon'" == ":"
+	
+	local 0 `cropt'
+	syntax , target(name) [ ctrltolerance(real 1e-6) ]
+	
+	confirm matrix `target'
+	
+	quietly `torun'
+	
+	tempname bb
+	matrix `bb' = e(b)
+	
+	local badcontrols = (mreldif(`bb',`target') > `ctrltolerance')
+	
+	return scalar badcontrols = `badcontrols'
+	
+	if `badcontrols' {
+		display as error "Warning: the controls `target' did not match"
+		matrix list `target', title("Target")  noheader
+		matrix list `bb', title("Realization") noheader
+	}
+
+end // of CheckResults
 
 program define PropAdjust
 
@@ -316,30 +362,104 @@ program define DiagDisplay, rclass
 	
 end // of DiagDisplay
 
-exit
 
-// Tests:
+program define SelfCheck
 
-webuse nhanes2, clear
-generate byte _one = 1
-total _one [pw=finalwgt], over(sex, nolab)
-matrix total_sex = e(b)
-matrix total_sex[1,1] = total_sex[1,1] + 10000
-matrix total_sex[1,2] = total_sex[1,2] + 10000
-matrix rownames total_sex = sex
+	local cmore `c(more)'
+	set more off
 
-ipfraking [pw=finalwgt] , ctotal( total_sex ) generate( rweight1 )
+	tempname bb
 
-total _one [pw=finalwgt], over(race, nolab)
-matrix total_race = e(b)
-matrix total_race[1,1] = total_race[1,1] + 15000
-matrix total_race[1,2] = total_race[1,2] + 4000
-matrix total_race[1,3] = total_race[1,3] + 1000
-matrix rownames total_race = race
+	capture use nhanes2, clear
+	if _rc webuse nhanes2, clear
+	
+	generate byte _one = 1
+	total _one [pw=finalwgt], over(sex, nolab)
+	matrix total_sex = e(b)
+	matrix total_sex[1,1] = total_sex[1,1] + 10000
+	matrix total_sex[1,2] = total_sex[1,2] + 10000
+	matrix rownames total_sex = sex
 
+	// 1. raking with a single margine
+	ipfraking [pw=finalwgt] , ctotal( total_sex ) generate( rweight1 )
+	assert r(converged)   == 1
+	assert r(badcontrols) == 0
 
-set seed 12345
-sample 500, count by(region)
-ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight2 )
-ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight3 ) trimhirel( 5.5 )
-ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight4 ) trimhirel( 5.5 ) trimhiabs(200000)
+	total _one [pw=rweight1], over(sex, nolab)
+	matrix `bb' = e(b)
+	assert mreldif( `bb',total_sex ) < c(epsfloat)
+
+	// 2. raking with two margins
+	total _one [pw=finalwgt], over(race, nolab)
+	matrix total_race = e(b)
+	matrix total_race[1,1] = total_race[1,1] + 15000
+	matrix total_race[1,2] = total_race[1,2] + 4000
+	matrix total_race[1,3] = total_race[1,3] + 1000
+	matrix rownames total_race = race
+
+	ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight2 )
+
+	assert r(converged)   == 1
+	assert r(badcontrols) == 0
+
+	total _one [pw=rweight2], over(sex, nolab)
+	matrix `bb' = e(b)
+	assert mreldif( `bb',total_sex ) < c(epsfloat)
+
+	total _one [pw=rweight2], over(race, nolab)
+	matrix `bb' = e(b)
+	assert mreldif( `bb',total_race ) < c(epsfloat)
+
+	
+	// somewhat unbalanced sample
+	set seed 12345
+	sample 500, count by(region)
+	
+	// 3. regular raking without constraints
+	ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight3 )
+
+	assert r(converged)   == 1
+	assert r(badcontrols) == 0
+
+	total _one [pw=rweight3], over(sex, nolab)
+	matrix `bb' = e(b)
+	assert mreldif( `bb',total_sex ) < c(epsfloat)
+
+	total _one [pw=rweight3], over(race, nolab)
+	matrix `bb' = e(b)
+	assert mreldif( `bb',total_race ) < c(epsfloat)
+	
+	// 4. raking with constraints on adjustment factors
+	ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight4 ) trimhirel( 5.5 ) tol(1e-10)
+	
+	assert r(converged)   == 1
+	assert r(badcontrols) == 1
+
+	total _one [pw=rweight4], over(sex, nolab)
+	matrix `bb' = e(b)
+	capture noisily assert mreldif( `bb',total_sex ) < c(epsfloat)
+
+	total _one [pw=rweight4], over(race, nolab)
+	matrix `bb' = e(b)
+	capture noisily assert mreldif( `bb',total_race ) < c(epsfloat)
+	
+	// 5. raking with constraints on absolute values of weights
+	ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight5 ) trimhirel( 5.5 ) trimhiabs(200000)
+
+	assert r(converged)   == 1
+	assert r(badcontrols) == 1
+	
+	total _one [pw=rweight5], over(sex, nolab)
+	matrix `bb' = e(b)
+	capture noisily assert mreldif( `bb',total_sex ) < c(epsfloat)
+
+	total _one [pw=rweight5], over(race, nolab)
+	matrix `bb' = e(b)
+	capture noisily assert mreldif( `bb',total_race ) < c(epsfloat)
+	
+	// 6. this must fail to converge
+	capture noisily ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight6 ) trimhiabs(100000) trimloabs(50000)
+	
+	set more `cmore'
+	
+end // of SelfCheck
