@@ -27,15 +27,15 @@ program define ipfraking, rclass
 
 	if "`trimfrequency'"!="" {
 		if "`trimopts'" == "" {
-			display "{err}Warning: trim() option is specified without numeric settings; will be ignored"
+			display "{err}Warning: trimfreuency() option is specified without numeric settings; will be ignored"
 		}
-		if !strpos("`trimfrequency'","often sometimes once") {
-			display "{err}Warning: trim() option is specified incorrectly, assume default value (sometimes)"
+		if !strpos("often sometimes once","`trimfrequency'") {
+			display "{err}Warning: trimfrequency() option is specified incorrectly, assume default value (sometimes)"
 			local trim sometimes
 		}
 	}
 	if "`trimopts'" != "" & "`trimfrequency'" == "" {
-		local trim sometimes
+		local trimfrequency sometimes
 	}
 	
 	tempvar oldweight currweight prevweight one
