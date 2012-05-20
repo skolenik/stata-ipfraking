@@ -18,6 +18,11 @@ program define ipfraking, rclass
 	//   iterate       is the maximum number of iterations
 	//   tolerance     is the difference in weight adjustment ratios over an iteration cycle
 
+	if "`exp'"=="" {
+		display as error "pweight is required"
+		exit 198
+	}
+	
 	if "`selfcheck'" != "" {
 		SelfCheck
 		exit
@@ -67,7 +72,7 @@ program define ipfraking, rclass
 	display
 	
 	// parse and check the control totals/means
-	ControlCheckParse `ctotal' `cmean' , one( `one' )
+	ControlCheckParse `ctotal' `cmean' , one( `one' ) loglevel(`loglevel')
 	
 	generate double `oldweight' = `exp' if `touse'
 	generate double `prevweight' = `oldweight'
@@ -78,10 +83,10 @@ program define ipfraking, rclass
 	forvalues i=1/`iterate' {
 		quietly replace `prevweight' = `currweight'
 		forvalues k=1/`nvars' {
-			PropAdjust `currweight' if `touse' , `total' `mean' target(`mat`k'') control(`var`k'') over(`over`k'')
-			if "`trimfrequency'" == "often" & "`trimopts'" != "" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `over`k'' )
+			PropAdjust `currweight' if `touse' , `total' `mean' target(`mat`k'') control(`var`k'') over(`over`k'') loglevel(`loglevel')
+			if "`trimfrequency'" == "often" & "`trimopts'" != "" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `over`k'' ) loglevel(`loglevel')
 		}
-		if "`trimfrequency'" == "sometimes" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' )
+		if "`trimfrequency'" == "sometimes" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
 		CheckConvergence `prevweight' `currweight' if `touse', `tolerance'
 		display "{txt} Iteration `i', max rel difference of raked weights = {res}" r(maxreldif) _n
 		if r(converged) continue, break
@@ -97,7 +102,7 @@ program define ipfraking, rclass
 	local badcontrols 0
 	
 	forvalues k=1/`nvars' {
-		CheckResults ,  target(`mat`k'') `ctrltolerance' : `total' `mean' `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
+		CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') : `total' `mean' `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
 		local badcontrols = `badcontrols' | r(badcontrols)
 	}
 	if `badcontrols' {
@@ -109,7 +114,7 @@ program define ipfraking, rclass
 	return add
 	
 	// generate or replace the values
-	if "`replace'" != "" quietly replace `oldweight' = `currweight'
+	if "`replace'" != "" replace `oldweight' = `currweight'
 	else {
 		generate `double' `generate' = `currweight' if `touse'
 		label variable `generate' "Raked weights"
@@ -128,7 +133,7 @@ program define CheckResults, rclass
 	assert "`colon'" == ":"
 	
 	local 0 `cropt'
-	syntax , target(name) [ ctrltolerance(real 1e-6) ]
+	syntax , target(name) [ ctrltolerance(real 1e-6) loglevel(int 0) ]
 	
 	confirm matrix `target'
 	
@@ -143,10 +148,12 @@ program define CheckResults, rclass
 	
 	if `badcontrols' {
 		display as error _n "Warning: the controls `target' did not match"
-		display "{txt}Target:" _c
-		matrix list `target', noheader
-		display "{txt}Realization:" _c
-		matrix list `bb', noheader
+		if `loglevel' > 0 {
+			display "{txt}Target:" _c
+			matrix list `target', noheader format(%12.0g)
+			display "{txt}Realization:" _c
+			matrix list `bb', noheader format(%12.0g)
+		}
 	}
 	
 	display
@@ -155,7 +162,7 @@ end // of CheckResults
 
 program define PropAdjust
 
-	syntax varname(numeric) [if] [in], target(namelist min=1 max=1) control(varname numeric) over(varname numeric) [total mean]
+	syntax varname(numeric) [if] [in], target(namelist min=1 max=1) control(varname numeric) over(varname numeric) [total mean loglevel(int 0)]
 	
 	local currweight `varlist'
 
@@ -167,6 +174,8 @@ program define PropAdjust
 		exit 301
 	}
 	
+	if `loglevel' < 2 local quietly quietly
+	
 	tempname bb
 	matrix `bb' = e(b)
 
@@ -174,7 +183,7 @@ program define PropAdjust
 		if `bb'[1,1] == 0 {
 			display as error "Warning: division by zero weighted total encountered with `control' control"
 		}
-		quietly replace `currweight' = `currweight' * `target'[1,1] / `bb'[1,1] if `touse'
+		`quietly' replace `currweight' = `currweight' * `target'[1,1] / `bb'[1,1] if `touse'
 	}
 	else {
 		// cycle over categories
@@ -189,7 +198,7 @@ program define PropAdjust
 				display as error "Warning: division by zero weighted total encountered with `control' control with `over' == `k'"
 			}
 			
-			quietly replace `currweight' = `currweight' * `target'[1,`k'] / `bb'[1,`k'] if `touse' & `over' == `: word `k' of `: colnames `bb' ''
+			`quietly' replace `currweight' = `currweight' * `target'[1,`k'] / `bb'[1,`k'] if `touse' & `over' == `: word `k' of `: colnames `bb' ''
 		}
 	}
 	
@@ -198,7 +207,7 @@ end // of PropAdjust
 
 program define ControlCheckParse
 
-	syntax namelist , one( varname )
+	syntax namelist , one( varname ) [ loglevel(int 0) ]
 
 	tempname b
 	
@@ -269,56 +278,58 @@ program define TrimWeights
 	local oldweight : word 1 of `varlist'
 	local newweight : word 2 of `varlist'
 	
+	if `loglevel' < 2 local quietly quietly
+	
 	tempvar trimhi trimlo
 	
-	quietly {
-		generate byte `trimhi' = (`newweight' > `oldweight' * `trimhirel') | `newweight' > `trimhiabs'
-		generate byte `trimlo' = (`newweight' < `oldweight' * `trimlorel') | `newweight' < `trimloabs'
-		
-		count if `trimhi' + `trimlo' > 0 & !missing( `trimhi' + `trimlo' )
-	}
+	`quietly' generate byte `trimhi' = (`newweight' > `oldweight' * `trimhirel') | `newweight' > `trimhiabs'
+	`quietly' generate byte `trimlo' = (`newweight' < `oldweight' * `trimlorel') | `newweight' < `trimloabs'
+	`quietly' count if `trimhi' + `trimlo' > 0 & !missing( `trimhi' + `trimlo' )
+
 	if r(N) {	
 		// check ratios
-		quietly replace `newweight' = `oldweight' * `trimhirel' if `newweight' > `oldweight' * `trimhirel'
-		quietly replace `newweight' = `oldweight' * `trimlorel' if `newweight' < `oldweight' * `trimlorel'
+		`quietly' replace `newweight' = `oldweight' * `trimhirel' if `newweight' > `oldweight' * `trimhirel'
+		`quietly' replace `newweight' = `oldweight' * `trimlorel' if `newweight' < `oldweight' * `trimlorel'
 		
 		// check ranges
-		quietly replace `newweight' = `trimhiabs' if `newweight' > `trimhiabs'
-		quietly replace `newweight' = `trimloabs' if `newweight' < `trimloabs'
+		`quietly' replace `newweight' = `trimhiabs' if `newweight' > `trimhiabs'
+		`quietly' replace `newweight' = `trimloabs' if `newweight' < `trimloabs'
 		
 		// report the trimming categories
-		local uniqover : list uniq over
-		local uniqover : list uniqover - one
-		tempvar groupover
-		quietly egen `groupover' = group( `uniqover' )
-		quietly replace `groupover' = `groupover' * ( `trimhi' | `trimlo' )
-		quietly levelsof `groupover' if ( `trimhi' | `trimlo' ) , local( trimmedcells )
+		if `loglevel' > 0 {
+			local uniqover : list uniq over
+			local uniqover : list uniqover - one
+			tempvar groupover
+			`quietly' egen `groupover' = group( `uniqover' )
+			`quietly' replace `groupover' = `groupover' * ( `trimhi' | `trimlo' )
+			quietly levelsof `groupover' if ( `trimhi' | `trimlo' ) , local( trimmedcells )
 		
-		// display the header
-		display "{txt}{dup 31:{c -}}{c TT}{dup 12:{c -}}{c TT}{dup 12:{c -}}"
-		display _col(32) "{txt}{c |}   Trimmed  {c |}  Trimmed"
-		display _col(32) "{txt}{c |} from above {c |} from below"
-		display "{txt}{dup 31:{c -}}{c +}{dup 12:{c -}}{c BT}{dup 12:{c -}}" _c
-		
-		foreach g in `trimmedcells' {
-			foreach x of varlist `uniqover' {
-				sum `x' if `groupover' == `g', mean
-				display _n "{res}`x'" _col(20) "{txt} = {res}" r(mean) _col(32) "{txt}{c |}" _c
+			// display the header
+			display "{txt}{dup 31:{c -}}{c TT}{dup 12:{c -}}{c TT}{dup 12:{c -}}"
+			display _col(32) "{txt}{c |}   Trimmed  {c |}  Trimmed"
+			display _col(32) "{txt}{c |} from above {c |} from below"
+			display "{txt}{dup 31:{c -}}{c +}{dup 12:{c -}}{c BT}{dup 12:{c -}}" _c
+			
+			foreach g in `trimmedcells' {
+				foreach x of varlist `uniqover' {
+					sum `x' if `groupover' == `g', mean
+					display _n "{res}`x'" _col(20) "{txt} = {res}" r(mean) _col(32) "{txt}{c |}" _c
+				}
+				quietly count if `groupover' == `g' & `trimhi'
+				display _col(36) "{res}" r(N) _col(45) "{txt}{c |}" _c
+				quietly count if `groupover' == `g' & `trimlo'
+				display _col(50) "{res}" r(N) 
+				//////// display the divider or the last line
+				// sum `groupover' if ( `trimhi' | `trimlo' ), meanonly
+				// if `g' == r(max) {
+					display "{txt}{dup 31:{c -}}{c BT}{dup 12:{c -}}{c BT}{dup 12:{c -}}" _c
+				// }
+				// else {
+				//	display "{txt}{dup 31:{c -}}{c +}{dup 12:{c -}}{c +}{dup 12:{c -}}" _c
+				// }
 			}
-			quietly count if `groupover' == `g' & `trimhi'
-			display _col(36) "{res}" r(N) _col(45) "{txt}{c |}" _c
-			quietly count if `groupover' == `g' & `trimlo'
-			display _col(50) "{res}" r(N) 
-			//////// display the divider or the last line
-			// sum `groupover' if ( `trimhi' | `trimlo' ), meanonly
-			// if `g' == r(max) {
-				display "{txt}{dup 31:{c -}}{c BT}{dup 12:{c -}}{c BT}{dup 12:{c -}}" _c
-			// }
-			// else {
-			//	display "{txt}{dup 31:{c -}}{c +}{dup 12:{c -}}{c +}{dup 12:{c -}}" _c
-			// }
+			display _n
 		}
-		display _n
 	}
 		
 end // of TrimWeights
