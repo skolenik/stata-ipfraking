@@ -3,7 +3,7 @@ program define ipfraking, rclass
 	version 10
 
 	syntax [pw/] [if] [in] , [ CTOTal( namelist ) cmean( namelist ) ///
-		generate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double ///
+		generate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) ///
 		selfcheck ]
 
@@ -110,7 +110,7 @@ program define ipfraking, rclass
 	}
 	return scalar badcontrols = `badcontrols'
 
-	DiagDisplay `oldweight' `currweight'
+	DiagDisplay `oldweight' `currweight' , `graph'
 	return add
 	
 	// generate or replace the values
@@ -359,7 +359,7 @@ end // of CheckConvergence
 
 program define DiagDisplay, rclass
 
-	syntax varlist(numeric min=2 max=2) [if] [in] 
+	syntax varlist(numeric min=2 max=2) [if] [in] , [ nograph ]
 
 	marksample touse
 	
@@ -424,16 +424,18 @@ program define DiagDisplay, rclass
 	return scalar factor_max  = `wrmax'
 	return scalar factor_cv   = `wrmean'/`wrsd'
 	
-	// histograms
-	tempname histnew histratio
-	
-	label variable `newweight' "Raked weights"
-	quietly histogram `newweight', freq nodraw name( `histnew' )
-	
-	label variable `wratio' "Adjustment factor"
-	quietly histogram `wratio', freq nodraw name( `histratio' )
-	
-	graph combine `histnew' `histratio'
+	if "`graph'" == "" {
+		// histograms
+		tempname histnew histratio
+		
+		label variable `newweight' "Raked weights"
+		quietly histogram `newweight', freq nodraw name( `histnew' )
+		
+		label variable `wratio' "Adjustment factor"
+		quietly histogram `wratio', freq nodraw name( `histratio' )
+		
+		graph combine `histnew' `histratio'
+	}
 	
 end // of DiagDisplay
 
