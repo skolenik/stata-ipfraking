@@ -1,9 +1,9 @@
-*! v.1.1.6 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.7 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
 
-	syntax [pw/] [if] [in] , [ CTOTal( namelist ) cmean( namelist ) ///
+	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) ///
 		selfcheck ]
@@ -11,7 +11,6 @@ program define ipfraking, rclass
 	// syntax:
 	//   [pw=original weight variable]
 	//   ctotal        is the list of matrix names, each matrix is a e(b) of an appropriate -total y, over()- command
-	//   cmean         is the list of matrix names, each matrix is a e(b) of an appropriate -mean y, over()- command
 	//   generate()    is the name of the variable to be created
 	//   replace       indicates that the weight variable is to be overwritten
 	//   trimrel       is the upper bound on the relative weight adjustment ratio
@@ -19,7 +18,7 @@ program define ipfraking, rclass
 	//   iterate       is the maximum number of iterations
 	//   tolerance     is the difference in weight adjustment ratios over an iteration cycle
 
-	if "`exp'"=="" {
+	if "`exp'"=="" & "`selfcheck'" == "" {
 		display as error "pweight is required"
 		exit 198
 	}
@@ -27,6 +26,10 @@ program define ipfraking, rclass
 	if "`selfcheck'" != "" {
 		SelfCheck
 		exit
+	}
+	else if "`ctotal'" == "" {
+		display as error "ctotal() is required"
+		exit 198
 	}
 	
 	local trimopts `trimhiabs' `trimhirel' `trimloabs' `trimlorel'
@@ -55,13 +58,6 @@ program define ipfraking, rclass
 		exit 198
 	}
 	
-	if ("`ctotal'"!="") + ("`cmean'"!= "") != 1 {
-		display as error "one and only one of ctotal or cmean must be specified"
-		exit 198
-	}
-	if "`ctotal'" != "" local total total
-	if "`cmean'"  != "" local mean mean
-
 	if "`generate'"!="" {
 		capture confirm new variable `generate'
 		// the following line will fail intentionally
@@ -72,19 +68,19 @@ program define ipfraking, rclass
 	
 	display
 	
-	// parse and check the control totals/means
-	ControlCheckParse `ctotal' `cmean' , one( `one' ) loglevel(`loglevel')
+	// parse and check the control totals
+	ControlCheckParse `ctotal' , one( `one' ) loglevel(`loglevel')
 	
 	generate double `oldweight' = `exp' if `touse'
 	generate double `prevweight' = `oldweight'
 	generate double `currweight' = `oldweight'
 	
-	local nvars : word count `cmean' `ctotal'
+	local nvars : word count `ctotal'
 
 	forvalues i=1/`iterate' {
 		quietly replace `prevweight' = `currweight'
 		forvalues k=1/`nvars' {
-			PropAdjust `currweight' if `touse' , `total' `mean' target(`mat`k'') control(`var`k'') over(`over`k'') loglevel(`loglevel')
+			PropAdjust `currweight' if `touse' , target(`mat`k'') control(`var`k'') over(`over`k'') loglevel(`loglevel')
 			if "`trimfrequency'" == "often" & "`trimopts'" != "" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `over`k'' ) loglevel(`loglevel')
 		}
 		if "`trimfrequency'" == "sometimes" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
@@ -103,7 +99,7 @@ program define ipfraking, rclass
 	local badcontrols 0
 	
 	forvalues k=1/`nvars' {
-		CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') : `total' `mean' `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
+		CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') : total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
 		local badcontrols = `badcontrols' | r(badcontrols)
 	}
 	if `badcontrols' {
@@ -120,9 +116,11 @@ program define ipfraking, rclass
 		generate `double' `generate' = `currweight' if `touse'
 		label variable `generate' "Raked weights"
 		if "`meta'" != "" {
-			note `generate' : Raking controls used: ctotal( `ctotal' ) / cmean( `cmean' )
+			note `generate' : Raking controls used: ctotal( `ctotal' )
 		}
 	}
+
+	return local ctotal `ctotal'
 	
 end // of ipfraking
 
@@ -163,13 +161,13 @@ end // of CheckResults
 
 program define PropAdjust
 
-	syntax varname(numeric) [if] [in], target(namelist min=1 max=1) control(varname numeric) over(varname numeric) [total mean loglevel(int 0)]
+	syntax varname(numeric) [if] [in], target(namelist min=1 max=1) control(varname numeric) over(varname numeric) [loglevel(int 0)]
 	
 	local currweight `varlist'
 
 	marksample touse
 	
-	capture `total' `mean' `control' [pw=`currweight'] if `touse', over( `over', nolab )
+	capture total `control' [pw=`currweight'] if `touse', over( `over', nolab )
 	if _rc {
 		display as error "cannot compute controls for `control' over `over' with the current weights"
 		exit 301
@@ -216,7 +214,7 @@ program define ControlCheckParse
 	forvalues k=1/`nvars' {
 		local mat`k' : word `k' of `namelist'
 		if colsof(`mat`k'') == 1 {
-			// this is an overall total/mean
+			// this is an overall total
 			capture local var`k' : colnames `mat`k''
 			if _rc {
 				display as error "cannot process matrix `mat`k''"
@@ -257,7 +255,7 @@ program define ControlCheckParse
 			}
 			matrix `b' = e(b)
 			if "`: colfullnames `mat`k'''" != "`: colfullnames `b''" {
-				display as error "categories of `over`k'' do not match in the control `mat`k'' and in the data"
+				display as error "categories of `over`k'' do not match in the control `mat`k'' and in the data (nolab option)"
 				exit 111
 			}
 			
@@ -535,8 +533,11 @@ program define SelfCheck
 	matrix `bb' = e(b)
 	capture noisily assert mreldif( `bb',total_race ) < c(epsfloat)
 	
-	// 6. this must fail to converge
+	// 6. this will take longer to converge
 	capture noisily ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight6 ) trimhiabs(100000) trimloabs(50000)
+	
+	assert r(converged)   == 1
+	assert r(badcontrols) == 0
 	
 	set more `cmore'
 	

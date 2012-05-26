@@ -1,0 +1,11 @@
+d ipfraking -- iterative proportional fitting aka raking
+d
+d Author: Stas Kolenikov
+d 
+d ipfraking performs iterative proportional fitting,
+d i.e., it adjusts the sampling weights to conform
+d to the specified control totals
+
+f ipfraking.ado
+f ipfraking.sthlp
+

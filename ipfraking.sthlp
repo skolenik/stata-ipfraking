@@ -154,8 +154,28 @@ stored with the variable specified in {cmd:generate()} option.{p_end}
 
 {title:Returned values}
 
+{phang}Scalars:
+
 {synopt:{cmd:r(converged)}}1, if convergence of the algorithm was achieved, and 0 otherwise.{p_end}
 {synopt:{cmd:r(badcontrols)}}1, if any of the control totals or means were not approximated accurately, and 0 otherwise.{p_end}
+{synopt:{cmd:r(maxreldif)}}the largest relative difference of the weights at the last iteration{p_end}
+{synopt:{cmd:r(raked_mean)}}the mean of the raked weights{p_end}
+{synopt:{cmd:r(raked_min)}}the smallest raked weight; >= {cmd:trimloabs()} value if specified{p_end}
+{synopt:{cmd:r(raked_max)}}the largest raked weight; <= {cmd:trimhiabs()} value if specified{p_end}
+{synopt:{cmd:r(raked_sd)}}the standard deviation of the raked weights{p_end}
+{synopt:{cmd:r(raked_cv)}}coefficient of variation of the raked weights; useful in eyeballing the design effect as{p_end}
+
+{phang2}{cmd:. display 1 + r(raked_cv)^2}{p_end}
+
+{synopt:{cmd:r(factor_mean)}}the average adjustment factor{p_end}
+{synopt:{cmd:r(factor_min)}}the smallest adjustment factor; >= {cmd:trimlorel()} value if specified{p_end}
+{synopt:{cmd:r(factor_max)}}the greatest adjustment factor; <= {cmd:trimhirel()} value if specified{p_end}
+{synopt:{cmd:r(factor_sd)}}the standard deviation of the adjustment factor{p_end}
+{synopt:{cmd:r(factor_cv)}}coefficient of variation of the adjustment factor{p_end}
+
+{phang}Macros:
+
+{synopt:{cmd:r(ctotal)}}the list of the control vectors (copy of the {cmd:ctotal()} option)
 
 
 {marker remarks}{title:Remark 1 -- control vectors}
