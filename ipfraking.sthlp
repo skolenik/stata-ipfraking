@@ -23,7 +23,6 @@
 {synoptline}
 {syntab:Control figures}
 {synopt :{cmdab:ctot:al(}{it:matname} [{it:matname} ...]{cmd:)}}matrices of control totals{p_end}
-{synopt :{cmd:cmean(}{it:matname} [{it:matname} ...]{cmd:)}}matrices of control means (proportions){p_end}
 {syntab:The new weight variable}
 {synopt :{cmdab:gen:erate(}{it:newvarname}{cmd:)}}new variable to write the raked weights to{p_end}
 {synopt :{cmd:replace}}overwrite the existing weight variable{p_end}
@@ -79,13 +78,6 @@ iterative proportional fitting weight calibration.
 {phang}{cmdab:ctot:al(}{it:matrix_name} [{it:matrix_name} ...]{cmd:)} specifies the control totals.
 
 {pmore}Each matrix is expected to be a result of Stata {help total} estimation command.
-If the latter was issued with {cmd:over(}{help varname}{cmd:)} option,
-the matrix has to be additionally augmented with the name of that variable as a rowname.
-See {help ipfraking##remarks:Remarks} and {help ipfraking##examples:Examples}.
-
-{phang}{cmd:cmean(}{it:matrix_name} [{it:matrix_name} ...]{cmd:)} specifies the control means (proportions){p_end}
-
-{pmore}Each matrix is expected to be a result of Stata {help mean} estimation command.
 If the latter was issued with {cmd:over(}{help varname}{cmd:)} option,
 the matrix has to be additionally augmented with the name of that variable as a rowname.
 See {help ipfraking##remarks:Remarks} and {help ipfraking##examples:Examples}.
@@ -180,8 +172,8 @@ stored with the variable specified in {cmd:generate()} option.{p_end}
 
 {marker remarks}{title:Remark 1 -- control vectors}
 
-{pstd}Matrices that {cmd:ipfraking} expects to receive as inputs via {opt ctotal(...)} or
-{opt cmean(...)} options must conform to the following specifications:
+{pstd}Matrices that {cmd:ipfraking} expects to receive as inputs via {opt ctotal(...)} 
+option must conform to the following specifications:
 
 {phang2}1. They need to be {it:1 x c} matrices (row-vectors)
 
