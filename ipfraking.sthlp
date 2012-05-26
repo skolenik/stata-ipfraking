@@ -41,7 +41,6 @@
 {syntab:Miscellaneous}
 {synopt:{cmd:loglevel(}{it:#}{cmd:)}}level of detail in the output{p_end}
 {synopt:{cmd:meta}}store some meta-info concerning the raking procedure{p_end}
-{synopt:{cmd:selfcheck}}[UNDOCUMENT LATER!] run some nhanes2-based examples{p_end}
 
 
 {title:Description}
@@ -75,27 +74,6 @@ iterative proportional fitting weight calibration.
 
 {phang}{cmd:option(}{it:whatever}{cmd:)}
 
-{pmore}More hanging stuff
-
-{syntab:Weight variable}
-{synopt :{cmdab:gen:erate(}{it:newvarname}{cmd:)}}new variable to write the raked weights to{p_end}
-{synopt :{cmd:replace}}overwrite the existing weight variable{p_end}
-{synopt :{cmd:double}}generate the new variable of {help double} type{p_end}
-{syntab:Convergence diagnostic and reporting}
-{synopt:{cmdab:iter:ate(}{it:#}{cmd:)}}maximum number of iterations{p_end}
-{synopt:{cmdab:tol:erance(}{it:#}{cmd:)}}convergence tolerance{p_end}
-{synopt:{cmdab:ctrltol:erance(}{it:#}{cmd:)}}required accuracy of the controls{p_end}
-{syntab:Trimming}
-{synopt:{cmd:trimhirel(}{it:#}{cmd:)}}the upper bound on the greatest factor by which the weights can increase{p_end}
-{synopt:{cmd:trimhiabs(}{it:#}{cmd:)}}the upper bound on the greatest value the weights can achieve{p_end}
-{synopt:{cmd:trimlorel(}{it:#}{cmd:)}}the lower bound on the smallest factor by which the weights can increase{p_end}
-{synopt:{cmd:trimloabs(}{it:#}{cmd:)}}the lower bound on the smallest value the weights can achieve{p_end}
-{synopt:{cmdab:trimfreq:ency(}{it:keyword}{cmd:)}}stages of raking when weight trimming should be applied{p_end}
-{syntab:Miscellaneous}
-{synopt:{cmd:loglevel(}{it:#}{cmd:)}}level of detail in the output{p_end}
-{synopt:{cmd:meta}}store some meta-info concerning the raking procedure{p_end}
-{synopt:{cmd:selfcheck}}[UNDOCUMENT LATER!] run some nhanes2-based examples{p_end}
-
 {dlgtab:Control figures}
 
 {phang}{cmdab:ctot:al(}{it:matrix_name} [{it:matrix_name} ...]{cmd:)} specifies the control totals.
@@ -112,6 +90,67 @@ If the latter was issued with {cmd:over(}{help varname}{cmd:)} option,
 the matrix has to be additionally augmented with the name of that variable as a rowname.
 See {help ipfraking##remarks:Remarks} and {help ipfraking##examples:Examples}.
 
+{phang}See Remark 1 below.
+
+{dlgtab:Weight variable}
+
+{phang}{cmdab:gen:erate(}{it:newvarname}{cmd:)} specifies the name of the new variable to contain the raked weights.
+
+{phang}{cmd:replace} overwrite the existing weight variable
+
+{phang}{cmd:double} generate the new variable as {help double} type{p_end}
+
+{dlgtab:Convergence diagnostic and reporting}
+
+{phang}{cmdab:iter:ate(}{it:#}{cmd:)} maximum number of iterations (default = 2000)
+
+{phang}{cmdab:tol:erance(}{it:#}{cmd:)} convergence tolerance. Convergence will be declared if the largest relative difference
+of the weights in two successive iterations (a full cycle over all raking variables) does not exceed this value.
+
+{phang}{cmdab:ctrltol:erance(}{it:#}{cmd:)} required accuracy of the controls. If, upon convergence of the algorithm
+(see the previous option), the relative difference of the weighted totals/means and the control totals/means
+is greater than this value, an error message will be issued.
+
+{phang}See Remark 2 below.
+
+{dlgtab:Trimming}
+
+{phang}{cmd:trimhirel(}{it:#}{cmd:)} specifies the upper bound on the adjustment factor over the baseline weight. The weights
+that exceeds the baseline times this value will be trimmed down.{p_end}
+
+{phang}{cmd:trimhiabs(}{it:#}{cmd:)} specifies the upper bound on the greatest value of the raked weights. 
+The weights that exceed this value will be trimmed down.{p_end}
+
+{phang}{cmd:trimlorel(}{it:#}{cmd:)} specifies the lower bound on the adjustment factor over the baseline weight. 
+The weights that are smaller than the baseline times this value will be increased.{p_end}
+
+{phang}{cmd:trimloabs(}{it:#}{cmd:)} specifies the lower bound on the smallest value of the raked weights. 
+The weights that are smaller than this value will be increased.{p_end}
+
+{phang}{cmdab:trimfreq:ency(}{it:keyword}{cmd:)} specifies when the trimming operations are to be performed.{p_end}
+
+{phang2}{cmd:often} means that the trimming operations will be performed after each marginal adjustment.{p_end}
+
+{phang2}{cmd:sometimes} means that the trimming operations will be performed in the end of each iteration
+(cycle over all margins).{p_end}
+
+{phang2}{cmd:once} means that the trimming operation will be performed once, after convergence has been achieved.{p_end}
+
+{phang}See Remark 3 below.{p_end}
+
+{dlgtab:Miscellaneous}
+
+{phang}{cmd:loglevel(}{it:#}{cmd:)} level of detail in the output.{p_end}
+
+{phang2}0 is the default value; only the iteration log will be produced.{p_end}
+
+{phang2}1 provides additional output on the intermediate trimming steps.{p_end}
+
+{phang2}2 is a lot of detailed (and not always useful) output.{p_end}
+
+{phang}{cmd:meta} puts the name(s) of the control vectors as a {help note} 
+stored with the variable specified in {cmd:generate()} option.{p_end}
+
 
 {title:Returned values}
 
@@ -119,7 +158,7 @@ See {help ipfraking##remarks:Remarks} and {help ipfraking##examples:Examples}.
 {synopt:{cmd:r(badcontrols)}}1, if any of the control totals or means were not approximated accurately, and 0 otherwise.{p_end}
 
 
-{marker remarks}{title:Remark 1}
+{marker remarks}{title:Remark 1 -- control vectors}
 
 {pstd}Matrices that {cmd:ipfraking} expects to receive as inputs via {opt ctotal(...)} or
 {opt cmean(...)} options must conform to the following specifications:
@@ -142,13 +181,36 @@ should be specified in the {cmd:over()} option, as otherwise Stata provides
 generic column names {cmd:_subpop_}{it:#} that are dependent on the data.
 
 
-{title:Remark 2}
+{title:Remark 2 -- convergence}
 
 {pstd}For algorithmic purposes, convergence is defined as achieving
 a stable state where the raked weights do not change (much) from
 iteration to iteration. In some sources, convergence of the raking
 algorithm is defined as whether the control totals are accurately
 approximated. These are two separate outcomes.
+
+{pstd}If the algorithm converges with inadequate accuracy of the totals
+(of which an error message will be issued), it means that the calibration
+constraints have been difficult to satisfy. The most common solutions to 
+this problem is to omit some of the variables. In the (most common) case of the control
+totals being the sizes of subpopulation groups, one can collapse/combine
+some cells, thus specifying fewer control totals.
+
+
+{title:Remark 3 -- trimming}
+
+{pstd}Weight trimming is often used in practice to reduce the spread of weights,
+and thus decrease the design effect. It may not be entirely clear what the effect
+of trimming might be on estimates that are but weakly related to the control
+variables, so this operation should be applied with caution.
+
+{pstd}The setting {cmd:trimfreq(sometimes)} appears to make the greatest sense. 
+The weakness of the setting {cmd:trimfreq(once)} is that it does not guarantee that 
+the resulting weights ensure the calibration constraints. The weakness of
+the setting {cmd:trimfreq(often)} is that the resulting weights may depend
+on the order in which the calibration variables are entered, especially
+when convergence is difficult to achieve.
+
 
 {marker examples}{title:Examples}
 
@@ -193,9 +255,6 @@ and reports problems, if any.
 {phang2}{cmd:. sample 500, count by(region)}{p_end}
 {phang2}{cmd:. * calibrating the weights}{p_end}
 {phang2}{cmd:. ipfraking [pw=finalwgt], ctotal(total_sex total_race) generate(rakedwgt2)}{p_end}
-{phang2}{cmd:. }{p_end}
-{phang2}{cmd:. }{p_end}
-{phang2}{cmd:. }{p_end}
 
 
 {pstd}Calibration over two margins with weight trimming{p_end}
@@ -230,26 +289,25 @@ and reports problems, if any.
 {phang2}{cmd:. sample 500, count by(region)}{p_end}
 {phang2}{cmd:. * calibrating the weights}{p_end}
 {phang2}{cmd:. ipfraking [pw=finalwgt], ctotal(total_sex total_race) trimhiabs(200000) generate(rakedwgt4) trimhirel(5.4)}{p_end}
-{phang2}{cmd:. }{p_end}
-{phang2}{cmd:. }{p_end}
-{phang2}{cmd:. }{p_end}
+
 
 {title:References}
 
-{phang}Deming, W. (1940)
+{phang}Deming, W. E., and Stephan, F. F. (1940). 
+On a Least Squares Adjustment of a Sampled Frequency Table When the Expected Marginal Totals are Known. {it:Annals of Mathematical Statistics} {bf:11} (4),
+ 427–444. doi: {browse "http://dx.doi.org/10.1214/aoms/1177731829":10.1214/aoms/1177731829}.
 
-{phang}Deville and Sarndal (1996)
+{phang}Ruschendorf, L. (1995). Convergence of the Iterative Proportional Fitting Procedure.
+{it:The Annals of Statistics}, {bf:23} (4), pp. 1160-1174.
+{browse "http://www.jstor.org/stable/2242759":JSTOR link}.
+ 
+{phang}Deville, J.-C., Sarndal, C.-E., and Sautory, O. (1993). Generalized Raking Procedures in Survey Sampling
+{it:Journal of the American Statistical Association}, {bf:88} (423) pp. 1013-1020.
+{browse "http://www.jstor.org/stable/2290793":JSTOR link}.
 
-{phang}Kott -- review
-
-{phang}Bollen, K. A. 1996. {browse "http://www.springerlink.com/content/2v1837041117kh66/":An alternative two stage least squares (2SLS) estimator for latent variable equations}. {it:Psychometrika} 61: 109-121.
-
-{phang}Kolenikov, S. 2009. {browse "http://www.stata-journal.com/article.html?article=st0169":Confirmatory factor analysis using {cmd:confa}}. {it:Stata Journal}, 9(3): 329--373.
-
-{phang}Satorra, A., and P. M. Bentler. 1994. Corrections to test statistics and standard errors in covariance structure analysis. In {it:Latent Variables Analysis}, ed. A. von Eye and C. C. Clogg, 399-419. Thousand Oaks, CA: Sage.
-
-{phang} Yuan, K.-H., and P. M. Bentler. 1997. {browse "http://www.jstor.org/stable/2965725":Mean and covariance structure analysis: Theoretical and practical improvements.}
-    {it:Journal of the American Statistical Association} 92: 767-774.
+{phang}Kott, P. (2006) Using Calibration Weighting to Adjust for Nonresponse and Coverage Errors.
+{it:Survey Methodology}, {bf:32} (2), pp. 133­142.
+{browse "http://www.statcan.gc.ca/pub/12-001-x/12-001-x2006002-eng.pdf":Statistics Canada website access}.
 
 
 {title:Author}
@@ -262,6 +320,5 @@ and reports problems, if any.
 
 {title:Also see}
 
-{psee}
-Article: {it:Stata Journal}, volume ??, number ??: {browse "http://www.stata-journal.com/article.html?article=st0001":st0001}
-maxentropy
+{psee}{help maxentropy} package by M. Wittenberg ({browse "http://www.stata-journal.com/article.html?article=st0196":The Stata Journal article})
+

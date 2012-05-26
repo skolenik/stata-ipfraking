@@ -1,9 +1,10 @@
+*! v.1.1.6 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
 
 	syntax [pw/] [if] [in] , [ CTOTal( namelist ) cmean( namelist ) ///
-		generate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
+		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) ///
 		selfcheck ]
 
@@ -45,7 +46,7 @@ program define ipfraking, rclass
 	
 	tempvar oldweight currweight prevweight one
 	
-	marksample touse
+	marksample touse, zeroweight
 	
 	quietly generate byte `one' = 1
 	
@@ -183,7 +184,7 @@ program define PropAdjust
 		if `bb'[1,1] == 0 {
 			display as error "Warning: division by zero weighted total encountered with `control' control"
 		}
-		`quietly' replace `currweight' = `currweight' * `target'[1,1] / `bb'[1,1] if `touse'
+		`quietly' replace `currweight' = `currweight' * `target'[1,1] / `bb'[1,1] if `touse' & `currweight' != 0
 	}
 	else {
 		// cycle over categories
@@ -198,7 +199,7 @@ program define PropAdjust
 				display as error "Warning: division by zero weighted total encountered with `control' control with `over' == `k'"
 			}
 			
-			`quietly' replace `currweight' = `currweight' * `target'[1,`k'] / `bb'[1,`k'] if `touse' & `over' == `: word `k' of `: colnames `bb' ''
+			`quietly' replace `currweight' = `currweight' * `target'[1,`k'] / `bb'[1,`k'] if `touse' & `over' == `: word `k' of `: colnames `bb' '' & `currweight'!=0
 		}
 	}
 	
