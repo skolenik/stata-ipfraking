@@ -1,4 +1,4 @@
-*! v.1.1.10 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.11 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -6,7 +6,7 @@ program define ipfraking, rclass
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) ///
-		selfcheck maxentropy * ]
+		selfcheck maxentropy from(varname) * ]
 
 	// syntax:
 	//   [pw=original weight variable]
@@ -73,7 +73,8 @@ program define ipfraking, rclass
 	
 	generate double `oldweight' = `exp' if `touse'
 	generate double `prevweight' = `oldweight'
-	generate double `currweight' = `oldweight'
+	if "`from'" == "" generate double `currweight' = `oldweight'
+	else generate double `currweight' = `from'
 	
 	local nvars : word count `ctotal'
 
@@ -708,4 +709,5 @@ exit
 1.1.8	added output of targets, controls and mismatches
 		check that totals are the same
 1.1.10	added support for maxentropy (which generally sucks)
+1.1.11	-from()- option is added
 */
