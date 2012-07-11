@@ -1,4 +1,4 @@
-*! v.1.1.7 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.9 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -6,7 +6,7 @@ program define ipfraking, rclass
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) ///
-		selfcheck ]
+		selfcheck * ]
 
 	// syntax:
 	//   [pw=original weight variable]
@@ -97,9 +97,17 @@ program define ipfraking, rclass
 	return add
 
 	local badcontrols 0
+
+	tempname pass
 	
 	forvalues k=1/`nvars' {
 		CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') : total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
+		matrix `pass' = r(target)
+		matrix rowname `pass' = `over`k''
+		return matrix target`k' = `pass'
+		matrix `pass' = r(result)
+		return matrix result`k' = `pass'
+		return scalar mreldif`k' = r(mreldif)
 		local badcontrols = `badcontrols' | r(badcontrols)
 	}
 	if `badcontrols' {
@@ -154,6 +162,13 @@ program define CheckResults, rclass
 			matrix list `bb', noheader format(%12.0g)
 		}
 	}
+	
+	tempname mcopy
+	matrix `mcopy' = `target'
+	
+	return scalar mreldif = mreldif(`bb',`target')
+	return matrix target = `mcopy'
+	return matrix result = `bb'
 	
 	display
 
@@ -229,6 +244,8 @@ program define ControlCheckParse
 			c_local over`k' `one'
 			c_local var`k'  `var`k''
 			c_local mat`k'  `mat`k''
+			tempname sum`k'
+			scalar `num`k'' = el( `mat`k'', 1, 1)
 		}
 		else {
 			// this is -over()- something, must be obtained 
@@ -259,6 +276,9 @@ program define ControlCheckParse
 				exit 111
 			}
 			
+			tempname sum`k'
+			mata : st_numscalar("`sum`k''", sum( st_matrix("`mat`k''") ) )
+			
 			c_local var`k' `var`k''
 			c_local over`k' `over`k''
 			c_local mat`k'  `mat`k''
@@ -266,6 +286,22 @@ program define ControlCheckParse
 		local overlist `overlist' `over`k''
 	}
 	c_local overlist `overlist'
+	
+	* check the sums
+	tempname sumdif
+	scalar `sumdif' = 0
+	forvalues k=1/`nvars' {
+		forvalues l=1/`k' {
+			scalar `sumdif' = `sumdif' + abs( `sum`k'' - `sum`l'' )
+		}
+	}
+	if `sumdif' > 1000*`nvars'*(`nvars'-1)*c(epsdouble) {
+		display as err "Warning: the totals of the control matrices are different:"
+		forvalues k=1/`nvars' {
+			display _col(4) "{txt}Target {res}`k' {txt}({res}`mat`k''{txt}) total" _col(40) " = {res}" %18.9g `sum`k''
+		}
+		display
+	}
 
 end // of ControlCheckParse
 
@@ -387,24 +423,24 @@ program define DiagDisplay, rclass
 	local wrmax   = r(max)
 	local wrsd    = r(sd)
 
-	local d = 6-floor( log10(`newmean' ) )
+	local d = min(6-floor( log10(`newmean' ) ), 6)
 	
 	display _n "{txt}   Summary of the weight changes" _n
 	display _col(15) "{txt}{c |}    Mean    Std. dev.    Min        Max       CV"
 	display "{txt}{dup 14:{c -}}{c +}{dup 50:{c -}} "
 	
 	display "{txt}Orig weights  {c |} " _c
-	display _col(15) as res %8.`d'f `oldmean' _c
-	display _col(28) as res %8.`d'f `oldsd' _c
-	display _col(38) as res %8.`d'f `oldmin' _c
-	display _col(49) as res %9.`d'f `oldmax' _c
+	display _col(15) as res %8.`d'g `oldmean' _c
+	display _col(28) as res %8.`d'g `oldsd' _c
+	display _col(38) as res %8.`d'g `oldmin' _c
+	display _col(49) as res %9.`d'g `oldmax' _c
 	display _col(60) as res %6.4g `oldsd'/`oldmean'
 	
 	display "{txt}Raked weights {c |} " _c
-	display _col(15) as res %8.`d'f `newmean' _c
-	display _col(28) as res %8.`d'f `newsd' _c
-	display _col(38) as res %8.`d'f `newmin' _c
-	display _col(49) as res %9.`d'f `newmax' _c
+	display _col(15) as res %8.`d'g `newmean' _c
+	display _col(28) as res %8.`d'g `newsd' _c
+	display _col(38) as res %8.`d'g `newmin' _c
+	display _col(49) as res %9.`d'g `newmax' _c
 	display _col(60) as res %6.4g `newsd'/`newmean'
 	
 	return scalar raked_mean = `newmean'
@@ -414,9 +450,9 @@ program define DiagDisplay, rclass
 	return scalar raked_cv   = `newsd'/`newmean'
 	
 	display "{txt}Adjust factor {c |} " _c
-	display _col(19) as res %6.4f `wrmean' _c
-	display _col(40) as res %6.4f `wrmin' _c
-	display _col(51) as res %7.4f `wrmax'
+	display _col(17) as res %8.4f `wrmean' _c
+	display _col(38) as res %8.4f `wrmin' _c
+	display _col(49) as res %9.4f `wrmax'
 	
 	return scalar factor_mean = `wrmean'
 	return scalar factor_min  = `wrmin'
@@ -433,7 +469,7 @@ program define DiagDisplay, rclass
 		label variable `wratio' "Adjustment factor"
 		quietly histogram `wratio', freq nodraw name( `histratio' )
 		
-		graph combine `histnew' `histratio'
+		graph combine `histnew' `histratio' , `options'
 	}
 	
 end // of DiagDisplay
@@ -542,3 +578,12 @@ program define SelfCheck
 	set more `cmore'
 	
 end // of SelfCheck
+
+
+exit
+
+
+/* History
+1.1.8 added output of targets, controls and mismatches
+      check that totals are the same
+*/
