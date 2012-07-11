@@ -1,4 +1,4 @@
-*! v.1.1.9 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.10 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -6,7 +6,7 @@ program define ipfraking, rclass
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) ///
-		selfcheck * ]
+		selfcheck maxentropy * ]
 
 	// syntax:
 	//   [pw=original weight variable]
@@ -77,25 +77,59 @@ program define ipfraking, rclass
 	
 	local nvars : word count `ctotal'
 
-	forvalues i=1/`iterate' {
-		quietly replace `prevweight' = `currweight'
-		forvalues k=1/`nvars' {
-			PropAdjust `currweight' if `touse' , target(`mat`k'') control(`var`k'') over(`over`k'') loglevel(`loglevel')
-			if "`trimfrequency'" == "often" & "`trimopts'" != "" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `over`k'' ) loglevel(`loglevel')
+	// choose the method
+	if "`maxentropy'" == "" {
+		// use iterative proportional fitting
+
+		forvalues i=1/`iterate' {
+			quietly replace `prevweight' = `currweight'
+			forvalues k=1/`nvars' {
+				PropAdjust `currweight' if `touse' , target(`mat`k'') control(`var`k'') over(`over`k'') loglevel(`loglevel')
+				if "`trimfrequency'" == "often" & "`trimopts'" != "" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `over`k'' ) loglevel(`loglevel')
+			}
+			if "`trimfrequency'" == "sometimes" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
+			CheckConvergence `prevweight' `currweight' if `touse', `tolerance'
+			display "{txt} Iteration `i', max rel difference of raked weights = {res}" r(maxreldif) _n
+			if r(converged) continue, break
 		}
-		if "`trimfrequency'" == "sometimes" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
-		CheckConvergence `prevweight' `currweight' if `touse', `tolerance'
-		display "{txt} Iteration `i', max rel difference of raked weights = {res}" r(maxreldif) _n
-		if r(converged) continue, break
+		
+		if !r(converged) {
+			display "{err}Warning: raking procedure did not converge"
+		}
+		
 	}
+	else {
+		// use maxentropy
+		if inlist("`trimfrequency'", "often", "sometimes") {
+			display as error "Warning: only trimfrequency(once) is supported with maxentropy option"
+		}
 	
-	if !r(converged) {
-		display "{err}Warning: raking procedure did not converge"
+		// vectorize the control totals; label the matrix rows for later use to create tempvars
+		FormMaxEntropyMatrix `ctotal'
+		tempname maxentmatrix maxenttotal
+		matrix `maxentmatrix' = r(M)
+		scalar `maxenttotal' = r(total)
+		
+		forvalues k=1/`=rowsof(`maxentmatrix')' {
+			tempvar ctrlvar`k'
+			local ctrlvarlist `ctrlvarlist' `ctrlvar`k''
+		}
+		* create tempvars
+		GenerateMaxEntropyVars `ctrlvarlist' if `touse', matrix( `maxentmatrix' )
+		
+		maxentropy `ctrlvarlist' , matrix( `maxentmatrix' ) generate( `currweight', replace ) ///
+			prior( `oldweight' ) total( `=`maxenttotal'' ) log
+		return add
+
+		return matrix maxentropy_mat = `maxentmatrix'
+		return scalar maxentropy_tot = `maxenttotal'
+			
 	}
-	
+
 	if "`trimfrequency'" == "once" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' )	
 	return add
 
+	// check if controls matched
 	local badcontrols 0
 
 	tempname pass
@@ -580,10 +614,98 @@ program define SelfCheck
 end // of SelfCheck
 
 
+program define FormMaxEntropyMatrix, rclass
+	// vectorize the control totals; label the matrix rows for later use to create tempvars
+	syntax namelist
+
+	tempname M curr_total ave_total
+	
+	local nt = 0
+	scalar `ave_total' = 0
+	
+	local nvars : word count `namelist'
+	forvalues k=1/`nvars' {
+		local mat`k'  : word `k' of `namelist'
+		local over`k' : rownames `mat`k''
+		local val`k'  : colnames `mat`k''
+			
+		if colsof(`mat`k'') == 1 {
+			// this is an overall total
+			matrix `M' = nullmat(`M') \ `mat`k''
+			local Mrnames `Mrnames' `over`k''
+		}
+		else {
+			// this is -over()- something
+			local cols`k' = colsof( `mat`k'' )
+
+			mata : st_numscalar( "`curr_total'", sum( st_matrix( "`mat`k''") ) )
+			scalar `ave_total' = `ave_total' + `curr_total'
+			
+			// omit the last category to avoid multicollinearity
+			matrix `M' = nullmat( `M' ) \ (`mat`k''[1,1..`cols`k''-1]'/`curr_total')
+			forvalues j=1/`=`cols`k''-1' {
+				local Mrnames `Mrnames' `over`k'':`: word `j' of `val`k'''
+			}
+			
+			local ++nt
+		}
+	}
+	
+	matrix rownames `M' = `Mrnames'
+		
+	return matrix M = `M'
+	return scalar total = `ave_total' / `nt'
+
+end // of FormMaxEntropyMatrix
+	
+program define GenerateMaxEntropyVars 
+
+	syntax newvarlist [if] [in], matrix( name )
+	
+	marksample touse, novarlist
+	
+	local thenames : rowfullnames `matrix'
+	
+	// each row of the matrix -> new variable
+	
+	forvalues k=1/`=rowsof(`matrix')' { 
+		local var`k' : word `k' of `varlist'
+		
+		// is this a single variable or a cagetory of a variable?
+		local title : word `k' of `thenames'
+		gettoken thevar rest : title, parse(":")
+		if "`rest'" == "" {
+			generate double `var`k'' = `thevar' if `touse'
+		}
+		else {
+			gettoken colon value : rest , parse(":")
+			assert "`colon'" == ":"
+			generate byte `var`k'' = ( `thevar' == `value' ) if `touse'
+		}
+	}
+
+end // of GenerateMaxEntropyVars
+
+
+
+
+
+
+
+
+
+
+
+
 exit
 
 
+
+
+
+
 /* History
-1.1.8 added output of targets, controls and mismatches
-      check that totals are the same
+1.1.8	added output of targets, controls and mismatches
+		check that totals are the same
+1.1.10	added support for maxentropy (which generally sucks)
 */
