@@ -1,11 +1,11 @@
-*! v.1.1.11 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.12 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
 
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
-		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) ///
+		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) trace ///
 		selfcheck maxentropy from(varname) * ]
 
 	// syntax:
@@ -61,7 +61,7 @@ program define ipfraking, rclass
 	if "`generate'"!="" {
 		capture confirm new variable `generate'
 		// the following line will fail intentionally
-		if _rc generate `generate' = .
+		if _rc generate `double' `generate' = .
 	}
 	
 	// finished checking input options
@@ -78,6 +78,22 @@ program define ipfraking, rclass
 	
 	local nvars : word count `ctotal'
 
+	local prevobj .
+	
+	if "`trace'" != "" {
+		local traceplot traceplot(
+		forvalues k=1/`nvars' {
+			tempname mreldif`k'var
+			
+			CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') quietly : ///
+				total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)			
+			quietly generate double `mreldif`k'var' = r(mreldif) in 1
+			label variable `mreldif`k'var' "`: word `k' of `ctotal''"
+			local traceplot `traceplot' `mreldif`k'var'
+		}
+		local traceplot `traceplot' )
+	}
+	
 	// choose the method
 	if "`maxentropy'" == "" {
 		// use iterative proportional fitting
@@ -88,10 +104,24 @@ program define ipfraking, rclass
 				PropAdjust `currweight' if `touse' , target(`mat`k'') control(`var`k'') over(`over`k'') loglevel(`loglevel')
 				if "`trimfrequency'" == "often" & "`trimopts'" != "" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `over`k'' ) loglevel(`loglevel')
 			}
+			if "`trace'" != "" {
+				forvalues k=1/`nvars' {
+					CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') quietly : ///
+						total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
+					quietly replace `mreldif`k'var' = r(mreldif) in `=`i'+1'
+				}
+				
+			}
 			if "`trimfrequency'" == "sometimes" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
 			CheckConvergence `prevweight' `currweight' if `touse', `tolerance'
-			display "{txt} Iteration `i', max rel difference of raked weights = {res}" r(maxreldif) _n
+			local currobj = r(maxreldif)
+			display "{txt} Iteration `i', max rel difference of raked weights = {res}" `currobj' _n
 			if r(converged) continue, break
+			if `currobj' > `prevobj' & `i' > 2 {
+				display "{err}Warning: raking procedure started diverging; exiting"
+				continue, break
+			}
+			local prevobj = `currobj'
 		}
 		
 		if !r(converged) {
@@ -117,8 +147,9 @@ program define ipfraking, rclass
 		}
 		* create tempvars
 		GenerateMaxEntropyVars `ctrlvarlist' if `touse', matrix( `maxentmatrix' )
-		
-		maxentropy `ctrlvarlist' , matrix( `maxentmatrix' ) generate( `currweight', replace ) ///
+		local ctrlvarlist_u `r(varlist)'
+
+		maxentropy `ctrlvarlist_u' , matrix( `maxentmatrix' ) generate( `currweight', replace ) ///
 			prior( `oldweight' ) total( `=`maxenttotal'' ) log
 		return add
 
@@ -143,14 +174,15 @@ program define ipfraking, rclass
 		matrix `pass' = r(result)
 		return matrix result`k' = `pass'
 		return scalar mreldif`k' = r(mreldif)
-		local badcontrols = `badcontrols' | r(badcontrols)
+		local badcontrols = `badcontrols' + r(badcontrols)
+		local whicharebad `whicharebad' `mat`k''
 	}
 	if `badcontrols' {
 		display "{err}Warning: weight adjustments converged, but the control figures did not match"
 	}
 	return scalar badcontrols = `badcontrols'
 
-	DiagDisplay `oldweight' `currweight' , `graph'
+	DiagDisplay `oldweight' `currweight' , `graph' `traceplot' `options'
 	return add
 	
 	// generate or replace the values
@@ -159,7 +191,14 @@ program define ipfraking, rclass
 		generate `double' `generate' = `currweight' if `touse'
 		label variable `generate' "Raked weights"
 		if "`meta'" != "" {
+		
 			note `generate' : Raking controls used: ctotal( `ctotal' )
+			forvalues k=1/`nvars' {
+				char `generate'[`mat`k''] `=return(mreldif`k')'
+			}
+		}
+		if `badcontrols' {
+			note `generate' : `whicharebad' total(s) did not match when creating this variable
 		}
 	}
 
@@ -175,7 +214,7 @@ program define CheckResults, rclass
 	assert "`colon'" == ":"
 	
 	local 0 `cropt'
-	syntax , target(name) [ ctrltolerance(real 1e-6) loglevel(int 0) ]
+	syntax , target(name) [ ctrltolerance(real 1e-6) loglevel(int 0) quietly ]
 	
 	confirm matrix `target'
 	
@@ -188,7 +227,7 @@ program define CheckResults, rclass
 	
 	return scalar badcontrols = `badcontrols'
 	
-	if `badcontrols' {
+	if `badcontrols' & "`quietly'" == "" {
 		display as error _n "Warning: the controls `target' did not match"
 		if `loglevel' > 0 {
 			display "{txt}Target:" _c
@@ -196,6 +235,7 @@ program define CheckResults, rclass
 			display "{txt}Realization:" _c
 			matrix list `bb', noheader format(%12.0g)
 		}
+		display
 	}
 	
 	tempname mcopy
@@ -205,7 +245,6 @@ program define CheckResults, rclass
 	return matrix target = `mcopy'
 	return matrix result = `bb'
 	
-	display
 
 end // of CheckResults
 
@@ -311,6 +350,11 @@ program define ControlCheckParse
 				exit 111
 			}
 			
+			quietly count if missing(`over`k'')
+			if r(N) {
+				display as error "Warning: `=r(N)' missing values of `over`k'' encountered; convergence will be impaired"
+			}
+			
 			tempname sum`k'
 			mata : st_numscalar("`sum`k''", sum( st_matrix("`mat`k''") ) )
 			
@@ -323,17 +367,19 @@ program define ControlCheckParse
 	c_local overlist `overlist'
 	
 	* check the sums
-	tempname sumdif
+	tempname sumdif avesum
 	scalar `sumdif' = 0
+	scalar `avesum' = 0
 	forvalues k=1/`nvars' {
 		forvalues l=1/`k' {
 			scalar `sumdif' = `sumdif' + abs( `sum`k'' - `sum`l'' )
 		}
+		scalar `avesum' = `avesum' + `sum`k''/`nvars'
 	}
-	if `sumdif' > 1000*`nvars'*(`nvars'-1)*c(epsdouble) {
+	if `sumdif' > 100*`avesum'*`nvars'*(`nvars'-1)*c(epsdouble) {
 		display as err "Warning: the totals of the control matrices are different:"
 		forvalues k=1/`nvars' {
-			display _col(4) "{txt}Target {res}`k' {txt}({res}`mat`k''{txt}) total" _col(40) " = {res}" %18.9g `sum`k''
+			display _col(4) "{txt}Target {res}`k' {txt}({res}`mat`k''{txt}) total" _col(45) " = {res}" %20.10g `sum`k''
 		}
 		display
 	}
@@ -429,7 +475,7 @@ end // of CheckConvergence
 
 program define DiagDisplay, rclass
 
-	syntax varlist(numeric min=2 max=2) [if] [in] , [ nograph ]
+	syntax varlist(numeric min=2 max=2) [if] [in] , [ nograph traceplot(varlist) * ]
 
 	marksample touse
 	
@@ -496,7 +542,7 @@ program define DiagDisplay, rclass
 	
 	if "`graph'" == "" {
 		// histograms
-		tempname histnew histratio
+		tempname histnew histratio histboth
 		
 		label variable `newweight' "Raked weights"
 		quietly histogram `newweight', freq nodraw name( `histnew' )
@@ -504,7 +550,50 @@ program define DiagDisplay, rclass
 		label variable `wratio' "Adjustment factor"
 		quietly histogram `wratio', freq nodraw name( `histratio' )
 		
-		graph combine `histnew' `histratio' , `options'
+*		if "`traceplot'" != "" local nameopt name(`histboth')
+*		else local nameopt `name'
+		
+		// traceplot
+		if "`traceplot'" != "" {
+			tempvar obsno mindif maxdif
+			tempname traceline logtraceline
+			sum `traceplot', mean
+			qui gen int `obsno' = _n-1 in 1/`=r(N)'
+					
+			// split the legend
+			local k=0 
+			foreach x of varlist `traceplot' {
+				local ++k
+				if 2*`k' > `: word count `traceplot'' local order2 `order2' `k'
+				else local order1 `order1' `k'
+			}
+			
+			label variable `obsno' "Iteration"
+			
+			// the last raking margin should nearly always be zero
+			local last : word `: word count `traceplot'' of `traceplot'
+			local traceplotl : list traceplot - last
+			
+			// come up with neat labels on log scale
+			qui egen float `mindif' = rowmin(`traceplotl')
+			qui egen float `maxdif' = rowmax(`traceplot')
+			sum `mindif', mean
+			local logmin = floor( log10( r(min) ) )
+			sum `maxdif', mean
+			local logmax = ceil( log10( r(max) ) )
+			local logstep = round( (`logmax'-`logmin')/5 )
+			if `logstep' == 0 local logstep 1
+			foreach d of numlist `logmin'(`logstep')`logmax' {
+				local thelab `thelab' 1e`d'
+			}		
+
+			quietly line `traceplot' `obsno' , nodraw name( `traceline' ) legend( cols(1) order( `order2' ) )
+			quietly line `traceplotl' `obsno' , nodraw name( `logtraceline' ) legend( cols(1) order( `order1' ) ) ///
+				yscale( log ) ylab( `thelab', angle(horizontal) ) 
+		}
+		
+		graph combine `histnew' `histratio' `traceline' `logtraceline', `options'
+
 	}
 	
 end // of DiagDisplay
@@ -659,7 +748,7 @@ program define FormMaxEntropyMatrix, rclass
 
 end // of FormMaxEntropyMatrix
 	
-program define GenerateMaxEntropyVars 
+program define GenerateMaxEntropyVars , rclass
 
 	syntax newvarlist [if] [in], matrix( name )
 	
@@ -685,6 +774,25 @@ program define GenerateMaxEntropyVars
 		}
 	}
 
+	// remove the collinear variables and redefine the calibration matrix
+	_rmcoll `varlist'
+	if r(k_omitted) > 0 {
+		local goodguys `r(varlist)'
+		tempname M
+		foreach x of varlist `goodguys' {
+			// determine the position in the original list
+			local row : list posof "`x'" in varlist
+			assert `row' > 0
+			matrix `M' = nullmat(`M') \ `matrix'[`row',1]
+			local Mrownames `Mrownames' `: word `row' of `thenames''
+		}
+		// overwrite the original matrix
+		matrix rowname `M' = `Mrownames'
+		matrix `matrix' = `M'
+	}
+	
+	return local varlist `goodguys'
+	
 end // of GenerateMaxEntropyVars
 
 
@@ -710,4 +818,7 @@ exit
 		check that totals are the same
 1.1.10	added support for maxentropy (which generally sucks)
 1.1.11	-from()- option is added
+1.1.12	all the reldifs are saved with -meta- option
+		traceplot is added to the graphical output
+		bugs with parameter transfer to -graph- are fixed
 */
