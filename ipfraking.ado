@@ -1,4 +1,4 @@
-*! v.1.1.12 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.14 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -6,7 +6,7 @@ program define ipfraking, rclass
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) trace ///
-		selfcheck maxentropy from(varname) * ]
+		selfcheck maxentropy from(varname) noDIVergence alpha(passthru) * ]
 
 	// syntax:
 	//   [pw=original weight variable]
@@ -101,7 +101,7 @@ program define ipfraking, rclass
 		forvalues i=1/`iterate' {
 			quietly replace `prevweight' = `currweight'
 			forvalues k=1/`nvars' {
-				PropAdjust `currweight' if `touse' , target(`mat`k'') control(`var`k'') over(`over`k'') loglevel(`loglevel')
+				PropAdjust `currweight' if `touse' , target(`mat`k'') control(`var`k'') over(`over`k'') loglevel(`loglevel') `alpha'
 				if "`trimfrequency'" == "often" & "`trimopts'" != "" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `over`k'' ) loglevel(`loglevel')
 			}
 			if "`trace'" != "" {
@@ -118,8 +118,8 @@ program define ipfraking, rclass
 			display "{txt} Iteration `i', max rel difference of raked weights = {res}" `currobj' _n
 			if r(converged) continue, break
 			if `currobj' > `prevobj' & `i' > 2 {
-				display "{err}Warning: raking procedure started diverging; exiting"
-				continue, break
+				display "{err}Warning: raking procedure appear diverging"
+				if "`divergence'" != "nodivergence" continue, break
 			}
 			local prevobj = `currobj'
 		}
@@ -178,7 +178,7 @@ program define ipfraking, rclass
 		local whicharebad `whicharebad' `mat`k''
 	}
 	if `badcontrols' {
-		display "{err}Warning: weight adjustments converged, but the control figures did not match"
+		display "{err}Warning: control figures did not match"
 	}
 	return scalar badcontrols = `badcontrols'
 
@@ -200,6 +200,12 @@ program define ipfraking, rclass
 		if `badcontrols' {
 			note `generate' : `whicharebad' total(s) did not match when creating this variable
 		}
+		
+		foreach trimpar in trimfrequency trimhiabs trimloabs trimhirel trimlorel {
+			if "``trimpar''" != "" char `generate'[`trimpar'] ``trimpar''
+		}
+		
+		char `generate'[command] `0'
 	}
 
 	return local ctotal `ctotal'
@@ -250,7 +256,7 @@ end // of CheckResults
 
 program define PropAdjust
 
-	syntax varname(numeric) [if] [in], target(namelist min=1 max=1) control(varname numeric) over(varname numeric) [loglevel(int 0)]
+	syntax varname(numeric) [if] [in], target(namelist min=1 max=1) control(varname numeric) over(varname numeric) [alpha(real 1) loglevel(int 0)]
 	
 	local currweight `varlist'
 
@@ -271,7 +277,8 @@ program define PropAdjust
 		if `bb'[1,1] == 0 {
 			display as error "Warning: division by zero weighted total encountered with `control' control"
 		}
-		`quietly' replace `currweight' = `currweight' * `target'[1,1] / `bb'[1,1] if `touse' & `currweight' != 0
+		if `loglevel' > 1 display "{txt}Control {res}`control'{txt}: " _c
+		`quietly' replace `currweight' = `currweight' * `target'[1,1] / `bb'[1,1] if `touse' & `currweight' != 0 & `control' != 0
 	}
 	else {
 		// cycle over categories
@@ -280,13 +287,16 @@ program define PropAdjust
 			if _rc {
 				// we've done the diagnostic before, so this should not be happening
 				display as error "categories mismatch in PropAdjust"
+				matrix list `bb'
+				matrix list `target'
 				exit 111
 			}
 			if `bb'[1,`k'] == 0 {
 				display as error "Warning: division by zero weighted total encountered with `control' control with `over' == `k'"
 			}
 			
-			`quietly' replace `currweight' = `currweight' * `target'[1,`k'] / `bb'[1,`k'] if `touse' & `over' == `: word `k' of `: colnames `bb' '' & `currweight'!=0
+			if `loglevel' > 1 display "{txt}Control {res}`over'{txt}, category {res}`: word `k' of `: colnames `bb' ''{txt}: " _c
+			`quietly' replace `currweight' = `currweight' * (`target'[1,`k'] / `bb'[1,`k'])^`alpha' if `touse' & `over' == `: word `k' of `: colnames `bb' '' & `currweight'!=0
 		}
 	}
 	
@@ -319,7 +329,7 @@ program define ControlCheckParse
 			c_local var`k'  `var`k''
 			c_local mat`k'  `mat`k''
 			tempname sum`k'
-			scalar `num`k'' = el( `mat`k'', 1, 1)
+			scalar `sum`k'' = el( matrix(`mat`k''), 1, 1)
 		}
 		else {
 			// this is -over()- something, must be obtained 
@@ -821,4 +831,8 @@ exit
 1.1.12	all the reldifs are saved with -meta- option
 		traceplot is added to the graphical output
 		bugs with parameter transfer to -graph- are fixed
+1.1.13 	when a continuous variable over(1) is specified,
+		only correct the weights for non-zero values of the control
+1.1.14	nodivergence option is added; control convergence <- iter() ?
+		alpha() is the speed of adjustment
 */
