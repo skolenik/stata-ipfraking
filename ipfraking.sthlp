@@ -27,10 +27,13 @@
 {synopt :{cmdab:gen:erate(}{it:newvarname}{cmd:)}}new variable to write the raked weights to{p_end}
 {synopt :{cmd:replace}}overwrite the existing weight variable{p_end}
 {synopt :{cmd:double}}generate the new variable of {help double} type{p_end}
-{syntab:Convergence diagnostic and reporting}
+{syntab:Convergence control, diagnostic and reporting}
 {synopt:{cmdab:iter:ate(}{it:#}{cmd:)}}maximum number of iterations{p_end}
 {synopt:{cmdab:tol:erance(}{it:#}{cmd:)}}convergence tolerance{p_end}
 {synopt:{cmdab:ctrltol:erance(}{it:#}{cmd:)}}required accuracy of the controls{p_end}
+{synopt:{cmd:trace}}produce the trace plot{p_end}
+{synopt:{cmdab:nodiv:ergence}}ignore divergence of the max difference of successive weights{p_end}
+{synopt:{cmdab:alpha(}{it:#}{cmd:)}}adjust the weights only by the fraction of alpha of the difference{p_end}
 {syntab:Trimming}
 {synopt:{cmd:trimhirel(}{it:#}{cmd:)}}the upper bound on the greatest factor by which the weights can increase{p_end}
 {synopt:{cmd:trimhiabs(}{it:#}{cmd:)}}the upper bound on the greatest value the weights can achieve{p_end}
@@ -102,6 +105,12 @@ of the weights in two successive iterations (a full cycle over all raking variab
 {phang}{cmdab:ctrltol:erance(}{it:#}{cmd:)} required accuracy of the controls. If, upon convergence of the algorithm
 (see the previous option), the relative difference of the weighted totals/means and the control totals/means
 is greater than this value, an error message will be issued.
+
+{phang}{cmd:trace} produce the trace plot to show how the control total discrepancy changes with the iteration number.
+
+{phang}{cmdab:nodiv:ergence} ignore divergence of the objective function (max relative difference of the weights).
+
+{phang}{cmd:alpha(}{it:#}{cmd:)} changes the adjustment factor to (factor)^alpha.
 
 {phang}See Remark 2 below.
 
@@ -199,7 +208,19 @@ generic column names {cmd:_subpop_}{it:#} that are dependent on the data.
 a stable state where the raked weights do not change (much) from
 iteration to iteration. In some sources, convergence of the raking
 algorithm is defined as whether the control totals are accurately
-approximated. These are two separate outcomes.
+approximated. These are two separate outcomes. The procedure may 
+converge in the sense of having obtained stable weights, but these
+weights may fail to satisfy the control totals.
+
+{pstd}The current algorithm pursues convergence of the weights
+to stable values, and its objective function is the maximum relative
+difference in weights from one iteration to the next. The algorithm
+continues as far as this difference declines, until this difference
+is sufficiently small. Sometimes, especially with raking,
+this objective function may start increasing.
+Usually, this is only a temporary phenomenon that appears
+for one to three iterations, after which the objective function
+continues declining.
 
 {pstd}If the algorithm converges with inadequate accuracy of the totals
 (of which an error message will be issued), it means that the calibration
@@ -207,6 +228,11 @@ constraints have been difficult to satisfy. The most common solutions to
 this problem is to omit some of the variables. In the (most common) case of the control
 totals being the sizes of subpopulation groups, one can collapse/combine
 some cells, thus specifying fewer control totals.
+
+{pstd}Another common source of the lack of convergence to the control
+totals are trimming requirements that are too strict. If the weights 
+converge, but control totals are not satisfied, try relaxing the trimming
+parameters.
 
 
 {title:Remark 3 -- trimming}
