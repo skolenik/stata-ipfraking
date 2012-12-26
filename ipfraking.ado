@@ -1,4 +1,4 @@
-*! v.1.1.14 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.15 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -835,4 +835,6 @@ exit
 		only correct the weights for non-zero values of the control
 1.1.14	nodivergence option is added; control convergence <- iter() ?
 		alpha() is the speed of adjustment
+1.1.15  Nothing is done with ipfraking, but mat2do utility program 
+        is added to the package
 */
