@@ -1,0 +1,28 @@
+20sep2001
+
+------------------------------------------------------------------------------
+LaTeX files not present in some TeX distributions
+------------------------------------------------------------------------------
+
+It seems that the following *.sty files are not distributed with the
+following TeX distributions:
+
+     OzTeX 4.0{break}
+     Scientific Workplace 2.5
+
+Unfortunately, these files are required by the LaTeX document class and
+packages developed for the Stata Journal.
+
+LaTeX packages:
+
+     chapterbib.sty{break}
+     crop.sty{break}
+     natbib.dtx
+
+The following source files are provided for copyright purposes:
+
+     crop.dtx{break}
+     crop.ins{break}
+     natbib.ins{break}
+     natbib.sty
+
