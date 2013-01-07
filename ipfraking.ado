@@ -1,4 +1,4 @@
-*! v.1.1.16 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.17 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -22,6 +22,15 @@ program define ipfraking, rclass
 		display as error "pweight is required"
 		exit 198
 	}
+
+	if "`replace'" != "" {
+		capture confirm numeric variable `exp'
+		if _rc {
+			di "{err}`exp' is not a numeric variable; cannot replace"
+			exit 198
+		}
+	}
+	
 	
 	if "`selfcheck'" != "" {
 		SelfCheck
@@ -30,13 +39,13 @@ program define ipfraking, rclass
 	else if "`ctotal'" == "" {
 		display as error "ctotal() is required"
 		exit 198
-	}
+	}	
 	
 	local trimopts `trimhiabs' `trimhirel' `trimloabs' `trimlorel'
 
 	if "`trimfrequency'"!="" {
 		if "`trimopts'" == "" {
-			display "{err}Warning: trimfreuency() option is specified without numeric settings; will be ignored"
+			display "{err}Warning: trimfrequency() option is specified without numeric settings; will be ignored"
 		}
 		if !strpos("often sometimes once","`trimfrequency'") {
 			display "{err}Warning: trimfrequency() option is specified incorrectly, assume default value (sometimes)"
@@ -115,10 +124,11 @@ program define ipfraking, rclass
 			if "`trimfrequency'" == "sometimes" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
 			CheckConvergence `prevweight' `currweight' if `touse', `tolerance'
 			local currobj = r(maxreldif)
-			display "{txt} Iteration `i', max rel difference of raked weights = {res}" `currobj' _n
+			if `loglevel' > 0 di _n
+			display "{txt} Iteration `i', max rel difference of raked weights = {res}" `currobj'
 			if r(converged) continue, break
 			if `currobj' > `prevobj' & `i' > 2 {
-				display "{err}Warning: raking procedure appear diverging"
+				display "{err}Warning: raking procedure appears diverging"
 				if "`divergence'" != "nodivergence" continue, break
 			}
 			local prevobj = `currobj'
@@ -177,22 +187,30 @@ program define ipfraking, rclass
 		local badcontrols = `badcontrols' + r(badcontrols)
 		local whicharebad `whicharebad' `mat`k''
 	}
+	/*
 	if `badcontrols' {
 		display "{err}Warning: control figures did not match"
 	}
+	*/
 	return scalar badcontrols = `badcontrols'
 
 	DiagDisplay `oldweight' `currweight' , `graph' `traceplot' `options'
 	return add
 	
 	// generate or replace the values
-	if "`replace'" != "" replace `oldweight' = `currweight'
+	if "`replace'" != "" {
+		capture confirm numeric variable `exp'
+		if _rc {
+			di "{err}`exp' is not a numeric variable; cannot replace"
+		}
+		else replace `exp' = `currweight'
+	}
 	else {
 		generate `double' `generate' = `currweight' if `touse'
 		label variable `generate' "Raked weights"
 		if "`meta'" != "" {
 		
-			note `generate' : Raking controls used: ctotal( `ctotal' )
+			note `generate' : Raking controls used: `ctotal'
 			forvalues k=1/`nvars' {
 				char `generate'[`mat`k''] `=return(mreldif`k')'
 			}
@@ -205,7 +223,7 @@ program define ipfraking, rclass
 			if "``trimpar''" != "" char `generate'[`trimpar'] ``trimpar''
 		}
 		
-		char `generate'[command] `0'
+		if "`meta'" != "" char `generate'[command] `=itrim(`"`0'"')'
 	}
 
 	return local ctotal `ctotal'
@@ -332,7 +350,7 @@ program define ControlCheckParse
 			scalar `sum`k'' = el( matrix(`mat`k''), 1, 1)
 		}
 		else {
-			// this is -over()- something, must be obtained 
+			// this is -over()- something, must be obtained
 			capture local var`k' : word 1 of `: coleq `mat`k'''
 			if _rc {
 				display as error "cannot process matrix `mat`k''"
@@ -444,7 +462,7 @@ program define TrimWeights
 				quietly count if `groupover' == `g' & `trimhi'
 				display _col(36) "{res}" r(N) _col(45) "{txt}{c |}" _c
 				quietly count if `groupover' == `g' & `trimlo'
-				display _col(50) "{res}" r(N) 
+				display _col(50) "{res}" r(N)
 				//////// display the divider or the last line
 				// sum `groupover' if ( `trimhi' | `trimlo' ), meanonly
 				// if `g' == r(max) {
@@ -571,7 +589,7 @@ program define DiagDisplay, rclass
 			qui gen int `obsno' = _n-1 in 1/`=r(N)'
 					
 			// split the legend
-			local k=0 
+			local k=0
 			foreach x of varlist `traceplot' {
 				local ++k
 				if 2*`k' > `: word count `traceplot'' local order2 `order2' `k'
@@ -599,7 +617,7 @@ program define DiagDisplay, rclass
 
 			quietly line `traceplot' `obsno' , nodraw name( `traceline' ) legend( cols(1) order( `order2' ) )
 			quietly line `traceplotl' `obsno' , nodraw name( `logtraceline' ) legend( cols(1) order( `order1' ) ) ///
-				yscale( log ) ylab( `thelab', angle(horizontal) ) 
+				yscale( log ) ylab( `thelab', angle(horizontal) )
 		}
 		
 		graph combine `histnew' `histratio' `traceline' `logtraceline', `options'
@@ -768,7 +786,7 @@ program define GenerateMaxEntropyVars , rclass
 	
 	// each row of the matrix -> new variable
 	
-	forvalues k=1/`=rowsof(`matrix')' { 
+	forvalues k=1/`=rowsof(`matrix')' {
 		local var`k' : word `k' of `varlist'
 		
 		// is this a single variable or a cagetory of a variable?
@@ -835,8 +853,10 @@ exit
 		only correct the weights for non-zero values of the control
 1.1.14	nodivergence option is added; control convergence <- iter() ?
 		alpha() is the speed of adjustment
-1.1.15  Nothing is done with ipfraking, but mat2do utility program 
+1.1.15  Nothing is done with ipfraking, but mat2do utility program
         is added to the package
-1.1.16  Nothing is done with ipfraking, but Stata Journal insert 
+1.1.16  Nothing is done with ipfraking, but Stata Journal insert
         was initiated
+1.1.17  Cosmetic changes in output (2013-01-02)
+        Fixed bug in -replace- option
 */

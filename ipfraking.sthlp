@@ -34,6 +34,7 @@
 {synopt:{cmd:trace}}produce the trace plot{p_end}
 {synopt:{cmdab:nodiv:ergence}}ignore divergence of the max difference of successive weights{p_end}
 {synopt:{cmdab:alpha(}{it:#}{cmd:)}}adjust the weights only by the fraction of alpha of the difference{p_end}
+{synopt:{cmd:nograph}}suppress the diagnostic histograms{p_end}
 {syntab:Trimming}
 {synopt:{cmd:trimhirel(}{it:#}{cmd:)}}the upper bound on the greatest factor by which the weights can increase{p_end}
 {synopt:{cmd:trimhiabs(}{it:#}{cmd:)}}the upper bound on the greatest value the weights can achieve{p_end}
@@ -114,6 +115,8 @@ is greater than this value, an error message will be issued.
 
 {phang}See Remark 2 below.
 
+{phang}{cmd:nograph}suppress the diagnostic histograms to speed up the process.
+
 {dlgtab:Trimming}
 
 {phang}{cmd:trimhirel(}{it:#}{cmd:)} specifies the upper bound on the adjustment factor over the baseline weight. The weights
@@ -133,7 +136,7 @@ The weights that are smaller than this value will be increased.{p_end}
 {phang2}{cmd:often} means that the trimming operations will be performed after each marginal adjustment.{p_end}
 
 {phang2}{cmd:sometimes} means that the trimming operations will be performed in the end of each iteration
-(cycle over all margins).{p_end}
+(cycle over all margins). This is the default setting.{p_end}
 
 {phang2}{cmd:once} means that the trimming operation will be performed once, after convergence has been achieved.{p_end}
 

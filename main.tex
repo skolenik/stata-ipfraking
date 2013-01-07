@@ -1,0 +1,46 @@
+% main.tex - a driver for your Stata Journal insert
+%
+% This file should only be changed according to the AUTHOR notes below.
+%
+% The Stata Press document class
+\documentclass[bib]{statapress}
+
+% Page dimensions
+\usepackage[crop,newcenter,frame]{pagedims}
+
+% The Stata Journal styles
+\usepackage{sj}
+
+% Encapsulated PostScript figures
+\usepackage{epsfig}
+
+% Stata Log listings and useful macros
+\usepackage{stata}
+
+% EDITORS: volume number, issue number, month, and year
+\sjsetissue{$vv$}{$ii$}{$mm$}{$yyyy$}
+
+% Stas' stuff
+\usepackage{amsfonts,amsmath,comment}
+\DeclareMathSymbol{\niceV}{\mathalpha}{AMSb}{"56}
+\DeclareMathSymbol{\niceE}{\mathalpha}{AMSb}{"45}
+\DeclareMathSymbol{\niceC}{\mathalpha}{AMSb}{"43}
+\newcommand{\Var}{\mathop{\niceV}\nolimits}
+\newcommand{\Expect}{\mathop{\niceE}\nolimits}
+\newcommand{\tr}{\mathop{\rm tr}\nolimits}
+\newcommand{\Prob}{\mathop{\rm Prob}\nolimits}
+\newcommand{\One}{{\rm 1\kern-.3em I}}
+
+
+\begin{document}
+
+% AUTHOR:  Change "readme" to your insert's file name.
+%\input{readme}
+\input{ipfraking}
+
+
+\clearpage
+\newpage
+
+\end{document}
+% END: main.tex
