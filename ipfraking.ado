@@ -1,4 +1,4 @@
-*! v.1.1.17 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.18 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -175,6 +175,7 @@ program define ipfraking, rclass
 	local badcontrols 0
 
 	tempname pass
+	local mrdmax = 0
 	
 	forvalues k=1/`nvars' {
 		CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') : total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
@@ -184,6 +185,7 @@ program define ipfraking, rclass
 		matrix `pass' = r(result)
 		return matrix result`k' = `pass'
 		return scalar mreldif`k' = r(mreldif)
+		local mrdmax = max( `mrdmax', r(mreldif) )
 		local badcontrols = `badcontrols' + r(badcontrols)
 		local whicharebad `whicharebad' `mat`k''
 	}
@@ -192,6 +194,7 @@ program define ipfraking, rclass
 		display "{err}Warning: control figures did not match"
 	}
 	*/
+	return scalar maxctrl = `mrdmax'
 	return scalar badcontrols = `badcontrols'
 
 	DiagDisplay `oldweight' `currweight' , `graph' `traceplot' `options'
@@ -203,7 +206,11 @@ program define ipfraking, rclass
 		if _rc {
 			di "{err}`exp' is not a numeric variable; cannot replace"
 		}
-		else replace `exp' = `currweight'
+		else {
+			replace `exp' = `currweight'
+			char `exp'[maxctrl] `mrdmax'
+			char `exp'[objfcn] `currobj'
+		}
 	}
 	else {
 		generate `double' `generate' = `currweight' if `touse'
@@ -215,6 +222,8 @@ program define ipfraking, rclass
 				char `generate'[`mat`k''] `=return(mreldif`k')'
 			}
 		}
+		else char `generate'[maxctrl] `mrdmax'
+		char `generate'[objfcn] `currobj'
 		if `badcontrols' {
 			note `generate' : `whicharebad' total(s) did not match when creating this variable
 		}
@@ -223,7 +232,10 @@ program define ipfraking, rclass
 			if "``trimpar''" != "" char `generate'[`trimpar'] ``trimpar''
 		}
 		
-		if "`meta'" != "" char `generate'[command] `=itrim(`"`0'"')'
+		if "`meta'" != "" {
+			if length(`"`0'"')<240 char `generate'[command] `=itrim(`"`0'"')'
+			else char `generate'[command] `0'
+		}
 	}
 
 	return local ctotal `ctotal'
@@ -859,4 +871,5 @@ exit
         was initiated
 1.1.17  Cosmetic changes in output (2013-01-02)
         Fixed bug in -replace- option
+1.1.18  Chars always contain 
 */
