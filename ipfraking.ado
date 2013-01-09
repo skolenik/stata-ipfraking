@@ -1,4 +1,4 @@
-*! v.1.1.18 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.19 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -40,22 +40,9 @@ program define ipfraking, rclass
 		display as error "ctotal() is required"
 		exit 198
 	}	
-	
-	local trimopts `trimhiabs' `trimhirel' `trimloabs' `trimlorel'
 
-	if "`trimfrequency'"!="" {
-		if "`trimopts'" == "" {
-			display "{err}Warning: trimfrequency() option is specified without numeric settings; will be ignored"
-		}
-		if !strpos("often sometimes once","`trimfrequency'") {
-			display "{err}Warning: trimfrequency() option is specified incorrectly, assume default value (sometimes)"
-			local trim sometimes
-		}
-	}
-	if "`trimopts'" != "" & "`trimfrequency'" == "" {
-		local trimfrequency sometimes
-	}
-	
+	CheckTrimOptions , `trimhiabs' `trimhirel' `trimloabs' `trimlorel' trimfrequency(`trimfrequency')
+		
 	tempvar oldweight currweight prevweight one
 	
 	marksample touse, zeroweight
@@ -242,6 +229,58 @@ program define ipfraking, rclass
 	
 end // of ipfraking
 
+program define CheckTrimOptions
+
+	syntax , [trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string)]
+	
+	if "`0'" == "" exit
+	
+	local trimopts `trimhirel' `trimhiabs' `trimlorel' `trimloabs'
+	// dirty trick!!!
+	c_local trimopts `trimopts'
+
+	if "`trimfrequency'"!="" {
+		if "`trimopts'" == "" {
+			display "{err}Warning: trimfrequency() option is specified without numeric settings; will be ignored"
+		}
+		if !strpos("often sometimes once","`trimfrequency'") {
+			display "{err}Warning: trimfrequency() option is specified incorrectly, assume default value (sometimes)"
+			c_local trimfrequency sometimes
+		}
+	}
+	if "`trimopts'" != "" & "`trimfrequency'" == "" {
+		c_local trimfrequency sometimes
+	}
+	if "`trimopts'" != "" {
+		foreach opt in trimhiabs trimhirel trimloabs trimlorel {
+			if "``opt''" != "" {
+				gettoken what rest : `opt', parse("(")
+				gettoken par rest  : rest, parse("(")
+				gettoken val rest  : rest, parse(")")
+				if `val' <= 0 {
+					display "{err}`what' must be positive"
+					exit 198
+				}
+				local `opt'_val `val'
+			}
+		}
+		if "`trimhiabs'"!="" & "`trimloabs'" != "" {
+			if `trimhiabs_val' <= `trimloabs_val' {
+				display "{err}trimhiabs must be greater than trimloabs"
+				exit 198
+			}
+		}
+		if "`trimhirel'"!="" & "`trimlorel'" != "" {
+			if `trimhirel_val' <= `trimlorel_val' {
+				display "{err}trimhirel must be greater than trimlorel"
+				exit 198
+			}
+		}
+	}
+
+
+end // of CheckTrimOptions
+
 program define CheckResults, rclass
 
 	gettoken cropt rest  : 0    , parse(":")
@@ -264,14 +303,14 @@ program define CheckResults, rclass
 	return scalar badcontrols = `badcontrols'
 	
 	if `badcontrols' & "`quietly'" == "" {
-		display as error _n "Warning: the controls `target' did not match"
+		if `loglevel' > 0 di _n
+		display as error "Warning: the controls `target' did not match"
 		if `loglevel' > 0 {
 			display "{txt}Target:" _c
 			matrix list `target', noheader format(%12.0g)
 			display "{txt}Realization:" _c
 			matrix list `bb', noheader format(%12.0g)
 		}
-		display
 	}
 	
 	tempname mcopy
@@ -641,6 +680,8 @@ end // of DiagDisplay
 
 program define SelfCheck
 
+	preserve
+
 	local cmore `c(more)'
 	set more off
 
@@ -656,8 +697,9 @@ program define SelfCheck
 	matrix total_sex[1,2] = total_sex[1,2] + 10000
 	matrix rownames total_sex = sex
 
-	// 1. raking with a single margine
+	di as inp _n ">> 1. raking with a single margin"
 	ipfraking [pw=finalwgt] , ctotal( total_sex ) generate( rweight1 )
+	return list
 	assert r(converged)   == 1
 	assert r(badcontrols) == 0
 
@@ -665,7 +707,7 @@ program define SelfCheck
 	matrix `bb' = e(b)
 	assert mreldif( `bb',total_sex ) < c(epsfloat)
 
-	// 2. raking with two margins
+	di as inp _n ">> 2. raking with two margins"
 	total _one [pw=finalwgt], over(race, nolab)
 	matrix total_race = e(b)
 	matrix total_race[1,1] = total_race[1,1] + 15000
@@ -674,6 +716,7 @@ program define SelfCheck
 	matrix rownames total_race = race
 
 	ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight2 )
+	return list
 
 	assert r(converged)   == 1
 	assert r(badcontrols) == 0
@@ -691,8 +734,9 @@ program define SelfCheck
 	set seed 12345
 	sample 500, count by(region)
 	
-	// 3. regular raking without constraints
+	di as inp _n ">> 3. regular raking without constraints"
 	ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight3 )
+	return list
 
 	assert r(converged)   == 1
 	assert r(badcontrols) == 0
@@ -705,25 +749,27 @@ program define SelfCheck
 	matrix `bb' = e(b)
 	assert mreldif( `bb',total_race ) < c(epsfloat)
 	
-	// 4. raking with constraints on adjustment factors
+	di as inp _n ">> 4. raking with constraints on adjustment factors (control totals will be off)"
 	ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight4 ) trimhirel( 5.5 ) tol(1e-10)
+	return list
 	
 	assert r(converged)   == 1
-	assert r(badcontrols) == 1
+	assert r(badcontrols) > 0
 
 	total _one [pw=rweight4], over(sex, nolab)
 	matrix `bb' = e(b)
-	capture noisily assert mreldif( `bb',total_sex ) < c(epsfloat)
+	display mreldif( `bb',total_sex )
 
 	total _one [pw=rweight4], over(race, nolab)
 	matrix `bb' = e(b)
-	capture noisily assert mreldif( `bb',total_race ) < c(epsfloat)
+	display mreldif( `bb',total_race )
 	
-	// 5. raking with constraints on absolute values of weights
+	di as inp _n ">> 5. raking with constraints on absolute values of weights"
 	ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight5 ) trimhirel( 5.5 ) trimhiabs(200000)
+	return list
 
 	assert r(converged)   == 1
-	assert r(badcontrols) == 1
+	assert r(badcontrols) > 0
 	
 	total _one [pw=rweight5], over(sex, nolab)
 	matrix `bb' = e(b)
@@ -733,13 +779,51 @@ program define SelfCheck
 	matrix `bb' = e(b)
 	capture noisily assert mreldif( `bb',total_race ) < c(epsfloat)
 	
-	// 6. this will take longer to converge
+	di as inp _n ">> 6. this will take longer to converge"
 	capture noisily ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight6 ) trimhiabs(100000) trimloabs(50000)
+	return list
 	
 	assert r(converged)   == 1
 	assert r(badcontrols) == 0
+
+	di as inp _n ">> 7. test -replace- option"
+	gen rweight7 = finalwgt
+	capture noisily ipfraking [pw=rweight7] , ctotal( total_sex total_race ) replace trimhiabs(100000) trimloabs(50000)
+	return list
 	
+	assert r(converged)   == 1
+	assert r(badcontrols) == 0
+	count if rweight7 != finalwgt
+	assert r(N) > 0
+	assert reldif( rweight7, rweight6 ) < c(epsfloat)
+	
+	di as inp _n ">> 8. test limited # of iterations"
+	capture noisily ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( rweight8 ) trimhiabs(100000) trimloabs(50000) iter(5)
+	return list
+	
+	assert r(converged)   == 0
+	assert r(badcontrols) > 0
+	
+	di as inp _n ">> 9. intentional syntax errors"
+	capture noisily ipfraking 
+	assert _rc == 198
+	capture noisily ipfraking [pw=finalwgt]
+	assert _rc == 198
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race )
+	assert _rc == 198
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) replace
+	assert _rc == 198
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) trimhiabs(0)
+	assert _rc == 198
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) trimhiabs(200) trimloabs(10000)
+	assert _rc == 198
+	
+	
+	
+	// end of checks
 	set more `cmore'
+	
+	restore
 	
 end // of SelfCheck
 
@@ -871,5 +955,7 @@ exit
         was initiated
 1.1.17  Cosmetic changes in output (2013-01-02)
         Fixed bug in -replace- option
-1.1.18  Chars always contain 
+1.1.18  Chars always contain the objective function and 
+		the control accuracy on exit
+1.1.19  Updated -selfcheck-
 */
