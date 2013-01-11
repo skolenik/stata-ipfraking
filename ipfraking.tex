@@ -57,21 +57,22 @@ statistics.
 
 Suppose now that a sample $\mathcal S$ of $n$ units indexed by $j=1,\ldots,n$
 is taken from $\mathcal U$. If the probability to select the
-$i$-th unit is known to be $\pi_i$, then an unbiased
-(design-based, non-parametric) estimator
-of the total (\ref{eq:total:pop}) is \citep{horvitz:thompson:1952}
-\begin{equation}
-   t_{w1}[y] = \sum_{j \in \mathcal{S}} \frac{y_j}{\pi_j}
-   \equiv \sum_{j \in \mathcal{S}} w_{1j} y_j
-   \label{eq:total:sample},
-\end{equation}
-where the probability weights, or design weights, are given by
-the inverses of probability of selection:
+$i$-th unit is known to be $\pi_i$, then 
+the {\it probability weights}, or {\it design weights}, are given by
+the inverse probability of selection:
 \begin{equation}
    w_{1i} = \pi_i^{-1}
    \label{eq:prob:weight}
 \end{equation}
-The subindex $w1$ stands to indicate that the weights $w_{1i}$ were
+With these weights, an unbiased
+(design-based, non-parametric) estimator
+of the total (\ref{eq:total:pop}) is \citep{horvitz:thompson:1952}
+\begin{equation}
+   t_{1}[y] = \sum_{j \in \mathcal{S}} \frac{y_j}{\pi_j}
+   \equiv \sum_{j \in \mathcal{S}} w_{1j} y_j
+   \label{eq:total:sample},
+\end{equation}
+The subindex $1$ stands to indicate that the weights $w_{1i}$ were
 used in obtaining this estimator. Probability weights protect
 the end user from potentially informative sample designs, and generally
 design-based methods ensure that inference can be generalized
@@ -80,6 +81,7 @@ by analysts and researchers are not specified correctly
 \citep{pfeff:1993,binder:roberts:2003}.
 
 \subsection{Calibrated weights}
+\label{subsec:calibration}
 
 Often, survey statisticians have auxiliary information on the units
 in the frame. Some of that information can be used at the sampling
@@ -110,7 +112,8 @@ It is still possible to capitalize on this additional data by
 adjusting the weights in such a way that the reweighted data
 conforms to these known figures. The procedures to perform these
 reweighting steps are generally known as {\it weight calibration}
-\citep{deville:sarndal:1992,deville:sarndal:sautory:1993,kott:2006,kott:2009,sarndal:2007}.
+\citep{deville:sarndal:1992,deville:sarndal:sautory:1993,%
+kott:2006,kott:2009,sarndal:2007}.
 
 Suppose there are several (categorical) variables, referred to
 as {\it control variables}, that are available for both
@@ -122,19 +125,22 @@ by specific levels of the control variables (i.e., a cell in a multivariate
 contingency table), and adjusting the weights within each cell.
 Thus for the unit $l$ in the (population-level) post-stratification cells $\mathcal{C}_k$, the post-stratified weight is
 \begin{equation}
-   w_{2l} = w_{1l} \frac%
+   w_{2j} = w_{1j} \frac%
         {\sum_{i \in \mathcal{U}} \One[i \in \mathcal{C}_k]}%
-        {\sum_{j \in \mathcal{S}} w_{1j} \One[i \in \mathcal{C}_k]}%
+        {\sum_{i \in \mathcal{S}} w_{1i} \One[i \in \mathcal{C}_k]}%
    \label{eq:ps:weight}
 \end{equation}
-where $\One[\cdot]$ is an indicator function taking the value of 1
+where $\One[\cdot]$ is an indicator function taking the value of one
 when its argument is true, and zero otherwise.
 While the probability weight $w_{1i}$ is fixed, the post-stratified weight
 $w_{2j}$ is random, as it depends on the random sample sizes of
 $\mathcal{C}_k \cap \mathcal{S}$.
 The existing Stata tools, \stcmd{poststrata()} and \stcmd{postweight()}
 options (see \svyref{poststratification}) handle the situation and,
-in particular, provide appropriate standard errors.
+in particular, provide appropriate standard errors. The total estimator
+based on $w_{2j}$ will be naturally denoted as $t_2[y]$, and the expression
+for it coincides with (\ref{eq:total:sample}) by replacing the probability
+weights $w_{1j}$ with post-stratified weights $w_{2j}$.
 
 In more complex situations, using say five calibration variables,
 such as gender, age groups, race/ethnicity, education, and urbanicity,
@@ -159,7 +165,8 @@ set of weights as that of constrained optimization with the control
 equations (\ref{eq:control:totals}) serving as constraints,
 and optimization targeted at making the discrepancy between
 the design weights $w_{1j}$ and calibrated weights
-$w_{3j}$ as close as possible, in a suitable sense.
+$w_{3j}$ as close as possible, in a suitable sense. Again,
+the appropriate total estimator can be denoted as $t_3[y]$.
 
 \subsection{Raking algorithm}
 \label{subsec:raking:algorithm}
@@ -192,8 +199,9 @@ In applications to the survey weights, the algorithm is as follows.
           declare non-convergence and exit.
     \item Otherwise, return to step 2.
 \end{enumerate}
-In practice, control totals are usually expressed as population counts in
-categories of discrete variables (such as gender, race/ethnicity, or education level groups).
+In practice, control totals are usually expressed as population counts 
+or proportions in categories of discrete variables (such as gender, 
+race/ethnicity, or education level groups).
 The control variables are then 0/1 variables representing the particular groups
 or their low-level interactions.
 Effectively, the algorithm implements post-stratification adjustment
@@ -201,7 +209,8 @@ Effectively, the algorithm implements post-stratification adjustment
 variable, and cycling over them within each iteration. In terms of multivariate optimization,
 this algorithm proceeds by optimizing over a each margin in sequence.
 While it is very simple and very explicit in terms
-of the algebra involved, it is also slow compared to Newton-Raphson-based methods.
+of the algebra involved, it is also much slower compared 
+to Newton-Raphson-based methods.
 
 \citet{deming:stephan:1940} stated that the algorithm minimizes the quadratic
 discrepancy
@@ -213,12 +222,12 @@ However, the quadratic problem can be solved explicitly to
 produce linear calibrated weights which lead to estimates
 identical to the generalized regression (GREG) estimates
 \citep[Case 1]{deville:sarndal:1992}. The raking algorithm instead solves
-the optimization problem with objective function given by
+the optimization problem with objective function 
+\citep[Case2]{deville:sarndal:1992}
 \begin{equation}
     \sum_{j \in \mathcal{S}} w_{3j} \ln( w_{3j}/w_{1j}) - w_{3j} + w_{1j}
     \label{eq:raking:discrepancy}
 \end{equation}
-listed as Case 2 in  \citet{deville:sarndal:1992}.
 Another user-contributed Stata package, \stcmd{maxentropy}
 \citep{wittenberg:2010}, implements Case 4 of \citet{deville:sarndal:1992} using
 Newton-Raphson optimization with analytical second derivatives,
@@ -234,7 +243,7 @@ is variance estimation. If variables $x_1,\ldots,x_p$ were used
 for weight calibration, then the variance of the calibrated
 estimator of the survey variable $y$ is
 \begin{equation}
-    \mathbb{V}\bigl\{t_{wm}[y]\bigr\} = \sum_{k,l \in \mathcal{U}}
+    \mathbb{V}\bigl\{t_{m}[y]\bigr\} = \sum_{k,l \in \mathcal{U}}
         (\pi_{kl}-\pi_k \pi_l)
         \frac{y_k - \mathbf{x}_k ' \mathbf{B}}{\pi_k}
         \frac{y_l - \mathbf{x}_l ' \mathbf{B}}{\pi_l}, m=2,3,
@@ -250,7 +259,7 @@ census regression,
 \end{equation}
 This variance can be estimated with
 \begin{equation}
-    v\bigl\{t_{wm}[y]\bigr\} = \sum_{k,l \in \mathcal{S}}
+    v\bigl\{t_{m}[y]\bigr\} = \sum_{k,l \in \mathcal{S}}
         \frac{\pi_{kl}-\pi_k \pi_l}{pi_{kl}}
         \frac{y_k - \mathbf{x}_k ' \mathbf{b}}{\pi_k}
         \frac{y_l - \mathbf{x}_l ' \mathbf{b}}{\pi_l}, m=2,3,
@@ -279,7 +288,7 @@ which are rarely computed in practice. The latter is a very general issue
 with the Horvitz-Thompson estimator (\ref{eq:total:sample}), as well.
 Its variance is
 \begin{equation}
-    \mathbb{V}\bigl\{t_{w1}[y]\bigr\} = \sum_{k,l \in \mathcal{U}}
+    \mathbb{V}\bigl\{t_{1}[y]\bigr\} = \sum_{k,l \in \mathcal{U}}
         (\pi_{kl}-\pi_k \pi_l)
         \frac{y_k}{\pi_k}
         \frac{y_l}{\pi_l}
@@ -443,7 +452,7 @@ change in weights:
     L_k = \max_{j \in \mathcal{S}} \frac{|w_j^{k,p}-w_j^{k-1,p}|}{w_j^{k-1,p}}
     \label{eq:conv:ratio:weights}
 \end{equation}
-When $L_k$ is small, $L_k < \delta_L$, it means that the weights stop 
+When $L_k$ is small, $L_k < \delta_L$, it means that the weights stop
 changing between iterations, i.e., the algorithm came to its steady state.
 On the other hand, if $L_k > L_{k-1}$, it means that the algorithm
 may start diverging, at which point it might be reasonable to terminate it.
@@ -470,7 +479,7 @@ if $m_c < \delta_M$; otherwise, a warning is issued.
 criterion, i.e., $\delta_L$. The default is $\delta_L = 10^{-6}$.
 
 \hangpara
-\stcmd{\underbar{iter}ate(\num)} specifies the maximum number 
+\stcmd{\underbar{iter}ate(\num)} specifies the maximum number
 of iterations $K$.
 The default is \stcmd{iterate(2000)}.
 
@@ -479,7 +488,7 @@ Iterations continue until either $k \ge K$, $L_k < \delta_L$ or
 $L_k > L_{k-1}$.
 
 \hangpara
-\stcmd{\underbar{ctrltol}erance(\num)} defines the criterion $\delta_M$ to 
+\stcmd{\underbar{ctrltol}erance(\num)} defines the criterion $\delta_M$ to
 assess the accuracy of the control totals. It does not impact
 iterations; it only serves as the final quality control check
 after the algorithm terminates as defined above.
@@ -495,38 +504,38 @@ that $L_k > L_{k-1}$, i.e., ignores this termination condition.
 \subsubsection{Trimming}
 
 \hangpara
-\stcmd{trimhirel(\num)} specifies the upper bound $u$ on the adjustment 
+\stcmd{trimhirel(\num)} specifies the upper bound $u$ on the adjustment
     factor over the baseline weight. The weights
     that exceeds the baseline times this value will be trimmed down,
     so that $w_{3j} \le u w_{1j}$ for any $j\in\mathcal{S}$.
 
 \hangpara
-\stcmd{trimhiabs(\num)} specifies the upper bound $U$ on the greatest 
+\stcmd{trimhiabs(\num)} specifies the upper bound $U$ on the greatest
     value of the raked weights.  The weights that
     exceed this value will be trimmed down, so that
     $w_{3j} \le U$ for any $j\in\mathcal{S}$.
 
 \hangpara
-\stcmd{trimlorel(\num)} specifies the lower bound $l$ on the adjustment factor 
-    over the baseline weight.  The weights that are smaller than the baseline 
+\stcmd{trimlorel(\num)} specifies the lower bound $l$ on the adjustment factor
+    over the baseline weight.  The weights that are smaller than the baseline
     times this value will be increased, so that
     $w_{3j} \ge l w_{1j}$ for any $j\in\mathcal{S}$.
 
 \hangpara
-\stcmd{trimloabs(\num)} specifies the lower bound $L$ on the smallest value 
-    of the raked weights.  The weights that are smaller than this value will 
-    be increased to this value, so that 
+\stcmd{trimloabs(\num)} specifies the lower bound $L$ on the smallest value
+    of the raked weights.  The weights that are smaller than this value will
+    be increased to this value, so that
     $w_{3j} \ge L$ for any $j\in\mathcal{S}$.
 
 \hangpara
-\stcmd{trimfreqency({\it keyword})} specifies when the trimming operations 
+\stcmd{trimfreqency({\it keyword})} specifies when the trimming operations
     are to be performed. The following keywords are recognized:
 
-\morehang \stcmd{often} means that the trimming operations will be performed 
-    after each marginal adjustment, i.e., within each subiteration inside 
+\morehang \stcmd{often} means that the trimming operations will be performed
+    after each marginal adjustment, i.e., within each subiteration inside
     Step 3 of the algorithm.
 
-\morehang \stcmd{sometimes} means that the trimming operations will be performed 
+\morehang \stcmd{sometimes} means that the trimming operations will be performed
     in the end of each iteration, i.e., after Step 3.
 
 \morehang \stcmd{once}
@@ -979,6 +988,22 @@ The following critical errors will stop execution of
     This is a generic error message that something bad happened while
     \stcmd{ipfraking} was computing the totals for the current set of weights.
     This error message should be very rare.
+    
+    \noindent
+    {\tt trimhiabs|trimloabs|trimhirel|trimlorel must be a positive number}
+    
+    \morehang
+    One or more of the trimming options are given as a non-positive number
+    or a non-number.
+    
+    \noindent
+    {\tt trimhiabs must be greater than trimloabs}
+    
+    \noindent
+    {\tt trimhirel must be greater than trimlorel}
+    
+    \morehang
+    Self-explanatory.
 
 The following warning messages may be produced by
 \stcmd{ipfraking}. It will continue running, but you must
@@ -1004,7 +1029,7 @@ double-check the results for potential problems.
     {\tt trimfrequency() option is specified incorrectly, assume default value (sometimes)}
 
     \morehang
-    As explained
+    Self-explanatory.
 
     \noindent
     {\tt raking procedure appears diverging}
@@ -1027,16 +1052,16 @@ double-check the results for potential problems.
 
     \morehang
     After convergence of weights was declared, \stcmd{ipfraking}
-    checked again the control totals, and found that the results 
+    checked again the control totals, and found that the results
     differed from the target for one or more of the control total
-    matrices. Any of the following can cause this: (i) the sum of 
+    matrices. Any of the following can cause this: (i) the sum of
     entries of this particular matrix differs from the others;
     (ii) the trimming options are too demanding, and do not allow
     the weights to adjust enough; (iii) the problem may not have a
     solution due to incompatible control totals or a bad sample.
 
     \noindent
-    {\tt division by zero weighted total encountered with 
+    {\tt division by zero weighted total encountered with
     {\it matrix{\_}name} control}
 
     \morehang
@@ -1048,7 +1073,7 @@ double-check the results for potential problems.
     {\tt \# missing values of {\it varname} encountered; convergence will be impaired}
 
     \morehang
-    A control variable has missing values in the calibration sample. 
+    A control variable has missing values in the calibration sample.
     There is little way for \stcmd{ipfraking} to figure out how to deal
     with the weights for the observations with missing values. The best course
     of action is to impute them and run \stcmd{ipfraking} again.
@@ -1060,6 +1085,37 @@ double-check the results for potential problems.
 \bibliographystyle{sj}
 % \bibliography{everything}
 \bibliography{ipfraking}
+
+\appendix
+
+\section*{Appendix: Common notation}
+
+\begin{tabular}{llp{9.5cm}}
+    $\mathcal{C}_k$ & Sec. \ref{subsec:calibration} & Calibration cell \\ 
+    $i$ & & Subscript $i$ usually applies to units in population \\
+    $j$ & & Subscript $j$ usually applies to units in sample \\
+    $n$ & & Sample size; number of sampled units \\
+    $N$ & & Population size; number of units in population or frame \\
+    $\pi_i$ & & Probability of selection of unit $i$ 
+            specified by the sampling design \\
+%
+    $\mathcal{S}$ & & Sample; set of sampled units \\
+    $T[y]$ & (\ref{eq:total:pop}) & Population-based total of variable $[y]$ \\
+    $t_m[y]$ & (\ref{eq:total:sample}) & Sample-based weighted estimate of the total
+        $T[y]$; subscript $m=1,2,3$ indicates the type of weights used in computing
+        the total \\
+    $\mathcal{U}$ & & Universe or population; set of units in population \\
+%    
+    $w_{1i}$ & (\ref{eq:prob:weight}) & Probability (design) weights; 
+        inverse probability of selection \\
+    $w_{2j}$ & (\ref{eq:ps:weight}) & Post-stratified weights;
+        random; depend on group sizes in sample; analytically computable \\
+    $w_{3j}$ & (\ref{eq:prob:weight}) & Calibrated (raked) weights;
+        require iterative optimization \\
+%
+    $x_l$ & Sec. \ref{subsec:raking:algorithm} & $l$-th calibration (control)
+        variable, $l=1,\ldots,p$. The population total $T[x_l]$ is known. \\
+\end{tabular}
 
 \begin{aboutauthor}
   Stanislav (Stas) Kolenikov is a Senior Survey Statistician at Abt SRBI.

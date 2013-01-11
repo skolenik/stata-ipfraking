@@ -1,4 +1,4 @@
-*! v.1.1.19 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.20 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -257,8 +257,13 @@ program define CheckTrimOptions
 				gettoken what rest : `opt', parse("(")
 				gettoken par rest  : rest, parse("(")
 				gettoken val rest  : rest, parse(")")
+				capture confirm number `val'
+				if _rc {			
+					display "{err}`what' must be a positive number"
+					exit 198
+				}
 				if `val' <= 0 {
-					display "{err}`what' must be positive"
+					display "{err}`what' must be a positive number"
 					exit 198
 				}
 				local `opt'_val `val'
@@ -825,6 +830,8 @@ program define SelfCheck
 	
 	restore
 	
+	di _n "{txt}ALL TESTS PASSED."
+	
 end // of SelfCheck
 
 
@@ -958,4 +965,5 @@ exit
 1.1.18  Chars always contain the objective function and 
 		the control accuracy on exit
 1.1.19  Updated -selfcheck-
+1.1.20	Cosmetic changes in output
 */
