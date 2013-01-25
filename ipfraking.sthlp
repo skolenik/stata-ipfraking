@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.8  15may2012}{...}
+{* *! version 1.23  25jan2013}{...}
 {cmd:help ipfraking} {right: ({browse "http://web.missouri.edu/~kolenikovs/stata/":Stas Kolenikov's webpage})}
 {hline}
 
@@ -49,7 +49,7 @@
 {title:Description}
 
 {pstd}{cmd:ipfraking} performs iterative proportional fitting, or raking,
-to produce a set of calibrated survey weights such that the 
+to produce a set of calibrated survey weights such that the
 sample weighted totals of control variables match the known population totals.
 Typically, these control totals represent the number of population
 units in categories of a discrete variable, such as age groups
@@ -59,7 +59,7 @@ greater accuracy, or administrative data.
 
 {pstd}The adjustment of the weights is performed by adjusting each of
 the given control margins sequentially, until convergence is achieved.
-In other words, for a given control variable (e.g., gender), 
+In other words, for a given control variable (e.g., gender),
 the {help total} sizes of subpopulations are estimated, and
 the weights in separate categories (males, females) are multiplied
 by a group-specific factor (ratio of the known population total
@@ -67,7 +67,7 @@ to the estimated total) so that the new set of weights produces
 total estimates conforming to the known totals.
 
 {pstd}
-Please cite this package as Kolenikov (2012), ipfraking: 
+Please cite this package as Kolenikov (2012), ipfraking:
 iterative proportional fitting weight calibration.
 
 
@@ -122,13 +122,13 @@ is greater than this value, an error message will be issued.
 {phang}{cmd:trimhirel(}{it:#}{cmd:)} specifies the upper bound on the adjustment factor over the baseline weight. The weights
 that exceeds the baseline times this value will be trimmed down.{p_end}
 
-{phang}{cmd:trimhiabs(}{it:#}{cmd:)} specifies the upper bound on the greatest value of the raked weights. 
+{phang}{cmd:trimhiabs(}{it:#}{cmd:)} specifies the upper bound on the greatest value of the raked weights.
 The weights that exceed this value will be trimmed down.{p_end}
 
-{phang}{cmd:trimlorel(}{it:#}{cmd:)} specifies the lower bound on the adjustment factor over the baseline weight. 
+{phang}{cmd:trimlorel(}{it:#}{cmd:)} specifies the lower bound on the adjustment factor over the baseline weight.
 The weights that are smaller than the baseline times this value will be increased.{p_end}
 
-{phang}{cmd:trimloabs(}{it:#}{cmd:)} specifies the lower bound on the smallest value of the raked weights. 
+{phang}{cmd:trimloabs(}{it:#}{cmd:)} specifies the lower bound on the smallest value of the raked weights.
 The weights that are smaller than this value will be increased.{p_end}
 
 {phang}{cmdab:trimfreq:ency(}{it:keyword}{cmd:)} specifies when the trimming operations are to be performed.{p_end}
@@ -152,7 +152,7 @@ The weights that are smaller than this value will be increased.{p_end}
 
 {phang2}2 is a lot of detailed (and not always useful) output.{p_end}
 
-{phang}{cmd:meta} puts the name(s) of the control vectors as a {help note} 
+{phang}{cmd:meta} puts the name(s) of the control vectors as a {help note}
 stored with the variable specified in {cmd:generate()} option.{p_end}
 
 
@@ -184,7 +184,7 @@ stored with the variable specified in {cmd:generate()} option.{p_end}
 
 {marker remarks}{title:Remark 1 -- control vectors}
 
-{pstd}Matrices that {cmd:ipfraking} expects to receive as inputs via {opt ctotal(...)} 
+{pstd}Matrices that {cmd:ipfraking} expects to receive as inputs via {opt ctotal(...)}
 option must conform to the following specifications:
 
 {phang2}1. They need to be {it:1 x c} matrices (row-vectors)
@@ -198,9 +198,9 @@ the totals were computed.
 
 {phang2}{cmd:total} {it:varname} {weight}, {cmd:over(}{it:varname}{cmd:, nolab)}
 
-{pstd}The {cmd:nolab} option is important, otherwise, the column names 
+{pstd}The {cmd:nolab} option is important, otherwise, the column names
 may contain the labels of the categorical variable that may be defined
-differently in the sample, or not defined at all. Also, only one variable 
+differently in the sample, or not defined at all. Also, only one variable
 should be specified in the {cmd:over()} option, as otherwise Stata provides
 generic column names {cmd:_subpop_}{it:#} that are dependent on the data.
 
@@ -211,7 +211,7 @@ generic column names {cmd:_subpop_}{it:#} that are dependent on the data.
 a stable state where the raked weights do not change (much) from
 iteration to iteration. In some sources, convergence of the raking
 algorithm is defined as whether the control totals are accurately
-approximated. These are two separate outcomes. The procedure may 
+approximated. These are two separate outcomes. The procedure may
 converge in the sense of having obtained stable weights, but these
 weights may fail to satisfy the control totals.
 
@@ -227,13 +227,13 @@ continues declining.
 
 {pstd}If the algorithm converges with inadequate accuracy of the totals
 (of which an error message will be issued), it means that the calibration
-constraints have been difficult to satisfy. The most common solutions to 
+constraints have been difficult to satisfy. The most common solutions to
 this problem is to omit some of the variables. In the (most common) case of the control
 totals being the sizes of subpopulation groups, one can collapse/combine
 some cells, thus specifying fewer control totals.
 
 {pstd}Another common source of the lack of convergence to the control
-totals are trimming requirements that are too strict. If the weights 
+totals are trimming requirements that are too strict. If the weights
 converge, but control totals are not satisfied, try relaxing the trimming
 parameters.
 
@@ -245,8 +245,8 @@ and thus decrease the design effect. It may not be entirely clear what the effec
 of trimming might be on estimates that are but weakly related to the control
 variables, so this operation should be applied with caution.
 
-{pstd}The setting {cmd:trimfreq(sometimes)} appears to make the greatest sense. 
-The weakness of the setting {cmd:trimfreq(once)} is that it does not guarantee that 
+{pstd}The setting {cmd:trimfreq(sometimes)} appears to make the greatest sense.
+The weakness of the setting {cmd:trimfreq(once)} is that it does not guarantee that
 the resulting weights ensure the calibration constraints. The weakness of
 the setting {cmd:trimfreq(often)} is that the resulting weights may depend
 on the order in which the calibration variables are entered, especially
@@ -334,14 +334,14 @@ and reports problems, if any.
 
 {title:References}
 
-{phang}Deming, W. E., and Stephan, F. F. (1940). 
+{phang}Deming, W. E., and Stephan, F. F. (1940).
 On a Least Squares Adjustment of a Sampled Frequency Table When the Expected Marginal Totals are Known. {it:Annals of Mathematical Statistics} {bf:11} (4),
  427–444. doi: {browse "http://dx.doi.org/10.1214/aoms/1177731829":10.1214/aoms/1177731829}.
 
 {phang}Ruschendorf, L. (1995). Convergence of the Iterative Proportional Fitting Procedure.
 {it:The Annals of Statistics}, {bf:23} (4), pp. 1160-1174.
 {browse "http://www.jstor.org/stable/2242759":JSTOR link}.
- 
+
 {phang}Deville, J.-C., Sarndal, C.-E., and Sautory, O. (1993). Generalized Raking Procedures in Survey Sampling
 {it:Journal of the American Statistical Association}, {bf:88} (423) pp. 1013-1020.
 {browse "http://www.jstor.org/stable/2290793":JSTOR link}.

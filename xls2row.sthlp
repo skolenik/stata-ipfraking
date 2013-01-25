@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 1.21  25jan2013}{...}
+{* *! version 1.22  25jan2013}{...}
 {cmd:help xls2row} {right: ({browse "http://web.missouri.edu/~kolenikovs/stata/":Stas Kolenikov's webpage})}
 {hline}
 

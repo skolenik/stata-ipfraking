@@ -1,4 +1,4 @@
-*! v.1.1.22 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.23 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -968,4 +968,5 @@ exit
 1.1.20	Cosmetic changes in output
 1.1.21  -xls2row- is added to the package
 1.1.22  xls2row.sthlp is written
+1.1.23  utility programs -xls2row- and -mat2do- are documented
 */
