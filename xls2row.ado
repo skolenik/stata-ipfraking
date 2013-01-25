@@ -1,6 +1,6 @@
 *! Convert a range of an Excel file to a row-vector: Stas Kolenikov
 program define xls2row
-	syntax name using/ , cellrange(passthru) sheet(passthru) over(varlist numeric min=1 max=1) [verbose scale(real 1)]
+	syntax name using/ , cellrange(passthru) sheet(passthru) over(varlist numeric min=1 max=1) [verbose scale(real 0)]
 	
 	preserve
 	
@@ -41,7 +41,7 @@ void dta2row( string scalar matname, string scalar verbose, real scalar scale ) 
 	VX = select( VX, !rowmissing(VX) )	
 	if (verbose!="") VX
 	if (sum(VX)!=1 ) printf("\n{err}Warning! {txt}Sum of values = {res}%10.0g\n\n", sum(VX) )
-	st_matrix( matname, VX'*scale/sum(VX) )
+	if (scale!=0) st_matrix( matname, VX'*scale/sum(VX) )
 }
 
 end // of Mata

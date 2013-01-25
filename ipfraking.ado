@@ -1,4 +1,4 @@
-*! v.1.1.20 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.22 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -82,7 +82,7 @@ program define ipfraking, rclass
 			tempname mreldif`k'var
 			
 			CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') quietly : ///
-				total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)			
+				total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)			 
 			quietly generate double `mreldif`k'var' = r(mreldif) in 1
 			label variable `mreldif`k'var' "`: word `k' of `ctotal''"
 			local traceplot `traceplot' `mreldif`k'var'
@@ -810,7 +810,7 @@ program define SelfCheck
 	assert r(badcontrols) > 0
 	
 	di as inp _n ">> 9. intentional syntax errors"
-	capture noisily ipfraking 
+	capture noisily ipfraking
 	assert _rc == 198
 	capture noisily ipfraking [pw=finalwgt]
 	assert _rc == 198
@@ -962,8 +962,10 @@ exit
         was initiated
 1.1.17  Cosmetic changes in output (2013-01-02)
         Fixed bug in -replace- option
-1.1.18  Chars always contain the objective function and 
+1.1.18  Chars always contain the objective function and
 		the control accuracy on exit
 1.1.19  Updated -selfcheck-
 1.1.20	Cosmetic changes in output
+1.1.21  -xls2row- is added to the package
+1.1.22  xls2row.sthlp is written
 */
