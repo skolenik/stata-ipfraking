@@ -1,4 +1,4 @@
-*! v.1.1.23 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.25 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -121,7 +121,9 @@ program define ipfraking, rclass
 			local prevobj = `currobj'
 		}
 		
-		if !r(converged) {
+		return scalar converged = r(converged)
+		
+		if !return(converged) {
 			display "{err}Warning: raking procedure did not converge"
 		}
 		
@@ -184,6 +186,9 @@ program define ipfraking, rclass
 	return scalar maxctrl = `mrdmax'
 	return scalar badcontrols = `badcontrols'
 
+	* DEBUGGING
+	* set trace on	
+
 	DiagDisplay `oldweight' `currweight' , `graph' `traceplot' `options'
 	return add
 	
@@ -209,7 +214,8 @@ program define ipfraking, rclass
 				char `generate'[`mat`k''] `=return(mreldif`k')'
 			}
 		}
-		else char `generate'[maxctrl] `mrdmax'
+		char `generate'[converged] `=return(converged)'
+		char `generate'[maxctrl] `mrdmax'
 		char `generate'[objfcn] `currobj'
 		if `badcontrols' {
 			note `generate' : `whicharebad' total(s) did not match when creating this variable
@@ -929,7 +935,36 @@ end // of GenerateMaxEntropyVars
 
 
 
+mata
 
+// D-S case 2: generalized raking
+// distance function G(w,d)
+real vector G_DS2( real vector w, real vector d) {
+	return( w :* ln( w :/ d ) :- w :+ d )
+}
+// derivative g(w,d)
+real vector g_DS2( real vector w, real vector d) {
+	return( ln( w:/d ) )
+}
+// inverse to g(w,d) sans d
+real vector F_DS2( real vector q, real vector u ) {
+	return( exp( q:*u ) )
+}
+// derivative of F
+real vector dF_DS2( real vector q, real vector u ) {
+	return( exp( q:*u ) )
+}
+
+// phi function
+real vector phi( real rowvector lambda, real rowvector total, string vector varnames, string scalar touse ) {
+	real vector arg
+
+	st_view( X=., ., varnames, touse )
+	arg = X * lambda'
+
+}
+
+end // of Mata
 
 
 
@@ -969,4 +1004,6 @@ exit
 1.1.21  -xls2row- is added to the package
 1.1.22  xls2row.sthlp is written
 1.1.23  utility programs -xls2row- and -mat2do- are documented
+1.1.24	some additional information on convergence is being stored
+1.1.25	raking through Mata optimization of the D-S objective function Case 2
 */
