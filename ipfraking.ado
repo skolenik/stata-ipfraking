@@ -6,7 +6,7 @@ program define ipfraking, rclass
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) trace ///
-		selfcheck maxentropy from(varname) noDIVergence alpha(passthru) * ]
+		selfcheck rapid from(varname) noDIVergence alpha(passthru) * ]
 
 	// syntax:
 	//   [pw=original weight variable]
@@ -91,7 +91,7 @@ program define ipfraking, rclass
 	}
 	
 	// choose the method
-	if "`maxentropy'" == "" {
+	if "`rapid'" == "" {
 		// use iterative proportional fitting
 
 		forvalues i=1/`iterate' {
@@ -122,39 +122,49 @@ program define ipfraking, rclass
 		}
 		
 		return scalar converged = r(converged)
-		
-		if !return(converged) {
-			display "{err}Warning: raking procedure did not converge"
-		}
-		
+				
 	}
 	else {
-		// use maxentropy
-		if inlist("`trimfrequency'", "often", "sometimes") {
-			display as error "Warning: only trimfrequency(once) is supported with maxentropy option"
+		// use Mata Newton-Raphson optimization
+
+		tempname prefix allctotals scale
+		GenerateCalibVars , ctotal(`ctotal') prefix(`prefix')
+		local ctrlvarlist_u `r(varlist)'
+		
+		if inlist("`trimfrequency'", "often") {
+			display as error "Warning: only trimfrequency(once|sometimes) are supported with maxentropy option"
 		}
 	
 		// vectorize the control totals; label the matrix rows for later use to create tempvars
-		FormMaxEntropyMatrix `ctotal'
-		tempname maxentmatrix maxenttotal
-		matrix `maxentmatrix' = r(M)
-		scalar `maxenttotal' = r(total)
-		
-		forvalues k=1/`=rowsof(`maxentmatrix')' {
-			tempvar ctrlvar`k'
-			local ctrlvarlist `ctrlvarlist' `ctrlvar`k''
+		MergeCtotals `ctotal'
+		matrix `allctotals' = r(Merged)
+		scalar `scale' = r(scale)
+
+		// what if trimming?
+		if "`trimopts'" == "" {
+			mata : calibrate( "`oldweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS2", `loglevel' )
+			DiagnoseMataDS `rc' `currweight' "`allctotals'" "`ctrlvarlist_u'"
 		}
-		* create tempvars
-		GenerateMaxEntropyVars `ctrlvarlist' if `touse', matrix( `maxentmatrix' )
-		local ctrlvarlist_u `r(varlist)'
+		else {
+			// create the trim maxima and minima
+			tempvar lower center upper
+			GenerateTrimLimits `lower' `center' `upper' if `touse' , ///
+				`trimloabs' `trimlorel' `trimhiabs' `trimhirel' scale(`=`scale'') oldweight(`oldweight')
+			mata : calibrate( "`oldweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS6", `loglevel', "", "", ., ., "`lower' `center' `upper'")
+			DiagnoseMataDS `rc' `currweight' "`allctotals'" "`ctrlvarlist_u'"
+		}
+		
+		if "`trimfrequency'" == "once" & "`trimopts'"!="" ///
+			TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
+		
+		// figure out what to return
+		return scalar converged = `converged'
+		
+		qui replace `currweight' = `currweight'*`scale'
+	}
 
-		maxentropy `ctrlvarlist_u' , matrix( `maxentmatrix' ) generate( `currweight', replace ) ///
-			prior( `oldweight' ) total( `=`maxenttotal'' ) log
-		return add
-
-		return matrix maxentropy_mat = `maxentmatrix'
-		return scalar maxentropy_tot = `maxenttotal'
-			
+	if !return(converged) {
+		display "{err}Warning: raking procedure did not converge; check the `generate' variable"
 	}
 
 	if "`trimfrequency'" == "once" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' )	
@@ -234,6 +244,62 @@ program define ipfraking, rclass
 	return local ctotal `ctotal'
 	
 end // of ipfraking
+
+program GenerateTrimLimits
+
+	syntax namelist [if] , scale(real) oldweight(varname numeric) ////
+		[trimhirel(real 1e100) trimhiabs(real 1e100) trimlorel(real 0) trimloabs(real 0)]
+
+noi di `"`0'"'
+		
+	marksample touse
+	tokenize `namelist'
+	local lower `1'
+	local center `2'
+	local upper `3'
+	
+	quietly {
+		gen double `lower' = 0 if `touse'
+		if "`trimloabs'" != "" replace `lower' = max(`lower',`trimloabs'/`scale') if `touse'
+		if "`trimlorel'" != "" replace `lower' = max(`lower',`trimlorel'*`oldweight'/`scale') if `touse'
+		gen double `upper' = 1e20 if `touse'
+		if "`trimhiabs'" != "" replace `upper' = min(`upper',`trimhiabs'/`scale') if `touse'
+		if "`trimhirel'" != "" replace `upper' = min(`upper',`trimhirel'*`oldweight'/`scale') if `touse'
+		gen double `center' = sqrt((`lower'+1000*c(epsdouble))*`upper')
+	}
+	
+	noi sum `lower' `center' `upper'
+
+end // of GenerateTrimLimits
+
+program define MergeCtotals, rclass
+	tokenize `0'
+	tempname merged
+	while "`1'" != "" {
+		mat `merged' = nullmat(`merged'), `1'
+		mac shift
+	}
+	tempname scale
+	mata : st_numscalar("`scale'",sum(st_matrix("`merged'")))
+	scalar `scale' = `scale' / (_N * `: word count `0'')
+	matrix `merged' = `merged' / `scale'
+	return matrix Merged `merged'
+	return scalar scale = `scale'
+end // of MergeCtotals
+
+program define DiagnoseMataDS 
+	args rc currweight allctotals ctrlvarlist_u
+	
+	if `rc'==0 exit
+	else if `rc' == 5701 {
+		// number of calibration targets is not the same as number of calibration variables\n")
+		matrix list `allctotals'
+		sum `ctrlvarlist_u'
+		di "{txt}Number of control totals        = {res}`= colsof(`allctotals')'"
+		di "{txt}Number of calibration variables = {res}`: word count `ctrlvarlist_u''"
+	}
+
+end
 
 program define CheckTrimOptions
 
@@ -841,98 +907,45 @@ program define SelfCheck
 end // of SelfCheck
 
 
-program define FormMaxEntropyMatrix, rclass
-	// vectorize the control totals; label the matrix rows for later use to create tempvars
-	syntax namelist
-
-	tempname M curr_total ave_total
 	
-	local nt = 0
-	scalar `ave_total' = 0
-	
-	local nvars : word count `namelist'
-	forvalues k=1/`nvars' {
-		local mat`k'  : word `k' of `namelist'
-		local over`k' : rownames `mat`k''
-		local val`k'  : colnames `mat`k''
-			
-		if colsof(`mat`k'') == 1 {
-			// this is an overall total
-			matrix `M' = nullmat(`M') \ `mat`k''
-			local Mrnames `Mrnames' `over`k''
-		}
-		else {
-			// this is -over()- something
-			local cols`k' = colsof( `mat`k'' )
+program define GenerateCalibVars , rclass
 
-			mata : st_numscalar( "`curr_total'", sum( st_matrix( "`mat`k''") ) )
-			scalar `ave_total' = `ave_total' + `curr_total'
-			
-			// omit the last category to avoid multicollinearity
-			matrix `M' = nullmat( `M' ) \ (`mat`k''[1,1..`cols`k''-1]'/`curr_total')
-			forvalues j=1/`=`cols`k''-1' {
-				local Mrnames `Mrnames' `over`k'':`: word `j' of `val`k'''
-			}
-			
-			local ++nt
-		}
-	}
-	
-	matrix rownames `M' = `Mrnames'
-		
-	return matrix M = `M'
-	return scalar total = `ave_total' / `nt'
-
-end // of FormMaxEntropyMatrix
-	
-program define GenerateMaxEntropyVars , rclass
-
-	syntax newvarlist [if] [in], matrix( name )
+	syntax [if] [in], ctotal( string ) prefix( string )
 	
 	marksample touse, novarlist
+
+	* ctotal has been checked already, can be assumed good
+	tokenize `ctotal'
 	
-	local thenames : rowfullnames `matrix'
+	local k : word count `ctotal'
 	
-	// each row of the matrix -> new variable
-	
-	forvalues k=1/`=rowsof(`matrix')' {
-		local var`k' : word `k' of `varlist'
-		
-		// is this a single variable or a cagetory of a variable?
-		local title : word `k' of `thenames'
-		gettoken thevar rest : title, parse(":")
-		if "`rest'" == "" {
-			generate double `var`k'' = `thevar' if `touse'
+	forvalues i=1/`k' {
+		local p = colsof(``i'')
+		local thisvar : rownames ``i''
+		local thesecats : colnames ``i''
+		if `p' == 1 {
+			* single continuous variable
+			gen double `prefix'_`i' = `thisvar' if `touse'
+			local calibvars `calibvars' `prefix'_`i'
 		}
 		else {
-			gettoken colon value : rest , parse(":")
-			assert "`colon'" == ":"
-			generate byte `var`k'' = ( `thevar' == `value' ) if `touse'
-		}
-	}
-
-	// remove the collinear variables and redefine the calibration matrix
-	_rmcoll `varlist'
-	if r(k_omitted) > 0 {
-		local goodguys `r(varlist)'
-		tempname M
-		foreach x of varlist `goodguys' {
-			// determine the position in the original list
-			local row : list posof "`x'" in varlist
-			assert `row' > 0
-			matrix `M' = nullmat(`M') \ `matrix'[`row',1]
-			local Mrownames `Mrownames' `: word `row' of `thenames''
-		}
-		// overwrite the original matrix
-		matrix rowname `M' = `Mrownames'
-		matrix `matrix' = `M'
+			forvalues j=1/`p' {
+				local thisval : word `j' of `thesecats'
+				gen byte `prefix'_`i'_`j' = (`thisvar'==`thisval') if `touse'
+				local calibvars `calibvars' `prefix'_`i'_`j'
+			}
+		}	
 	}
 	
-	return local varlist `goodguys'
+	// quality check
+	foreach x of varlist `calibvars' {
+		qui count if `x' != 0 & !mi(`x')
+		assert r(N)>0
+	}
 	
-end // of GenerateMaxEntropyVars
-
-
+	return local varlist `calibvars'
+	
+end // of GenerateCalibVars
 
 
 mata
@@ -947,22 +960,209 @@ real vector g_DS2( real vector w, real vector d) {
 	return( ln( w:/d ) )
 }
 // inverse to g(w,d) sans d
-real vector F_DS2( real vector q, real vector u ) {
+real vector F_DS2( real colvector q, real colvector u ) {
 	return( exp( q:*u ) )
 }
 // derivative of F
-real vector dF_DS2( real vector q, real vector u ) {
-	return( exp( q:*u ) )
+real vector dF_DS2_du( real vector q, real vector u ) {
+	return( q :* exp( q:*u ) )
+}
+
+// D-S case 6: with trimming
+real vector F_DS6( real colvector q, real colvector u, real colvector lower, real colvector upper, real colvector center) {
+	real vector midpoint, numer, denom;
+	
+	midpoint = ( upper :- lower ) :/ ( (center :- lower) :* (upper :- center) )
+	numer = lower :* (upper:-center) + upper :* (center:-lower) :* exp( midpoint :* q :* u )
+	denom = (upper:-center) + (center:-lower) :* exp( midpoint :* q :* u )
+
+	assert( denom != 0 )
+	
+	return( numer :/ denom )
+}
+// derivative of F
+real vector dF_DS6_du( real colvector q, real colvector u, real colvector lower, real colvector upper, real colvector center) {
+
+	real vector midpoint, numer, denom, d_numer, d_denom;
+	
+	midpoint = ( upper :- lower ) :/ ( (center :- lower) :* (upper :- center) )
+	
+	numer = lower :* (upper:-center) + upper :* (center:-lower) :* exp( midpoint :* q :* u )
+	denom = (upper:-center) + (center:-lower) :* exp( midpoint :* q :* u )
+	d_numer = midpoint :* q :* upper :* (center:-lower) :* exp( midpoint :* q :* u )
+	d_denom = midpoint :* q :*  (center:-lower) :* exp( midpoint :* q :* u )
+
+	assert( denom != 0 )	
+	
+	return( ( (d_numer :* denom) :- (numer :* d_denom) ):/( denom :* denom ) )
+}
+
+real vector F_hyperb( real colvector q, real colvector u, real colvector upper) {
+	// horizontal asymptote at upper
+	// passes through (0,1)
+	// O(x) at -infty
+	return( 1 )
 }
 
 // phi function
-real vector phi( real rowvector lambda, real rowvector total, string vector varnames, string scalar touse ) {
-	real vector arg
+real vector phi( real rowvector lambda, pointer(real vector function) F, ///
+	real matrix X, real colvector q, real colvector d, ///
+	| real matrix param1, real matrix param2, real matrix param3, real matrix param4) {
+	
+	real vector arg, phi;
 
-	st_view( X=., ., varnames, touse )
 	arg = X * lambda'
-
+	
+	if      ( rows(param1)==0 ) phi = ((*F)( q, arg ) :- 1) :* X
+	else if ( rows(param2)==0 ) phi = ((*F)( q, arg, param1 ) :- 1) :* X
+	else if ( rows(param3)==0 ) phi = ((*F)( q, arg, param1, param2 ) :- 1) :* X
+	else if ( rows(param4)==0 ) phi = ((*F)( q, arg, param1, param2, param3 ) :- 1) :* X
+	else                        phi = ((*F)( q, arg, param1, param2, param3, param4 ) :- 1) :* X
+	
+/*
+	printf("{txt}In phi routine, phi must be n x p: \n")
+	phi
+*/
+	
+	return( quadcross(1, d, phi)  )
 }
+
+// main function
+void calibrate( string scalar wgtname, string scalar newwgtname, ///
+	string scalar targetname, string scalar varlist, string scalar method, ///
+	real scalar loglevel, ///
+	| string scalar tousename, string scalar qname, ///
+	real scalar iter, real scalar tolerance, ///
+	string scalar trimnames ///
+) {
+
+	real rowvector target, diff, delta, dtotal;
+	real scalar p, converged;
+	real matrix outer, invouter;
+	string vector varnames;
+
+	// all the relevant views; use st_data as they should not change
+	varnames = tokens( varlist )
+	if ("tousename"!="") {
+		X = st_data( ., varnames, tousename )
+		d = st_data( ., wgtname,  tousename )
+		if (qname!="") st_view( q=., ., qname,    tousename )
+		else q=J(rows(X),1,1)
+	}
+	else {
+		X = st_data( ., varnames)
+		d = st_data( ., wgtname)
+		if (qname!="") st_view( q=., ., qname)
+		else q=J(rows(X),1,1)
+	}
+		
+	// constant matrices
+	target = st_matrix( targetname )
+	dtotal = quadcolsum( d :* X )
+
+	// check the calibration variables
+	if ( cols( X ) != cols( target ) ) {
+		printf("{err}number of calibration targets is not the same as number of calibration variables\n")
+		st_local( "rc", "5701" )
+		st_local( "converged", "0" )
+		return
+	};
+
+	// check the trimming parameters for DS6 calibration
+	method
+	if (method == "DS6") {
+		trimnames
+		if (trimnames=="" ) {
+			printf("{err}must specify trimming parameters with DS6\n")
+			st_local( "rc", "5702" )
+			st_local( "converged", "0" )
+			return		
+		}
+		else {
+			trimvars = tokens(trimnames)
+			trimvars
+			if (cols(trimvars)==3) {
+				if ("tousename"!="") {
+					lower  = st_data(.,trimvars[1], tousename)
+					center = st_data(.,trimvars[2], tousename)
+					upper  = st_data(.,trimvars[3], tousename)
+				}
+				else {
+					lower  = st_data(.,trimvars[1])
+					center = st_data(.,trimvars[2])
+					upper  = st_data(.,trimvars[3])
+				}
+			}
+			else {
+				printf("{err}incorrect number of trimming parameters in DS6\n")
+				st_local( "rc", "5703" )
+				st_local( "converged", "0" )
+				return		
+			}
+		}
+	};
+
+	// default values
+	if ( iter == . | rows(iter)==0 ) iter=100;
+	if ( tolerance == . | rows(tolerance)==0 ) tolerance = 1e-7;
+	
+	p = cols( varnames )
+	converged = 0
+	
+	// initial value
+	lambda = J(1,p,0) 
+
+	for(k=1;k<=iter;k++) {
+		
+		if (method == "DS6") {
+			diff = target - dtotal - phi( lambda, &F_DS6(), X, q, d, lower, upper, center)  // DS6
+			outer  = quadcross( X, d :* dF_DS6_du( q, X*lambda', lower, upper, center ), X ) // DS6
+		}
+		else if (method == "DS2") {
+			diff = target - dtotal - phi( lambda, &F_DS2(), X, q, d )  // DS2
+			outer  = quadcross( X, d :* dF_DS2_du( q, X*lambda' ), X ) // DS2
+		}
+		invouter = invsym( outer )
+		delta = diff * invouter'
+		lambda = lambda + delta
+		
+		printf("{txt}Iteration {res}%2.0f{txt}, |delta| = {res}%9.6f{txt}, |lambda| = {res}%9.6f\n",k,norm(delta), norm(lambda) )
+		if (loglevel>0) lambda
+		if ( method == "DS6" & norm( lambda ) > 0.5*ln(maxdouble()) ) {
+			printf("{err}Warning: Lagrange multipliers are pusing the numerical accuracy; convergence may be impaired\n")
+		}
+		
+		if ( norm( delta ) < tolerance * min( (1, norm( lambda ) ) ) ) {
+			converged = 1
+			break
+		}
+	}
+	
+	// the only thing that is to be changed are the new weights; hence view rather than st_data
+	st_view( w=., ., newwgtname, tousename )
+	if (converged) {	
+		if (method == "DS6") {
+			if ( norm(lambda) < ln( maxdouble() ) ) {
+				w[,] = d :* F_DS6( q, X*lambda', lower, upper, center  )
+			}
+			else {
+				printf("{err}The procedure resulted in numeric overflow; missing weights will be returned.\n")
+				w[,] = J( rows(w), 1, . )
+			}
+		}
+		else if (method == "DS2") {
+			w[,] = d :* F_DS2( q, X*lambda' )
+		};
+	}
+	else {
+		printf("{err}The procedure did not seem to have converged; missing weights will be returned.\n")
+		w[,] = J( rows(w), 1, . )
+	}
+
+	st_local( "converged", strofreal(converged) )
+	st_local( "rc", "0" )
+}
+
 
 end // of Mata
 
