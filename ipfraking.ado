@@ -142,25 +142,54 @@ program define ipfraking, rclass
 
 		// what if trimming?
 		if "`trimopts'" == "" {
-			mata : calibrate( "`oldweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS2", `loglevel' )
+			mata : calibrate( "`oldweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS2", `=`scale'', `loglevel' )
 			DiagnoseMataDS `rc' `currweight' "`allctotals'" "`ctrlvarlist_u'"
+			return scalar converged = `converged'
 		}
 		else {
+			/* DS6 does not seem to work
 			// create the trim maxima and minima
 			tempvar lower center upper
 			GenerateTrimLimits `lower' `center' `upper' if `touse' , ///
 				`trimloabs' `trimlorel' `trimhiabs' `trimhirel' scale(`=`scale'') oldweight(`oldweight')
-			mata : calibrate( "`oldweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS6", `loglevel', "", "", ., ., "`lower' `center' `upper'")
+			mata : calibrate( "`oldweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS6", `=`scale'', `loglevel', "", "", ., ., "`lower' `center' `upper'")
 			DiagnoseMataDS `rc' `currweight' "`allctotals'" "`ctrlvarlist_u'"
+			*/	
+			
+			forvalues i=1/`iterate' {
+				quietly replace `prevweight' = `currweight'
+				mata : calibrate( "`prevweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS2", `=`scale'', `loglevel' )
+				if "`trace'" != "" {
+					forvalues k=1/`nvars' {
+						CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') quietly : ///
+							total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
+						quietly replace `mreldif`k'var' = r(mreldif) in `=`i'+1'
+					}
+					
+				}
+				TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
+				local anytrim = `r(anytrim)'
+				CheckConvergence `prevweight' `currweight' if `touse', `tolerance'
+				local currobj = r(maxreldif)
+				if `loglevel' > 0 di _n
+				display "{txt} Meta-iteration `i', max rel difference of raked weights = {res}" `currobj'
+				if r(converged) continue, break
+				if `converged' & !`anytrim' continue, break
+				if `currobj' > `prevobj' & `i' > 2 {
+					display "{err}Warning: raking procedure appears diverging"
+					if "`divergence'" != "nodivergence" continue, break
+				}
+				local prevobj = `currobj'
+			}
+			
+			return scalar converged = r(converged) | (`converged' & !`anytrim')
+			
 		}
 		
 		if "`trimfrequency'" == "once" & "`trimopts'"!="" ///
 			TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
 		
-		// figure out what to return
-		return scalar converged = `converged'
-		
-		qui replace `currweight' = `currweight'*`scale'
+		* qui replace `currweight' = `currweight'*`scale'
 	}
 
 	if !return(converged) {
@@ -245,13 +274,12 @@ program define ipfraking, rclass
 	
 end // of ipfraking
 
+// orphan?
 program GenerateTrimLimits
 
 	syntax namelist [if] , scale(real) oldweight(varname numeric) ////
 		[trimhirel(real 1e100) trimhiabs(real 1e100) trimlorel(real 0) trimloabs(real 0)]
 
-noi di `"`0'"'
-		
 	marksample touse
 	tokenize `namelist'
 	local lower `1'
@@ -542,7 +570,7 @@ program define ControlCheckParse
 
 end // of ControlCheckParse
 
-program define TrimWeights
+program define TrimWeights, rclass
 
 	syntax varlist(numeric min=2 max=2) , [ one(varname numeric) over(varlist) ///
 		trimhirel(real `=c(maxdouble)') trimhiabs(real `=c(maxdouble)') trimlorel(real 0) trimloabs(real 0) loglevel(int 0) ]
@@ -602,8 +630,10 @@ program define TrimWeights
 			}
 			display _n
 		}
+		return scalar anytrim = 1
 	}
-		
+	else return scalar anytrim = 0
+	
 end // of TrimWeights
 
 program define CheckConvergence, rclass
@@ -1030,7 +1060,7 @@ real vector phi( real rowvector lambda, pointer(real vector function) F, ///
 // main function
 void calibrate( string scalar wgtname, string scalar newwgtname, ///
 	string scalar targetname, string scalar varlist, string scalar method, ///
-	real scalar loglevel, ///
+	real scalar scale, real scalar loglevel, ///
 	| string scalar tousename, string scalar qname, ///
 	real scalar iter, real scalar tolerance, ///
 	string scalar trimnames ///
@@ -1055,6 +1085,7 @@ void calibrate( string scalar wgtname, string scalar newwgtname, ///
 		if (qname!="") st_view( q=., ., qname)
 		else q=J(rows(X),1,1)
 	}
+	d = d / scale
 		
 	// constant matrices
 	target = st_matrix( targetname )
@@ -1159,6 +1190,8 @@ void calibrate( string scalar wgtname, string scalar newwgtname, ///
 		w[,] = J( rows(w), 1, . )
 	}
 
+	w[,] = w*scale
+	
 	st_local( "converged", strofreal(converged) )
 	st_local( "rc", "0" )
 }
@@ -1206,4 +1239,5 @@ exit
 1.1.23  utility programs -xls2row- and -mat2do- are documented
 1.1.24	some additional information on convergence is being stored
 1.1.25	raking through Mata optimization of the D-S objective function Case 2
+1.1.26	trimming is added to fast implementation via trimming the converged Case 2 weights and cycling over
 */
