@@ -1,4 +1,4 @@
-*! v.1.1.27 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.28 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -434,42 +434,50 @@ program define PropAdjust
 	local currweight `varlist'
 
 	marksample touse
-	
+
+	/*
 	capture total `control' [pw=`currweight'] if `touse', over( `over', nolab )
 	if _rc {
 		display as error "cannot compute controls for `control' over `over' with the current weights"
 		exit 301
 	}
-	
-	if `loglevel' < 2 local quietly quietly
-	
 	tempname bb
 	matrix `bb' = e(b)
 
-	if colsof(`bb') == 1 {
-		if `bb'[1,1] == 0 {
+	*/
+	qui levelsof `over' if `touse', local( allover )
+	forvalues k=1/`: word count `allover'' {
+		sum `control' if `touse' & `over' == `: word `k' of `allover'' [aw=`currweight'], mean
+		tempname ctrl`k'
+		scalar `ctrl`k'' = r(sum)
+	}
+	
+	if `loglevel' < 2 local quietly quietly
+	
+	if `: word count `allover'' == 1 {
+		if scalar(`ctrl1') == 0 {
 			display as error "Warning: division by zero weighted total encountered with `control' control"
 		}
 		if `loglevel' > 1 display "{txt}Control {res}`control'{txt}: " _c
-		`quietly' replace `currweight' = `currweight' * `target'[1,1] / `bb'[1,1] if `touse' & `currweight' != 0 & `control' != 0
+		`quietly' replace `currweight' = `currweight' * `target'[1,1] / scalar(`ctrl1') if `touse' & `currweight' != 0 & `control' != 0
 	}
 	else {
 		// cycle over categories
 		forvalues k=1/`= colsof(`target')' {
-			capture assert "`: word `k' of `: colnames `bb' ''" == "`: word `k' of `: colnames `target' ''"
+			capture assert "`: word `k' of `allover''" == "`: word `k' of `: colnames `target' ''"
 			if _rc {
 				// we've done the diagnostic before, so this should not be happening
 				display as error "categories mismatch in PropAdjust"
-				matrix list `bb'
+				di "{txt}categories of {res}`over'{txt}: {res}`allover'"
 				matrix list `target'
 				exit 111
 			}
-			if `bb'[1,`k'] == 0 {
+			if scalar(`ctrl`k'') == 0 {
 				display as error "Warning: division by zero weighted total encountered with `control' control with `over' == `k'"
 			}
 			
-			if `loglevel' > 1 display "{txt}Control {res}`over'{txt}, category {res}`: word `k' of `: colnames `bb' ''{txt}: " _c
-			`quietly' replace `currweight' = `currweight' * (`target'[1,`k'] / `bb'[1,`k'])^`alpha' if `touse' & `over' == `: word `k' of `: colnames `bb' '' & `currweight'!=0
+			if `loglevel' > 1 display "{txt}Control {res}`over'{txt}, category {res}`: word `k' of `allover''{txt}: " _c
+			`quietly' replace `currweight' = `currweight' * (`target'[1,`k'] / scalar(`ctrl`k''))^`alpha' if `touse' & `over' == `: word `k' of `allover'' & `currweight'!=0
 		}
 	}
 	
@@ -1240,4 +1248,5 @@ exit
 1.1.25	raking through Mata optimization of the D-S objective function Case 2
 1.1.26	trimming is added to fast implementation via trimming the converged Case 2 weights and cycling over
 1.1.27	check for missing values in trimming high values; mstep added to slow down the algorithm
+1.1.28	total computation rewritten in terms of a much faster -sum- than -total-
 */
