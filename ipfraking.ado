@@ -1,4 +1,4 @@
-*! v.1.1.25 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.27 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -6,7 +6,7 @@ program define ipfraking, rclass
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) trace ///
-		selfcheck rapid from(varname) noDIVergence alpha(passthru) * ]
+		selfcheck rapid from(varname) noDIVergence alpha(passthru) mstep(real 1) * ]
 
 	// syntax:
 	//   [pw=original weight variable]
@@ -142,7 +142,7 @@ program define ipfraking, rclass
 
 		// what if trimming?
 		if "`trimopts'" == "" {
-			mata : calibrate( "`oldweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS2", `=`scale'', `loglevel' )
+			mata : calibrate( "`oldweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS2", `=`scale'', `mstep', `loglevel' )
 			DiagnoseMataDS `rc' `currweight' "`allctotals'" "`ctrlvarlist_u'"
 			return scalar converged = `converged'
 		}
@@ -152,13 +152,13 @@ program define ipfraking, rclass
 			tempvar lower center upper
 			GenerateTrimLimits `lower' `center' `upper' if `touse' , ///
 				`trimloabs' `trimlorel' `trimhiabs' `trimhirel' scale(`=`scale'') oldweight(`oldweight')
-			mata : calibrate( "`oldweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS6", `=`scale'', `loglevel', "", "", ., ., "`lower' `center' `upper'")
+			mata : calibrate( "`oldweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS6", `=`scale'', `mstep, `loglevel', "", "", ., ., "`lower' `center' `upper'")
 			DiagnoseMataDS `rc' `currweight' "`allctotals'" "`ctrlvarlist_u'"
 			*/	
 			
 			forvalues i=1/`iterate' {
 				quietly replace `prevweight' = `currweight'
-				mata : calibrate( "`prevweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS2", `=`scale'', `loglevel' )
+				mata : calibrate( "`prevweight'", "`currweight'", "`allctotals'", "`ctrlvarlist_u'", "DS2", `=`scale'', `mstep', `loglevel' )
 				if "`trace'" != "" {
 					forvalues k=1/`nvars' {
 						CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') quietly : ///
@@ -167,7 +167,9 @@ program define ipfraking, rclass
 					}
 					
 				}
-				TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
+				if "`trimfrequency'" == "sometimes" & "`trimopts'"!="" {
+					TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
+				}
 				local anytrim = `r(anytrim)'
 				CheckConvergence `prevweight' `currweight' if `touse', `tolerance'
 				local currobj = r(maxreldif)
@@ -185,9 +187,6 @@ program define ipfraking, rclass
 			return scalar converged = r(converged) | (`converged' & !`anytrim')
 			
 		}
-		
-		if "`trimfrequency'" == "once" & "`trimopts'"!="" ///
-			TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
 		
 		* qui replace `currweight' = `currweight'*`scale'
 	}
@@ -588,11 +587,11 @@ program define TrimWeights, rclass
 
 	if r(N) {	
 		// check ratios
-		`quietly' replace `newweight' = `oldweight' * `trimhirel' if `newweight' > `oldweight' * `trimhirel'
+		`quietly' replace `newweight' = `oldweight' * `trimhirel' if `newweight' > `oldweight' * `trimhirel' & !mi(`newweight')
 		`quietly' replace `newweight' = `oldweight' * `trimlorel' if `newweight' < `oldweight' * `trimlorel'
 		
 		// check ranges
-		`quietly' replace `newweight' = `trimhiabs' if `newweight' > `trimhiabs'
+		`quietly' replace `newweight' = `trimhiabs' if `newweight' > `trimhiabs' & !mi(`newweight')
 		`quietly' replace `newweight' = `trimloabs' if `newweight' < `trimloabs'
 		
 		// report the trimming categories
@@ -1060,7 +1059,7 @@ real vector phi( real rowvector lambda, pointer(real vector function) F, ///
 // main function
 void calibrate( string scalar wgtname, string scalar newwgtname, ///
 	string scalar targetname, string scalar varlist, string scalar method, ///
-	real scalar scale, real scalar loglevel, ///
+	real scalar scale, real scalar mstep, real scalar loglevel, ///
 	| string scalar tousename, string scalar qname, ///
 	real scalar iter, real scalar tolerance, ///
 	string scalar trimnames ///
@@ -1068,7 +1067,7 @@ void calibrate( string scalar wgtname, string scalar newwgtname, ///
 
 	real rowvector target, diff, delta, dtotal;
 	real scalar p, converged;
-	real matrix outer, invouter;
+	real matrix outer, invouter, step;
 	string vector varnames;
 
 	// all the relevant views; use st_data as they should not change
@@ -1154,7 +1153,7 @@ void calibrate( string scalar wgtname, string scalar newwgtname, ///
 			outer  = quadcross( X, d :* dF_DS2_du( q, X*lambda' ), X ) // DS2
 		}
 		invouter = invsym( outer )
-		delta = diff * invouter'
+		delta = mstep * diff * invouter'
 		lambda = lambda + delta
 		
 		printf("{txt}Iteration {res}%2.0f{txt}, |delta| = {res}%9.6f{txt}, |lambda| = {res}%9.6f\n",k,norm(delta), norm(lambda) )
@@ -1240,4 +1239,5 @@ exit
 1.1.24	some additional information on convergence is being stored
 1.1.25	raking through Mata optimization of the D-S objective function Case 2
 1.1.26	trimming is added to fast implementation via trimming the converged Case 2 weights and cycling over
+1.1.27	check for missing values in trimming high values; mstep added to slow down the algorithm
 */
