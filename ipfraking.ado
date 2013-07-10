@@ -1,4 +1,4 @@
-*! v.1.1.29 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.30 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -1262,4 +1262,5 @@ exit
 1.1.27	check for missing values in trimming high values; mstep added to slow down the algorithm
 1.1.28	total computation rewritten in terms of a much faster -sum- than -total-
 1.1.29	r(reldif#) matrix is returned
+1.1.30	mat2do allows -append- option
 */
