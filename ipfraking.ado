@@ -1,4 +1,4 @@
-*! v.1.1.28 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.29 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -212,6 +212,8 @@ program define ipfraking, rclass
 		matrix `pass' = r(result)
 		return matrix result`k' = `pass'
 		return scalar mreldif`k' = r(mreldif)
+		matrix `pass' = r(reldif)
+		return matrix reldif`k' = `pass'
 		local mrdmax = max( `mrdmax', r(mreldif) )
 		local badcontrols = `badcontrols' + r(badcontrols)
 		local whicharebad `whicharebad' `mat`k''
@@ -417,12 +419,22 @@ program define CheckResults, rclass
 		}
 	}
 	
-	tempname mcopy
-	matrix `mcopy' = `target'
+	tempname mcopy rd
+
+	matrix `rd' = J(1,`=colsof(`target')',.)
+	forvalues k=1/`=colsof(`target')' {
+		matrix `rd'[1,`k'] = reldif( `bb'[1,`k'], `target'[1,`k'] )
+	}
+	matrix colnames `rd' = `: colfullnames `target''
+	matrix rownames `rd' = `: rownames `target''
+	matrix rownames `bb' = `: rownames `target''
 	
+	matrix `mcopy' = `target'
+
 	return scalar mreldif = mreldif(`bb',`target')
 	return matrix target = `mcopy'
 	return matrix result = `bb'
+	return matrix reldif = `rd'
 	
 
 end // of CheckResults
@@ -1249,4 +1261,5 @@ exit
 1.1.26	trimming is added to fast implementation via trimming the converged Case 2 weights and cycling over
 1.1.27	check for missing values in trimming high values; mstep added to slow down the algorithm
 1.1.28	total computation rewritten in terms of a much faster -sum- than -total-
+1.1.29	r(reldif#) matrix is returned
 */
