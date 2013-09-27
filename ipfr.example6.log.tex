@@ -1,0 +1,23 @@
+{\smallskip}
+. set rmsg on
+r; t=0.00 16:21:00
+{\smallskip}
+. set seed 2013
+r; t=0.00 16:21:00
+{\smallskip}
+. bsweights bsw , reps(310) n(-1) balanced dots  calibrate( ipfraking [pw=@], r
+> eplace nograph ctotal( ACS2011_sex_age Census2011_region Census2011_race ) )
+Balancing within strata: 
+...............................
+{\smallskip}
+Rescaling weights 
+..................................................    50
+.cannot compute controls for _one over race with the current weights
+r(301); t=78.12 16:22:18
+{\smallskip}
+. svyset [pw=rakedwgt2], vce(bootstrap) bsrw( bsw* ) dof( 31 )
+variable bsw* not found
+in option bsrweight()
+r(111); t=0.06 16:22:19
+{\smallskip}
+. set rmsg off

@@ -1,0 +1,19 @@
+. ipfraking [pw=finalwgt], ctotal( NHANES2_sex NHANES2_race ) gen( rakedwgt1 )
+{\smallskip}
+Warning: the totals of the control matrices are different:
+   Target 1 (NHANES2_sex) total              =            131197383
+   Target 2 (NHANES2_race) total             =          158357332.6
+{\smallskip}
+ Iteration 1, max rel difference of raked weights = .56227988
+ Iteration 2, max rel difference of raked weights = .00073288
+ Iteration 3, max rel difference of raked weights = 2.356e-07
+Warning: the controls NHANES2_sex did not match
+{\smallskip}
+   Summary of the weight changes
+{\smallskip}
+              {\VBAR}    Mean    Std. dev.    Min        Max       CV
+\HLI{14}{\PLUS}\HLI{50} 
+Orig weights  {\VBAR}    11318       7304      2000       79634   .6453
+Raked weights {\VBAR}    15299      10274      1914       90831   .6716
+Adjust factor {\VBAR}   1.3490               0.8846      1.5614
+{\smallskip}

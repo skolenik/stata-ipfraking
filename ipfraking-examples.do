@@ -2,6 +2,8 @@
 
 clear
 discard
+set more off
+set rmsg off
 
 version 10
 
@@ -109,10 +111,10 @@ sjlog close, replace
 graph export ipfraking_example4_sometimes.eps, replace
 
 sjlog using ipfr.example4.often, replace
-drop rakedwgt3
 ipfraking [pw=finalwgt], gen( rakedwgt5 ) ///
     ctotal( ACS2011_sex_age Census2011_region Census2011_race ) ///
     trimhiabs(200000) trimloabs(2000) trimfreq(often) trace
+compare rakedwgt3 rakedwgt5
 sjlog close, replace
 
 graph export ipfraking_example4_often.eps, replace
@@ -131,14 +133,20 @@ sjlog using ipfr.example6.bsw, replace
 set rmsg on
 set seed 2013
 bsweights bsw , reps(310) n(-1) balanced dots ///
-    calibrate( ipfraking [pw=@], replace nograph ///
+    calibrate( ipfraking [pw=@], replace nograph meta ///
     ctotal( ACS2011_sex_age Census2011_region Census2011_race ) )
+forvalues k=1/310 {
+    _dots `k' 0
+    assert `: char bsw`k'[converged]' == 1
+    assert `: char bsw`k'[maxctrl]' < 10*c(epsfloat)
+}
 svyset [pw=rakedwgt2], vce(bootstrap) bsrw( bsw* ) dof( 31 )
 set rmsg off
 sjlog close, replace
 
 sjlog using ipfr.example6.brr, replace
 webuse nhanes2brr, clear
+svy : proportion highbp
 generate byte _one = 1
 generate byte age_grp = 1 + (age>=40) + (age>=60) if !mi(age)
 generate sex_age = sex*10 + age_grp
@@ -150,6 +158,7 @@ forvalues k=1/32 {
     _dots `k' 0 
 }
 svyset [pw=rakedwgt2], vce(brr) brrw( brrc* ) dof( 31 )
+svy : proportion highbp
 sjlog close, replace
 
 exit

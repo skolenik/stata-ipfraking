@@ -1,0 +1,365 @@
+
+Subject:
+weight calibration aka raking
+From:
+H Joseph Newton <jnewton@stat.tamu.edu>
+Date:
+7/23/2013 9:06 AM
+To:
+"Kolenikov, Stanislav" <kolenikovs@missouri.edu>
+CC:
+<jnewton@stat.tamu.edu>, "'Lisa M. Gilmore'" <lmg@stata.com>, <jholle@science.tamu.edu>
+
+Hi Stas:
+
+
+
+  Below is a very positive review. Please attend to the comments and get me and Lisa a zippy file with all the source, data, and manuscript producing files so that she can begin the final formatting.
+
+
+
+Best,
+
+Joe
+
+
+
+
+
+From: Brady West [mailto:bwest@umich.edu]
+Sent: Friday, May 31, 2013 3:51 PM
+To: H Joseph Newton
+Cc: Lisa M. Gilmore; jholle@science.tamu.edu
+Subject: Re: SJ: new submission: weight calibration aka raking
+
+
+
+Hi Joe,
+
+Here are my comments on Stas' article. In general, I was quite
+impressed by the package that he has developed, and the article
+does a great job of both outlining the conceptual issues that the
+package is addressing (Section 1) and providing mostly clear
+examples of how to use the package. The article would make for a
+nice contribution to the journal, and the package a great
+contribution to survey statisticians using Stata. My comments and
+suggestions are mostly minor and revolve around clarification or
+grammar. The most important substantive addition that would be
+needed prior to publication is comment (5).
+
+1. The Abstract should explicitly mention the name of the package (-ipfraking-).
+
+[Done]
+
+2. Remove "the" before "known control totals" on page 1.
+
+[Done]
+
+3. Remove "the" before "substantive interest" on page 1.
+
+[Done]
+
+4. When referring to population totals / means / etc. I would use
+capital letters, but this is a minor comment. For example, on pages
+1 and 2, I would use Y-bar, not y-bar.
+
+[I went through the article and made changes where applicable.]
+
+5. More important, the paper should make it clear (maybe in Section
+1, or at the end) what unique advantages (speed / options /
+trimming / ability to apply to replicate weights / etc.) this
+package offers relative to the -ipfweight- package that Michael
+Bergmann at Mannheim has already developed, and the -survwgt rake-
+command that Nick Winter at Virginia has developed.
+
+[I added a section 1.8 to discuss these. Nick Winter's is a great
+package, and it does nearly everything that most users would ever
+need. I was able to crash other packages a bit too easily by
+supplying wrong weights or wrong combinations of targets and their
+respective variables. I can't say that my package is bullet-proof
+with respect to the user errors, but I think it handles them with
+greater flexibility and robustness.]
+
+6. Provide a brief definition of "informative sample designs" on
+page 2 for the reader who may not be familiar with this concept.
+
+[Done.]
+
+7. Strike "tools" in the middle of page 3 before poststrata() and
+postweight().
+
+[I moved the word "options" upfront in that sentence. ]
+
+8. Explicitly define x_j in equation (5).
+
+[j is the observation index, x's are the control variables, as
+defined on the line preceding the formula, and I introduced the
+bold-faced vector notation more explicitly.]
+
+9. I had to review the descriptions of the algorithms several times
+before fully understanding the notation that was used. I would
+suggest (on page 4, where the raking algorithm is first described)
+spelling out the different steps for the reader. For example, after
+step 1, say "That is, use the base weights to initialize the raked
+weight." Related to this comment, make it clear why p is indicated
+in the superscript in the first step. This may confuse readers, as
+p refers to the number of control variables.
+
+[ I added some comments in the body of the algorithm description. I
+hope they help. ]
+
+10. There are several places where "the" is omitted from sentences.
+There are three instances in the second paragraph on page 6 alone
+(before the names of the surveys, and before "hundreds of
+thousands") and one instance before "weights" in the last paragraph
+on page 6 (when describing the CV). There is an "a" omitted before
+"practical perspective" at the bottom of page 6 as well. Hopefully
+these grammar issues will be caught by an editor.
+
+[ I will circulate the paper internally to see if better tech
+writers than myself catch these. ]
+
+11. Weight calibration does not always work to reduce non-response
+errors (page 6); typical variables available for
+post-stratification adjustments may be unrelated to response
+propensity or key survey variables, depending on the survey. A more
+balanced view of this argument should be presented. For example,
+see Massey and Botman (1988, Telephone Survey Methodology) or
+Biemer and Christ (2008, International Handbook in Survey
+Methodology).
+
+[ I don't have Massey & Botman (1988). I found Biemer & Christ
+(2008) discussion to be somewhat limited. I think Bethlehem's work
+to be more relevant, so I added some discussion of that. ]
+
+12. Related to (9) above, spell out what is meant by the two weight
+trimming steps in Step 6 on page 7. Readers may get stuck on the
+notation.
+
+[ Done ]
+
+13. Give a brief example of the meta-data to which you are
+referring on page 9.
+
+[ These are the control variable names and categories -- text
+added. ]
+
+14. The coleq option on page 9 is not clearly described. Because
+examples provided later show what the matrices should look like and
+possible values for these parameters, at the very least refer to
+one of the examples at this point. The same is true on page 10. It
+would help a reader to see an example of these matrices.
+
+[ This was kept terse intentionally, so that it is basically what
+the help file provides. I did refer to the Examples section. ]
+
+15. Page 12, "...pay attention to what the inputs look like, ..."
+Also, "...an excerpt from the NHANES II data set ..."
+
+[ Done ]
+
+16. There are a couple of periods missing after the descriptions at
+the top of page 12.
+
+[ Done ]
+
+17. In Example 1 (page 13), I would suggest adding some more text
+explaining exactly what is being done in the formation of the
+matrices, since the structure of the matrices is so important to
+the command running smoothly.
+
+[ I discuss the format of the matrix in a greater extent. ]
+
+18. Page 14, provide an example of what you mean by "unusual
+patterns" in the graphical output.
+
+[ I have not tried to cook an artificial example, but I added some
+text to describe what I mean by unusual. This is a matter of having
+seen several dozen of such plots: some of them would look like any
+other plot, while others would jump at you as somewhat odd. ]
+
+19. Page 18, mention that the plots in Figure 2 are discussed in
+more detail in the following section.
+
+[ Done ]
+
+20. Page 19, explain the arguments supplied to trimhiabs(),
+trimloabs() and trimhirel() in detail.
+
+[ Done. While working on this, I wanted to find a reference that
+would describe how to deal with r() returned values, but did not
+find anything in The Stata Journal. If the editor has any pointers,
+that would be terrific. ]
+
+21. The wording in the first paragraph on page 20 is quite
+confusing. I think "not only" needs to be deleted, and impediment
+needs to be changed to impede.
+
+[ Rewrote ]
+
+22. Page 23, "...from within bsweights (Kolenikov 2010), which can
+pass..."
+
+[ Done ]
+
+23. Page 23, is rakedwgt2 the default name of the overall raked
+weight produced by the command if no name is specified? Make this
+clear...
+
+[ rakedwgt2 is the weight that was produced in one of the previous
+examples with the same raking settings as those in the current
+bootstrap. Or rather the bootstrap weights are created with the
+same settings as rakedwgt2. There is no default name, and ipfraking
+will produce an error if it does not know what to do. See "one and
+only one of generate() or replace must be specified" error message
+in Section 4. ]
+
+24. It would be nice to add an analysis at the end of Section 3
+that examines estimates before and after raking the BRR weights,
+just so that readers could see the full implementation, from weight
+adjustment to estimation.
+
+Again, this is a very nice article overall.
+
+-Brady
+
+
+
+
+
+On Sun, May 19, 2013 at 1:07 PM, H Joseph Newton <jnewton@stat.tamu.edu> wrote:
+
+Dear Brady:
+
+  I recently received as editor of the Stata Journal a submission by
+Stanislav Kolenikov on "Calibrating survey data using iterative proportional
+fitting (raking)", and I am hoping you could review it or suggest someone
+who could. The submission email is below, a zip file with all relevant files
+is attached, and you can look at the manuscript at
+
+http://stat.tamu.edu/~jnewton/kolenikov_weight.pdf
+
+Thanks very much,
+Joe Newton
+
+
+
+
+-----Original Message-----
+From: H Joseph Newton [mailto:jnewton@stat.tamu.edu]
+Sent: Wednesday, April 10, 2013 10:19 AM
+To: Kolenikov, Stanislav
+Cc: jnewton@stat.tamu.edu; 'Lisa M. Gilmore'; jholle@science.tamu.edu
+Subject: FW: FW: new submission: weight calibration aka raking
+
+Thanks very much, Stas. I will get it reviewed as soon as possible.
+
+Joe
+
+
+-----Original Message-----
+From: Stas Kolenikov [mailto:kolenikovs@missouri.edu]
+Sent: Sunday, April 07, 2013 11:25 AM
+To: H Joseph Newton
+Cc: 'Lisa M. Gilmore'; jholle@science.tamu.edu
+Subject: Re: FW: new submission: weight calibration aka raking
+
+Dear Editor,
+
+I apologize for the confusion. Please find attached the complete collection
+which I hope includes everything now.
+
+On 4/7/2013 10:41 AM, H Joseph Newton wrote:
+> Dear Stas:
+>
+>    I still need the article (see below)
+>
+> Joe
+>
+> -----Original Message-----
+> From: H Joseph Newton [mailto:jnewton@stat.tamu.edu]
+> Sent: Sunday, February 10, 2013 9:20 AM
+> To: Kolenikov, Stanislav
+> Cc: jnewton@stat.tamu.edu; 'Lisa M. Gilmore'; jholle@science.tamu.edu
+> Subject: FW: new submission: weight calibration aka raking
+>
+> Hi Stas:
+>
+>    I cannot find the actual article. Ipfraking.pdf is a pdf of the
+> sthlp file.
+>
+> Joe
+>
+>
+> -----Original Message-----
+> From: Stephanie White [mailto:swhite@stata.com]
+> Sent: Monday, January 28, 2013 11:29 AM
+> To: Nicholas J. Cox; H. Joseph Newton
+> Subject: new submission: weight calibration aka raking
+>
+> From: Stas Kolenikov <kolenikovs@missouri.edu>
+> Date: Fri, 25 Jan 2013 15:26:56 -0600
+> To: editors@stata-journal.com
+> Subject: new submission: weight calibration aka raking
+>
+>
+> Dear editors,
+>
+> please find attached submission to SJ tentatively titled "Calibrating
+> survey data using iterative proportional fitting (raking)". (As Joe
+> might remember, we decided a couple of months back that I won't be
+> reviewing a submission on a similar topic as I have some work brewing
+> on it; so here's that work.) I can suggest the following reviewers (no
+> particular conflict of interest, although they all personally know me;
+> the world of Stata users highly qualified in survey statistics is not
+> that huge, and we've been reviewing each others' work in the survey
+statistics journals, anyway):
+>
+> Frauke Kreuter, Univ of Maryland
+> Brady West, Univ of Michigan
+> Steve Heeringa, Univ of Michigan
+> Steve Samuels, consultant
+>
+> It won't hurt if Jeff Pitblado could look over these files, just in case.
+>
+> I fiddled a little bit with the main.tex style file, so I have
+> attached that, as well. I did not bother putting \cnp formatting for
+> the time being, as changes are naturally expected.
+>
+> Finally, I did some debugging and feature modifications to the earlier
+> bsweights package, so I am attaching these files, as well, as I use
+> -bsweights- in one of the examples.
+>
+> Please let me know whether the ipfraking-examples.do file runs OK. You
+> can also discover an undocumented -ipfraking, selfcheck- option that
+> is also worth trying out.
+>
+> --
+> --
+>     .. Stas Kolenikov, Adjunct Assistant Professor
+>     .. Department of Statistics, University of Missouri
+>     .. http://web.missouri.edu/~kolenikovs/     +1 (573) 882-1577
+>
+>
+
+--
+--
+  .. Stas Kolenikov, Adjunct Assistant Professor
+  .. Department of Statistics, University of Missouri
+  .. http://web.missouri.edu/~kolenikovs/
+
+
+
+
+--
+Brady T. West
+Research Assistant Professor
+Survey Methodology Program (SMP)
+Survey Research Center (SRC)
+Institute for Social Research (ISR)
+University of Michigan-Ann Arbor
+Email: bwest@umich.edu
+Voice (SMP): 734-647-4615
+Voice (CSCAR): 734-764-5286
+Web: www.umich.edu/~bwest
+Remember: Data R as data .do!

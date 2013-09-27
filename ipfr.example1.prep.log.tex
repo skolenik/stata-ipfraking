@@ -1,0 +1,65 @@
+. webuse nhanes2, clear
+{\smallskip}
+. generate byte _one = 1
+{\smallskip}
+.
+. svy : total _one , over( sex, nolabel )
+(running total on estimation sample)
+{\smallskip}
+Survey: Total estimation
+{\smallskip}
+Number of strata =      31       Number of obs    =      10351
+Number of PSUs   =      62       Population size  =  117157513
+                                 Design df        =         31
+{\smallskip}
+            1: sex = 1
+            2: sex = 2
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{48}
+             {\VBAR}             Linearized
+        Over {\VBAR}      Total   Std. Err.     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{48}
+_one         {\VBAR}
+           1 {\VBAR}   5.62e+07    1377465      5.34e+07    5.90e+07
+           2 {\VBAR}   6.10e+07    1396159      5.82e+07    6.38e+07
+\HLI{13}{\BOTT}\HLI{48}
+{\smallskip}
+. matrix NHANES2_sex = e(b)
+{\smallskip}
+. matrix rownames NHANES2_sex = sex
+{\smallskip}
+.
+\cnp
+. svy : total _one , over( race, nolabel )
+(running total on estimation sample)
+{\smallskip}
+Survey: Total estimation
+{\smallskip}
+Number of strata =      31       Number of obs    =      10351
+Number of PSUs   =      62       Population size  =  117157513
+                                 Design df        =         31
+{\smallskip}
+            1: race = 1
+            2: race = 2
+            3: race = 3
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{48}
+             {\VBAR}             Linearized
+        Over {\VBAR}      Total   Std. Err.     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{48}
+_one         {\VBAR}
+           1 {\VBAR}   1.03e+08    2912042      9.71e+07    1.09e+08
+           2 {\VBAR}   1.12e+07    1458814       8213964    1.42e+07
+           3 {\VBAR}    2968728    1252160      414930.1     5522526
+\HLI{13}{\BOTT}\HLI{48}
+{\smallskip}
+. matrix NHANES2_race = e(b)
+{\smallskip}
+. matrix rownames NHANES2_race = race
+{\smallskip}
+.
+. matrix NHANES2_sex[1,1] = NHANES2_sex[1,1]*1.25
+{\smallskip}
+. matrix NHANES2_race[1,1] = NHANES2_race[1,1]*1.4
+{\smallskip}
+.

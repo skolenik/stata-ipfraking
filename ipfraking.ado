@@ -1,4 +1,4 @@
-*! v.1.1.30 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.31 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -82,7 +82,7 @@ program define ipfraking, rclass
 			tempname mreldif`k'var
 			
 			CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') quietly : ///
-				total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)			 
+				total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)			
 			quietly generate double `mreldif`k'var' = r(mreldif) in 1
 			label variable `mreldif`k'var' "`: word `k' of `ctotal''"
 			local traceplot `traceplot' `mreldif`k'var'
@@ -242,6 +242,15 @@ program define ipfraking, rclass
 			replace `exp' = `currweight'
 			char `exp'[maxctrl] `mrdmax'
 			char `exp'[objfcn] `currobj'
+    		char `exp'[converged] `=return(converged)'
+    		if "`meta'" != "" {
+    			forvalues k=1/`nvars' {
+    				char `exp'[`mat`k''] `=return(mreldif`k')'
+    			}
+        		foreach trimpar in trimfrequency trimhiabs trimloabs trimhirel trimlorel {
+        			if "``trimpar''" != "" char `exp'[`trimpar'] ``trimpar''
+        		}
+    		}
 		}
 	}
 	else {
@@ -316,7 +325,7 @@ program define MergeCtotals, rclass
 	return scalar scale = `scale'
 end // of MergeCtotals
 
-program define DiagnoseMataDS 
+program define DiagnoseMataDS
 	args rc currweight allctotals ctrlvarlist_u
 	
 	if `rc'==0 exit
@@ -1160,7 +1169,7 @@ void calibrate( string scalar wgtname, string scalar newwgtname, ///
 	converged = 0
 	
 	// initial value
-	lambda = J(1,p,0) 
+	lambda = J(1,p,0)
 
 	for(k=1;k<=iter;k++) {
 		
@@ -1263,4 +1272,8 @@ exit
 1.1.28	total computation rewritten in terms of a much faster -sum- than -total-
 1.1.29	r(reldif#) matrix is returned
 1.1.30	mat2do allows -append- option
+1.1.31  -meta- better interacts with -replace-
+        Stata Journal R&R is completed
+
+
 */

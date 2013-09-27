@@ -1,0 +1,93 @@
+. webuse nhanes2brr, clear
+{\smallskip}
+. svy : proportion highbp
+(running proportion on estimation sample)
+{\smallskip}
+BRR replications (32)
+\HLI{4}{\PLUS}\HLI{3} 1 \HLI{3}{\PLUS}\HLI{3} 2 \HLI{3}{\PLUS}\HLI{3} 3 \HLI{3}{\PLUS}\HLI{3} 4 \HLI{3}{\PLUS}\HLI{3} 5
+................................
+{\smallskip}
+Survey: Proportion estimation    Number of obs    =      10351
+                                 Population size  =  117157513
+                                 Replications     =         32
+                                 Design df        =         31
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{48}
+             {\VBAR}                 BRR
+             {\VBAR} Proportion   Std. Err.     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{48}
+highbp       {\VBAR}
+           0 {\VBAR}   .8941859   .0067023      .8805165    .9078553
+           1 {\VBAR}   .1058141   .0067023      .0921447    .1194835
+\HLI{13}{\BOTT}\HLI{48}
+{\smallskip}
+. generate byte _one = 1
+{\smallskip}
+. generate byte age_grp = 1 + (age>=40) + (age>=60) if !mi(age)
+{\smallskip}
+. generate sex_age = sex*10 + age_grp
+{\smallskip}
+. ipfraking [pw=finalwgt], gen( rakedwgt2 ) ///
+>     ctotal( ACS2011_sex_age Census2011_region Census2011_race )
+{\smallskip}
+ Iteration 1, max rel difference of raked weights = 14.95826
+ Iteration 2, max rel difference of raked weights = .19495004
+ Iteration 3, max rel difference of raked weights = .02204455
+ Iteration 4, max rel difference of raked weights = .00315355
+ Iteration 5, max rel difference of raked weights = .00043857
+ Iteration 6, max rel difference of raked weights = .00006061
+ Iteration 7, max rel difference of raked weights = 8.365e-06
+ Iteration 8, max rel difference of raked weights = 1.154e-06
+ Iteration 9, max rel difference of raked weights = 1.593e-07
+{\smallskip}
+\cnp
+   Summary of the weight changes
+{\smallskip}
+              {\VBAR}    Mean    Std. dev.    Min        Max       CV
+\HLI{14}{\PLUS}\HLI{50}
+Orig weights  {\VBAR}    11318       7304      2000       79634   .6453
+Raked weights {\VBAR}    22055      19227      4050      338675   .8717
+Adjust factor {\VBAR}   2.1464               0.9264     18.3694
+{\smallskip}
+. forvalues k=1/32 {\lbr}
+  2.     quietly ipfraking [pw=brr_`k'], gen( brrc_`k' ) nograph ///
+>         ctotal( ACS2011_sex_age Census2011_region Census2011_race )
+  3.     _dots `k' 0
+  4. {\rbr}
+................................
+. svyset [pw=rakedwgt2], vce(brr) brrw( brrc* ) dof( 31 )
+{\smallskip}
+      pweight: rakedwgt2
+          VCE: brr
+          MSE: off
+    brrweight: brrc_1 brrc_2 brrc_3 brrc_4 brrc_5 brrc_6 brrc_7 brrc_8 brrc_9
+               brrc_10 brrc_11 brrc_12 brrc_13 brrc_14 brrc_15 brrc_16
+               brrc_17 brrc_18 brrc_19 brrc_20 brrc_21 brrc_22 brrc_23
+               brrc_24 brrc_25 brrc_26 brrc_27 brrc_28 brrc_29 brrc_30
+               brrc_31 brrc_32
+    Design df: 31
+  Single unit: missing
+     Strata 1: <one>
+         SU 1: <observations>
+        FPC 1: <zero>
+{\smallskip}
+. svy : proportion highbp
+(running proportion on estimation sample)
+{\smallskip}
+BRR replications (32)
+\HLI{4}{\PLUS}\HLI{3} 1 \HLI{3}{\PLUS}\HLI{3} 2 \HLI{3}{\PLUS}\HLI{3} 3 \HLI{3}{\PLUS}\HLI{3} 4 \HLI{3}{\PLUS}\HLI{3} 5
+................................
+{\smallskip}
+Survey: Proportion estimation    Number of obs    =      10351
+                                 Population size  =  228294169
+                                 Replications     =         32
+                                 Design df        =         31
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{48}
+             {\VBAR}                 BRR
+             {\VBAR} Proportion   Std. Err.     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{48}
+highbp       {\VBAR}
+           0 {\VBAR}   .8730544   .0081501      .8564323    .8896766
+           1 {\VBAR}   .1269456   .0081501      .1103234    .1435677
+\HLI{13}{\BOTT}\HLI{48}

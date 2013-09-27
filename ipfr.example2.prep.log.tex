@@ -1,0 +1,4 @@
+. generate byte age_grp = 1 + (age>=40) + (age>=60) if !mi(age)
+{\smallskip}
+. generate sex_age = sex*10 + age_grp
+{\smallskip}

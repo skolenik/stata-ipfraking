@@ -1,0 +1,34 @@
+. sum finalwgt
+{\smallskip}
+    Variable {\VBAR}       Obs        Mean    Std. Dev.       Min        Max
+\HLI{13}{\PLUS}\HLI{56}
+    finalwgt {\VBAR}     10351    11318.47     7304.04       2000      79634
+{\smallskip}
+. ipfraking [pw=finalwgt], gen( rakedwgt4 ) ///
+>     ctotal( ACS2011_sex_age Census2011_region Census2011_race ) ///
+>     trimhiabs(`=2.5*r(max)') trimloabs(`=r(min)') trimhirel(6)
+{\smallskip}
+\cnp
+ Iteration 1, max rel difference of raked weights = 5
+ Iteration 2, max rel difference of raked weights = .25592859
+ Iteration 3, max rel difference of raked weights = .0626759
+ Iteration 4, max rel difference of raked weights = .0158786
+ Iteration 5, max rel difference of raked weights = .00299304
+ Iteration 6, max rel difference of raked weights = .00070812
+ Iteration 7, max rel difference of raked weights = .00016401
+ Iteration 8, max rel difference of raked weights = .00003734
+ Iteration 9, max rel difference of raked weights = 8.434e-06
+ Iteration 10, max rel difference of raked weights = 1.898e-06
+ Iteration 11, max rel difference of raked weights = 4.265e-07
+Warning: the controls ACS2011_sex_age did not match
+Warning: the controls Census2011_region did not match
+Warning: the controls Census2011_race did not match
+{\smallskip}
+   Summary of the weight changes
+{\smallskip}
+              {\VBAR}    Mean    Std. dev.    Min        Max       CV
+\HLI{14}{\PLUS}\HLI{50}
+Orig weights  {\VBAR}    11318       7304      2000       79634   .6453
+Raked weights {\VBAR}    21830      18115      4113      199085   .8298
+Adjust factor {\VBAR}   2.1323               0.8973      6.0000
+{\smallskip}

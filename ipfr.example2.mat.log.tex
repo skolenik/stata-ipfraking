@@ -1,0 +1,40 @@
+. matrix ACS2011_sex_age = ( ///
+>     153267860*0.274, 153267860*0.275, 153267860*0.173, /// males
+>     158324057*0.260, 158324057*0.276, 158324057*0.207  /// females
+> )
+{\smallskip}
+. matrix colnames ACS2011_sex_age = 11 12 13 21 22 23
+{\smallskip}
+. matrix coleq    ACS2011_sex_age = _one
+{\smallskip}
+. matrix rownames ACS2011_sex_age = sex_age
+{\smallskip}
+. scalar ACS2011_total_pop = 311591917
+{\smallskip}
+. matrix ACS2011_adult_pop = ACS2011_sex_age * J(colsof(ACS2011_sex_age),1,1)
+{\smallskip}
+\cnp
+. matrix Census2011_region = ///
+>     (55521598, 67158835, 116046736, 72864748 )
+{\smallskip}
+. matrix Census2011_region = Census2011_region * ACS2011_adult_pop / ACS2011_to
+> tal_pop
+{\smallskip}
+. matrix colnames Census2011_region = 1 2 3 4
+{\smallskip}
+. matrix coleq    Census2011_region = _one
+{\smallskip}
+. matrix rownames Census2011_region = region
+{\smallskip}
+. matrix Census2011_race = ///
+>     (243470497, 40750746, 27370674 )
+{\smallskip}
+. matrix Census2011_race = Census2011_race * ACS2011_adult_pop / ACS2011_total_
+> pop
+{\smallskip}
+. matrix colnames Census2011_race = 1 2 3
+{\smallskip}
+. matrix coleq    Census2011_race = _one
+{\smallskip}
+. matrix rownames Census2011_race = race
+{\smallskip}

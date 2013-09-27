@@ -1,0 +1,23 @@
+. ipfraking [pw=finalwgt], gen( rakedwgt3 ) ///
+>     ctotal( ACS2011_sex_age Census2011_region Census2011_race ) ///
+>     trimhiabs( 200000 ) trimloabs( 2000 )
+{\smallskip}
+ Iteration 1, max rel difference of raked weights = 14.95826
+ Iteration 2, max rel difference of raked weights = .21474256
+ Iteration 3, max rel difference of raked weights = .02754514
+ Iteration 4, max rel difference of raked weights = .00511347
+ Iteration 5, max rel difference of raked weights = .00095888
+ Iteration 6, max rel difference of raked weights = .00018036
+ Iteration 7, max rel difference of raked weights = .00003391
+ Iteration 8, max rel difference of raked weights = 6.377e-06
+ Iteration 9, max rel difference of raked weights = 1.199e-06
+ Iteration 10, max rel difference of raked weights = 2.254e-07
+{\smallskip}
+   Summary of the weight changes
+{\smallskip}
+              {\VBAR}    Mean    Std. dev.    Min        Max       CV
+\HLI{14}{\PLUS}\HLI{50} 
+Orig weights  {\VBAR}    11318       7304      2000       79634   .6453
+Raked weights {\VBAR}    22055      18908      4033      200000   .8573
+Adjust factor {\VBAR}   2.1486               0.9220     18.9828
+{\smallskip}
