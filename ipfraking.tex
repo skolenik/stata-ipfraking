@@ -20,11 +20,11 @@ and the suggested workflow is discussed.
 
 \section{Introduction and background}
 
-Large scale social, behavioral and health data are usually collected
-via complex survey designs that involve some or all of stratification,
+Large scale social, behavioral and health data are often collected
+via complex survey designs that may involve some or all of stratification,
 multiple stages of selection and unequal probabilities of selection
 \citep{korn:graubard:1995,korn:graubard:1999}.
-In an ideal setting, varying probabilities of selection can be fully
+In an ideal setting, varying probabilities of selection are
 accounted for by using the Horvitz-Thompson estimator of the totals
 \citep{horvitz:thompson:1952,thompson:1997}, and the remaining
 sampling fluctuations can be further ironed out by
@@ -33,17 +33,23 @@ However, on top of the planned differences in probabilities of obtaining
 a response from a sampled unit, non-response is a practical problem
 that has been growing more acute over the recent years
 \citep{groves:dillman:eltinge:little:2001,pew:2012}.
-In this paper, I shall discuss the specific issue of creating
-survey weights, and, even more specifically, concentrate on
-calibrating survey weights to known control totals, to ensure
+The analysis weights that are provided along with the public use
+microdata by data collecting agencies are designed to account
+for unequal probabilities of selection, non-response, and other factors 
+affecting imbalance between the population and the sample, thus making 
+the analyses conducted on such micordata generalizable to the target population.
+In this paper, I shall discuss the specific issue in the process of creating
+survey weights: 
+calibrating survey weights to known control totals to ensure
 that the resulting weighted data are representative of the population
 of interest.
 
 \subsection{Population totals}
+\label{subsec:totals}
 
 For a given finite population $\mathcal U$ of units indexed $i=1,\ldots,N$,
 the interests of survey statisticians often lie in estimating the
-population total of a variable $y$
+population total of a variable $Y$
 \begin{equation}
    T[Y] = \sum_{i \in \mathcal{U}} Y_i
    \label{eq:total:pop}
@@ -51,7 +57,7 @@ population total of a variable $y$
 (As is customary in sampling texts, the population quantities will be denoted
 with capital letters, and the sample quantities, with lowercase letters.
 The finite population is denoted as $\mathcal{U}$, and the sample drawn from it,
-as $\mathcal{S}$. The indices of units in the population are $i\in \mathcal{U}$, and 
+as $\mathcal{S}$. The indices of units in the population are $i\in \mathcal{U}$, and
 those of units in the sample, $j \in \mathcal{S}$.)
 A lot of other analytical problems can be cast in terms of estimating
 the totals of the existing or auxiliary variables, and then expressing
@@ -67,7 +73,7 @@ $$
 where the denominator is a somewhat unusual total of a variable
 identically equal to 1, i.e., the estimator of the population size
 (if the latter is unknown). The mean for a domain $\mathcal{D}$
-(mean income of females; TV hours of teenagers) is also a ratio of totals,
+(mean income of females; TV hours of teenagers) is also a ratio of totals
 $$
     \bar Y_\mathcal{D} = \frac{T[YZ]}{T[Z]}
 $$
@@ -94,11 +100,11 @@ of the total (\ref{eq:total:pop}) is \citep{horvitz:thompson:1952}
    \equiv \sum_{j \in \mathcal{S}} w_{1j} y_j
    \label{eq:total:sample},
 \end{equation}
-The subindex $1$ stands to indicate that the weights $w_{1i}$ were
+The subindex $1$ indicates that the weights $w_{1i}$ were
 used in obtaining this estimator. Probability weights protect
 the end user from potentially informative sampling designs, in which
-the probabilities of selection are correlated with outcomes,
-and generally design-based methods ensure that inference can be generalized
+the probabilities of selection are correlated with outcomes, and 
+the design-based methods generally ensure that inference can be generalized
 to the finite population even when the statistical models used
 by analysts and researchers are not specified correctly
 \citep{pfeff:1993,binder:roberts:2003}.
@@ -111,8 +117,8 @@ in the frame. Some of that information can be used at the sampling
 stage to inform stratification and clustering. When creating areal
 probability samples of human populations, the survey designers have
 geographic information on the sampled units: from strata
-that can be defined as regions, states, or provinces, and the primary
-sampling units that can be defined as districts, counties, or census tracts;
+that can be defined as regions, states or provinces, and the primary
+sampling units that can be defined as districts, counties or census tracts;
 down to the address of the sampled household. When creating establishment
 survey samples, the frame information that survey statisticians may have
 at their disposal can include the industry classification code(s) and size
@@ -128,9 +134,9 @@ affixed to the data set with \stcmd{svyset} command).
 
 In many situations, however, usable information is not available beforehand,
 and may only appear in the collected data. In the above example with
-areal samples, there may exist census figures on the age and gender
-distribution of the population, but age and gender of the sampled units
-is unknown until the survey measurement is taken on them.
+areal samples, the census totals of the age and gender
+distribution of the population may exist, but age and gender of 
+the sampled units is unknown until the survey measurement is taken on them.
 It is still possible to capitalize on this additional data by
 adjusting the weights in such a way that the reweighted data
 conforms to these known figures. The procedures to perform these
@@ -141,18 +147,18 @@ kott:2006,kott:2009,sarndal:2007}.
 Suppose there are several (categorical) variables, referred to
 as {\it control variables}, that are available for both
 the population and the sample
-(groups of age, gender, race, educational attainment, etc.).
+(age groups, race, gender, educational attainment, etc.).
 The {\it post-stratification} adjustment consists of breaking down
 the population into post-stratification cells defined
 by specific levels of the control variables (i.e., a cell in a multivariate
 contingency table), and adjusting the weights within each cell
-so that they sum up to the known total.
-Thus for the unit $j$ in the (population-level) post-stratification 
+so that the weights sum to the known total.
+Thus for the unit $j$ in the (population-level) post-stratification
 cells $\mathcal{C}_k$, the post-stratified weight is
 \begin{equation}
    w_{2j} = w_{1j} \frac%
         {\sum_{i \in \mathcal{U}} \One[i \in \mathcal{C}_k]}%
-        {\sum_{i \in \mathcal{S}} w_{1i} \One[i \in \mathcal{C}_k]}%
+        {\sum_{l \in \mathcal{S}} w_{1l} \One[l \in \mathcal{C}_k]}%
    \label{eq:ps:weight}
 \end{equation}
 where $\One[\cdot]$ is an indicator function taking the value of one
@@ -176,8 +182,9 @@ the sample cases or the population units. For a sample of size
 $n=1,000$ typical for social science studies or public opinion polls,
 this recommendation translates to cells of size
 $\sum_{j \in \mathcal{S}} \One[i \in \mathcal{C}_k] \le 50$.
-Weight calibration has to proceed
-via an iterative optimization that is aimed at satisfying
+Instead of adjusting every cell of a multi-way table, weight calibration 
+can target adjusting only the margins, or low level interactions,
+via an iterative optimization aimed at satisfying
 the {\it control totals} for the control variables $\mathbf{x}=(x_1, \ldots, x_p)$:
 \begin{equation}
     \sum_{j \in \mathcal{S}} w_{3j} \mathbf{x}_j
@@ -202,13 +209,13 @@ An early algorithm to perform weight calibration is often attributed to
 table to satisfy the known margins in log-linear analysis.
 In applications to the survey weights, the algorithm is described below.
 At a basic level, this algorithm consists of an outer cycle that checks
-convergence criteria, and an inner cycle that iterates between the control 
+convergence criteria, and an inner cycle that iterates over the control
 variables. The multi-index notation of the intermediate weights,
 $w_j^{k,v}$, indicates the weight of unit $j$ computed in the outer cycle $k$
 after post-stratifying with respect the $v$-th variable. Thus $k$ runs from $1$
 to a predefined maximum number of iterations $K$, and $v$ runs from zero
 (indicating the input weight to a given iteration) through $1$ (indicating
-adjustment with respect to the first control variable) to $p$ (indicating 
+adjustment with respect to the first control variable) to $p$ (indicating
 adjustment with respect to the last control variable).
 
 {\it Algorithm 1: basic raking}
@@ -227,7 +234,7 @@ adjustment with respect to the last control variable).
             w_j^{k,v} =
                 \left\{
                 \begin{array}{ll}
-                    w_j^{k,v-1} \dfrac{ T[X_v] }{ \sum_{j \in \mathcal{S}} w_j^{k,v} x_v },
+                    w_j^{k,v-1} \dfrac{ T[X_v] }{ \sum_{l \in \mathcal{S}} w_l^{k,v-1} x_{vl} },
                         & x_{vj} \neq 0 \\
                     w_j^{k,v-1},
                         & x_{vj} = 0
@@ -249,8 +256,8 @@ adjustment with respect to the last control variable).
 
 In practice, control totals are usually expressed as population counts
 or proportions in categories of discrete variables (such as gender,
-race/ethnicity, or education level groups).
-The control variables are then 0/1 variables representing the particular groups
+race/ethnicity or education level groups).
+The control variables are then 0/1 indicators representing the particular groups
 or their low-level interactions.
 Effectively, the algorithm implements post-stratification adjustment
 (\ref{eq:ps:weight}) treating each control variable as the post-stratification
@@ -305,7 +312,7 @@ census regression,
 This variance can be estimated with
 \begin{equation}
     v\bigl\{t_{m}[y]\bigr\} = \sum_{k,l \in \mathcal{S}}
-        \frac{\pi_{kl}-\pi_k \pi_l}{pi_{kl}}
+        \frac{\pi_{kl}-\pi_k \pi_l}{\pi_{kl}}
         \frac{y_k - \mathbf{x}_k ' \mathbf{b}}{\pi_k}
         \frac{y_l - \mathbf{x}_l ' \mathbf{b}}{\pi_l}, m=2,3,
     \label{eq:varest:calibrated}
@@ -326,7 +333,7 @@ versions of the data. First, this estimator utilizes the original design weights
 $w_{1i}=\pi_i^{-1}$. Hence, the publicly released data set must include
 both the calibrated weights and the design weights, which may create
 confusion. Second, the end user
-of the data must be given the set of the calibrating variables, which may
+of the data must be given the set of the control variables, which may
 not be possible if confidential variables were used in calibration. Third,
 this estimator is not necessarily implemented in survey packages
 (a third party package \stcmd{calibest} implements (\ref{eq:varest:calibrated})
@@ -351,12 +358,12 @@ calibrated data usually proceeds along the lines of
 replicate variance estimation methods \citep{shao:1996,kolenikov:2010}.
 
 When the control totals are obtained from another survey,
-the sampling variability of the latter needs to be taken
+the sampling variability of the latter should be taken
 into account \citep{dever:valliant:2010}. For instance,
 to calibrate population surveys conducted in the USA,
 the American Community Survey \citep{acs:2009}
 is often used for demographic variables,
-and the National Health Interview Survey \citep{nhis:2000}, for phone usage.
+and the National Health Interview Survey \citep{nhis:2000} for phone usage.
 These very large scale surveys have sample sizes in the hundreds of thousands.
 For typical surveys with sample sizes in hundreds to low thousands,
 the impact on the standard errors is in the second or the third
@@ -372,21 +379,21 @@ associated with weight calibration. If the survey variable
 $y$ is associated with calibration variables $x_1,\ldots,x_p$,
 in the sense of having a non-trivial $R^2$ in the census regression
 (\ref{eq:census:regression}),
-then the (asymptotic) variance of the calibrated estimator is
+then the calibrated estimator is (asymptotically)
 more efficient than the direct Horvitz-Thompson estimator
 by a factor of $1-R^2$.
 
 Weight calibration can also reduce non-response
-and coverage errors 
+and coverage errors
 \citep{chang:kott:2008,kott:2006,lund:sarn:1999}, which
-feature prominently as some of the most important issues 
+feature prominently as some of the most important issues
 that survey community currently faces \citep{groves:2006}.
 However, for weight calibration to be successful in
 reducing the non-response bias, the control variables
 need to correlated with the response propensity and/or the outcome
 variables \citep{bethlehem:2002,judkins:etal:2007}.
 
-Weight calibration comes with some costs, too. From analytic perspective,
+Weight calibration comes with some costs, too. From an analytic perspective,
 manipulating the weights almost inevitably leads to increase in their
 variation, which in turn leads to increases in the design effects.
 For the unequal probability sample without stratification or clustering,
@@ -431,25 +438,25 @@ for all $j$, $l \le w_{3j}/w_{1j} \le u$ for some ratio limits $l$ and $u$.
 Weight trimming may introduce bias, so the amount of trimming needs to be
 seen as a trade-off between an apparent efficiency improvement
 and latent bias \citep{elliott:2008}.
-See the next section for the syntax diagram, and in particular
-Section \ref{subsubsec:trimming} for specification of
-the trimming options. If not specified otherwise, the default values
-are $U=u=+\infty$, $L=l=0$.
 
 With trimming, the modified algorithm implemented in
 \stcmd{ipfraking} proceeds as follows.
+(See Section \ref{subsec:syntax} for the syntax diagram, and in particular
+Section \ref{subsubsec:trimming} for specification of
+the trimming options. If not specified otherwise, the default values
+are $U=u=+\infty$, $L=l=0$.)
 
 
 {\it Algorithm 2: raking with simultaneous trimming}
 
 \begin{enumerate}
-    \item Initialize the iteration counter $k\leftarrow 0$
-          and the weights as $w_j^{0,p} \leftarrow w_{1j}$.
-    \item Increment the iteration counter $k \leftarrow k+1$,
+    \item Initialize the outer cycle iteration counter $k\leftarrow 0$.
+          Initialize the weights $w_j^{0,p} \leftarrow w_{1j}$.
+          Set $D_0 = \infty$ (This is a notation introduced for consistency 
+          of notation in step  \ref{step:check:weight:conv}.)
+    \item Increment the outer cycle iteration counter $k \leftarrow k+1$,
           update the weights $w_j^{k,0} \leftarrow w_j^{k-1,p}$.
           \label{step:next:cycle}
-    \item If the number of iterations $k$ reaches a prespecified limit $K$,
-          declare non-convergence and exit.
     \item Initialize the inner cycle over control variables: $v \leftarrow 1$
     \item Update the weights using the $v$-th variable
         as the post-stratification variable:
@@ -457,7 +464,7 @@ With trimming, the modified algorithm implemented in
             w_j^{k,v} =
                 \left\{
                 \begin{array}{ll}
-                    w_j^{k,v-1} \dfrac{ T[X_v] }{ \sum_{j \in \mathcal{S}} w_j^{k,v} x_v },
+                    w_j^{k,v-1} \dfrac{ T[X_v] }{ \sum_{l \in \mathcal{S}} w_l^{k,v-1} x_{vl} },
                         & x_{vj} \neq 0 \\
                     w_j^{k,v-1},
                         & x_{vj} = 0
@@ -473,16 +480,15 @@ With trimming, the modified algorithm implemented in
         $$
             w_j^{k,v} \leftarrow \max\bigl( w_j^{k,v}, L, l w_j^{0,p} \bigr)
         $$
-        \label{step:trimfreq:often}
-        \noindent
-        That is, trim the weights that are greater than $U$ in absolute terms and/or 
-        have increased by more than a factor of $u$ from the initial weight; reduce them
-        to the largest allowed value. Likewise, trim the weights that are less than $L$ 
+        That is, trim the weights that are greater than $U$ in absolute terms and/or
+        have increased by more than a factor of $u$ from the initial weight; reduce such weights
+        to the largest allowed value. Likewise, trim the weights that are less than $L$
         in absolute terms and/or have dropped by more than a factor of $l$ from the initial
-        weight; pull them up to the smallest allowed value.
+        weight; increase such weights to the smallest allowed value.
+        \label{step:trimfreq:often}
     \item Increment the internal cycle counter $v \leftarrow v+1$
-    \item If $v \le p$, cycle back to step \ref{step:update:weights},
-        otherwise proceed to the next step.
+    \item If $v \le p$, cycle back to step \ref{step:update:weights}.
+        Otherwise the inner cycle over the control variables is completed; proceed to the next step.
     \item If \stcmd{trimfrequency} option is specified as \stcmd{sometimes},
         perform weight trimming:
         $$
@@ -497,12 +503,17 @@ With trimming, the modified algorithm implemented in
             D_k = \max_{j \in \mathcal{S}}
                 \Bigl| \frac{w_j^{k,p}}{w_j^{k-1,p}} - 1 \Bigr|
         $$
-        is smaller than pre-specified tolerance (\stcmd{tolerance} option),
-        move to the next step. If $D_k > D_{k-1}$, $k>1$, the algorithm
-        may be diverging -- declare non-convergence and exit.
-        Otherwise, cycle back to step
-        \ref{step:next:cycle}.
+        is less than or equal to tolerance $\delta_D$ (given in \stcmd{tolerance} option),
+        declare convergence of weights and go to step \ref{step:trimfreq:once}. 
+        If $D_k > D_{k-1}$, $k>1$, the algorithm
+        may be diverging; stop the outer cycle iterations, issue a non-convergence
+        message and go to step \ref{step:trimfreq:once}. Otherwise
+        (i.e., if $\delta_D < D_k < D_{k-1}$), move to the next step:
+        there is some room for weight improvement.
         \label{step:check:weight:conv}
+    \item If the number of the outer cycle iterations $k$ reaches a prespecified limit $K$,
+          stop the outer cycle iterations and issue a non-convergence message. 
+          Otherwise, cycle back to step \ref{step:next:cycle}.
     \item If \stcmd{trimfrequency} option is specified as \stcmd{once},
         perform weight trimming:
         $$
@@ -515,11 +526,15 @@ With trimming, the modified algorithm implemented in
     \item If discrepancies between the weighted totals
         $\sum_{j \in \mathcal{S}} w_j^{k,p} x_v$
         and the target totals $T[X_v]$ are greater than
-        a prespecified tolerances for all
-        $l=1,\ldots,p$ (\stcmd{ctrltolerance} option),
+        prespecified tolerances $\delta_T$ (\stcmd{ctrltolerance} option),
+        $$
+            \Bigl| \frac{ T[X_v] - \sum_{j \in \mathcal{S}} w_j^{k,p} x_v }%
+                        {T[X_v]+1} \Bigr| > \delta_T
+        $$
+        for at least one $v=1,\ldots,p$,
         issue a warning message (see Section \ref{subsec:tbshooting}).
         \label{step:check:ctotal:conv}
-    \item Exit and return the weights $w_j^{k,p}$ as calibrated weights.
+    \item Return the weights $w_j^{k,p}$ as calibrated weights and exit.
 \end{enumerate}
 
 The algorithm may be exited for three possible reasons: reaching
@@ -535,16 +550,19 @@ outcomes of running \stcmd{ipfraking}:
          \ref{step:check:weight:conv}, and the weighted control totals
          are within tolerances from their targets, as checked in
          step \ref{step:check:ctotal:conv}. The raked weights
-         are most likely safe to use.
+         are most likely safe to use, although additional quality control checks,
+         including computation of the DEFF (\ref{eq:deff:weights}),
+         histograms and tabulations with the main variables of interest 
+         would be recommended.
     \item The weights have converged as checked in step
          \ref{step:check:weight:conv}, but the weighted control totals
-         are off from their targets, as checked in
+         are not sufficiently close to their targets, as checked in
          step \ref{step:check:ctotal:conv}. The raked weights
          should be reviewed, and may not be safe to use.
          This often happens when the trimming options are
          too aggressive, when the data and the control totals
          are incompatible, or when the control totals themselves
-         are poor (e.g., the matrices sum up to different values,
+         are poor (e.g., the matrices sum to different values,
          of which \stcmd{ipfraking} will issue an error message).
     \item The weights have not converged after the pre-specified number
         of iterations, or started diverging. Again, the resulting weights
@@ -562,7 +580,8 @@ that are circulating in Stata community. Nick Winter's \stcmd{survwgt}
 is the most robust and versatile of these, and its \stcmd{survwgt rake}
 subcommand implements the same raking algorithm as the basic algorithm
 of \stcmd{ipfraking}. The functionality of \stcmd{survwgt} also includes
-valuable capabilities to create BRR and jackknife replicate weights
+valuable capabilities to create the balanced repeated replication (BRR) 
+and jackknife replicate weights
 \citep{kolenikov:2010}, as well as non-response cell adjustments.
 One feature that \stcmd{survwgt} does not have is trimming.
 
@@ -576,25 +595,26 @@ Another user-contributed Stata package, \stcmd{maxentropy}
 Newton-Raphson optimization with analytical second derivatives,
 and is much faster than \stcmd{ipfraking} described here.
 
-Compared to these packages, I developed \stcmd{ipfraking} to work in
+Compared to these packages, \stcmd{ipfraking} was developed to work in
 the weight production environment of a survey company. To be an effective tool,
 the weight calibration procedure should not only produce the correct figures,
 but also provide extensive diagnostics and robustness checks that can potentially
 be analyzed later in semi-automated fashion, and be robust and fail softly with
 incorrectly specified inputs. For instance, all of the above packages rely on the user
 to match the variables and their targets, and some are relatively fragile numerically
-when the initial weights generate totals that are far off their targets. 
-In \stcmd{ipfraking}, as you will shortly see, this match is achieved through metadata 
-(variable names and values) stored in Stata matrices, as the necessary
-variables and their categories are picked up by \stcmd{ipfraking} from the targets. 
-Thus the number of necessary inputs, and hence the likelihood of the user error 
+when the initial weights generate totals that are far off their targets.
+In \stcmd{ipfraking}, as you will shortly see, the match between variables 
+and their targets is implemented internally through metadata
+(variable names and values) stored in Stata target matrices, as the necessary
+variables and their categories are picked up by \stcmd{ipfraking} from the targets.
+Thus the number of necessary inputs, and hence the likelihood of the user error
 (through incorrect ordering of variables and their categories) is reduced.
 The targets, in turn, can be easily obtained from the calibration data sets
 such as American Community Survey. Also, \stcmd{ipfraking} defines convergence in
 terms of values of weights rather than the target discrepancies as done in other
 packages. It thus allows the possibility of the raking procedure converging
-in computational sense (weights stop changing from one iteration to the next), 
-and then diagnoses the statistical convergence, i.e., whether the targets 
+in computational sense (weights stop changing from one iteration to the next),
+and then diagnoses the statistical convergence, i.e., whether the targets
 are being satisfied.
 
 Besides the internal convergence diagnostics, the weights produced by \stcmd{ipfraking}
@@ -605,6 +625,7 @@ within numerical accuracy.
 \section{Package description}
 
 \subsection{Syntax}
+\label{subsec:syntax}
 
 \begin{stsyntax}
 ipfraking
@@ -612,7 +633,7 @@ ipfraking
 \optin\
 \optweight\
 ,
-\underbar{ctot}al({\it matname} [{\it matname \ldots}]
+\underbar{ctot}al({\it matname} [{\it matname \ldots}])
 \optional{
 \underbar{gen}erate(\newvarname)
 replace
@@ -622,22 +643,23 @@ double
 \underbar{ctrltol}erance(\num)
 trace
 \underbar{nodiv}ergence
-trimhirel(\num)
 trimhiabs(\num)
-trimlorel(\num)
+trimhirel(\num)
 trimloabs(\num)
+trimlorel(\num)
 trimfrequency(once|sometimes|often)
+double
 meta
 nograph
 }
 \end{stsyntax}
 
 \hangpara
-Note that \stcmd{[pw=\varname]} is required, and must contain the initial weights.
+Note that the weight statement \stcmd{[pw=\varname]} is required, and must contain the initial weights.
 
 \subsection{Options}
 
-\subsubsection{Essential options}
+\subsubsection{Required options}
 
 \hangpara
 \stcmd{\underbar{ctot}al(}{\it matname} \LB{\it matname \ldots}\RB\stcmd{)}
@@ -665,10 +687,9 @@ contains the name of the new variable to contain the raked weights.
 \stcmd{replace} indicates that the weight variable supplied in the
 \stcmd{[pw=\varname]} expression should be overwritten with the new weights.
 
-\morehang
-One of \stcmd{generate()} or \stcmd{replace} must be specified.
+One and only one of \stcmd{generate()} or \stcmd{replace} must be specified.
 
-\subsubsection{Convergence}
+\subsubsection{Options to control convergence}
 
 \begin{sttech}
 Convergence in \stcmd{ipfraking} is defined in terms of the maximum relative
@@ -681,6 +702,7 @@ When $D_k$ is small, $D_k < \delta_D$, it means that the weights stop
 changing between iterations, i.e., the algorithm came to its steady state.
 On the other hand, if $D_k > D_{k-1}$, it means that the algorithm
 may start diverging, at which point it might be reasonable to terminate it.
+See step \ref{step:check:weight:conv} of Algorithm 2 in Section \ref{subsec:trimming}.
 
 Once the algorithm terminates, it also checks whether the control totals
 are satisfied. Specifically, for each of the control total matrices
@@ -695,8 +717,11 @@ $$
 {\rm mreldif}(A,B) = \max_{ij} \frac{|a_{ij}-b_{ij}|}{1+|b_{ij}|}
 $$
 as defined in \dref{functions}. A control relation is satisfied
-if $m_c < \delta_M$; otherwise, a warning is issued.
+if $m_c < \delta_T$; otherwise, a warning is issued.
+See step \ref{step:check:ctotal:conv} of Algorithm 2 in Section \ref{subsec:trimming}.
 
+Iterations continue until either $k = K$, a specified number of iterations; 
+$D_k < \delta_D$; or $D_k > D_{k-1}$.
 \end{sttech}
 
 \hangpara
@@ -705,84 +730,86 @@ criterion, i.e., $\delta_D$. The default is $\delta_D = 10^{-6}$.
 
 \hangpara
 \stcmd{\underbar{iter}ate(\num)} specifies the maximum number
-of iterations $K$.
-The default is \stcmd{iterate(2000)}.
-
-\morehang
-Iterations continue until either $k \ge K$, $D_k < \delta_D$ or
-$D_k > D_{k-1}$.
-
-\hangpara
-\stcmd{\underbar{ctrltol}erance(\num)} defines the criterion $\delta_M$ to
-assess the accuracy of the control totals. It does not impact
-iterations; it only serves as the final quality control check
-after the algorithm terminates as defined above. The default value is $10^{-6}$.
-
-\hangpara
-\stcmd{trace} request a trace plot to be added. See
-Section \ref{subsec:example:trace}.
+of iterations $K$. The default is $K=2000$.
 
 \hangpara
 \stcmd{\underbar{nodiv}ergence} overrides the check
 that $D_k > D_{k-1}$, i.e., ignores this termination condition.
 
-\subsubsection{Trimming}
-\label{subsubsec:trimming}
+\hangpara
+\stcmd{\underbar{ctrltol}erance(\num)} defines the criterion $\delta_T$ to
+assess the accuracy of the control totals. It does not impact
+iterations or convergence criteria; it only serves as the final quality control check
+after the algorithm terminates as defined above. The default value is $\delta_T=10^{-6}$.
 
 \hangpara
-\stcmd{trimhirel(\num)} specifies the upper bound $u$ on the adjustment
-    factor over the baseline weight. The weights
-    that exceeds the baseline times this value will be trimmed down,
-    so that $w_{3j} \le u w_{1j}$ for any $j\in\mathcal{S}$.
+\stcmd{trace} requests a trace plot to be added. See
+Section \ref{subsec:example:trace}.
+
+\subsubsection{Trimming options}
+\label{subsubsec:trimming}
 
 \hangpara
 \stcmd{trimhiabs(\num)} specifies the upper bound $U$ on the greatest
     value of the raked weights.  The weights that
     exceed this value will be trimmed down, so that
-    $w_{3j} \le U$ for any $j\in\mathcal{S}$.
+    $w_{3j} \le U$ for every $j\in\mathcal{S}$.
+
+\hangpara
+\stcmd{trimhirel(\num)} specifies the upper bound $u$ on the adjustment
+    factor over the baseline weight. The weights
+    that exceed the baseline times this value will be trimmed down,
+    so that $w_{3j} \le u w_{1j}$ for every $j\in\mathcal{S}$.
+
+\hangpara
+\stcmd{trimloabs(\num)} specifies the lower bound $L$ on the smallest value
+    of the raked weights.  The weights that are smaller than this value will
+    be increased, so that $w_{3j} \ge L$ for every $j\in\mathcal{S}$.
 
 \hangpara
 \stcmd{trimlorel(\num)} specifies the lower bound $l$ on the adjustment factor
     over the baseline weight.  The weights that are smaller than the baseline
     times this value will be increased, so that
-    $w_{3j} \ge l w_{1j}$ for any $j\in\mathcal{S}$.
-
-\hangpara
-\stcmd{trimloabs(\num)} specifies the lower bound $L$ on the smallest value
-    of the raked weights.  The weights that are smaller than this value will
-    be increased to this value, so that
-    $w_{3j} \ge L$ for any $j\in\mathcal{S}$.
+    $w_{3j} \ge l w_{1j}$ for every $j\in\mathcal{S}$.
 
 \hangpara
 \stcmd{trimfreqency({\it keyword})} specifies when the trimming operations
     are to be performed. The following keywords are recognized:
 
-\morehang \stcmd{often} means that the trimming operations will be performed
-    after each marginal adjustment, i.e., within each iteration of the inner 
+\morehang \stcmd{often} means that trimming will be performed
+    after each marginal adjustment, i.e., within each iteration of the inner
     cycle inside Step \ref{step:trimfreq:often} of Algorithm 2.
 
-\morehang \stcmd{sometimes} means that the trimming operations will be performed
+\morehang \stcmd{sometimes} means that trimming will be performed
     after a full set of variables has been used for post-stratification, i.e.,
-    in the end of each outer cycle iteration at step \ref{step:trimfreq:sometimes} of
-    Algorithm 2.
+    at the end of each outer cycle iteration at step \ref{step:trimfreq:sometimes} of
+    Algorithm 2. This is the default behavior if any of the numeric trimming
+    options above are specified.
 
 \morehang \stcmd{once}
-    means that the trimming operation will be performed after the algorithm terminates
+    means that trimming will be performed after the outer loop converges
     at step \ref{step:trimfreq:once} of Algorithm 2.
 
-See Section \ref{subsec:example:trimming}.
+The numeric trimming options \stcmd{trimhiabs(\num)}, \stcmd{trimhirel(\num)}, 
+\stcmd{trimloabs(\num)}, \stcmd{trimlorel(\num)} can be specified in any combination,
+or entirely omitted to produce untrimmed weights. By default, there is no trimming.
+See Section \ref{subsec:example:trimming} for examples.
 
-\subsubsection{Miscellaneous}
+\subsubsection{Miscellaneous options}
 
 \hangpara
 \stcmd{double} specifies that the new variable named in \stcmd{generate()}
 option should be generated as double type. See \dref{data types}.
 
-
 \hangpara
 \stcmd{meta} puts the name(s) of the control vectors and the achieved control
     accuracies $m_c$ as characteristics stored with the variable specified in
     \stcmd{generate()} option. See Section \ref{subsec:example:meta}.
+
+\hangpara
+\stcmd{nograph} omits the histogram of the calibrated weights, which can be
+used to speed up \stcmd{ipfraking} once the diagnostics on the weights 
+are completed (e.g., in replicate weight production).
 
 \subsection{Utility programs}
 
@@ -845,8 +872,8 @@ The name of the Excel file, the range of cells and the name of
 the sheet to take the values from are required, and specified in the same
 way as in \stcmd{import excel} (see \dref{import excel}).
 Mathematically speaking, \stcmd{xls2row} performs a
-vec-transformation of the matrix, i.e., stores the result by columns.
-The \stcmd{matrix rowname} of the resulting
+vec-transformation of the matrix read from an Excel sheet, i.e., stores the result by columns.
+The \stcmd{matrix coleq} of the resulting
     matrix is the convention name \stcmd{\_one}.
 
 To optimize the performance, note that \stcmd{xls2row} relies on
@@ -856,20 +883,23 @@ would otherwise be written to disk and restored back a number of times.
 
 
 \hangpara
-      \stcmd{cellrange()} specifies the range of cells in an Excel file, e.g., B2:D15.
+    \stcmd{cellrange()} specifies the range of cells in an Excel file, e.g., B2:D15.
 
 \hangpara
     \stcmd{sheet()} specifies the name of the sheet in Excel file to take values from.
 
 \hangpara
     \stcmd{over(\varname)} is the variable corresponding to the control total being
-    imported from Excel. The columns of the resulting row vector with the
-    labeled with the values of \varname, and \varname itself will appear
-    as the \stcmd{matrix rowname}.
+    imported from Excel. The columns of the resulting row vector {\it matrix\_name} will the
+    labeled with the values of \varname (i.e., as the \stcmd{matrix colname} 
+    of the matrix {\it matrix\_name}), and \varname\ itself will appear
+    as the \stcmd{matrix rowname} of the matrix {\it matrix\_name}. If the number
+    of categories of \varname\ does not match the number of non-missing imported
+    values, an error message will be issued, and the target matrix will not be created.
 
 \hangpara
     \stcmd{scale(\num)} optionally scales the entries of
-    the resulting row vector so that they sum up to the specified value.
+    the resulting row vector so that they sum to the specified value.
 
 
 
@@ -882,9 +912,10 @@ would otherwise be written to disk and restored back a number of times.
 \label{subsec:basic}
 
 In this very simple example, I shall demonstrate the basic mechanics of
-\stcmd{ipfraking}, its input requirements and output. Do not take the numbers
-very seriously, but pay attention to what the inputs look like, and what
-messages may be produced by \stcmd{ipfraking}.
+\stcmd{ipfraking}, its input requirements and output. 
+These examples are intended to only demonstrate the syntax 
+and the output of \stcmd{ipfraking}, and may or may not provide
+substantively meaningful results.
 
 
 \begin{stexample}[Example 1]
@@ -907,16 +938,17 @@ raking procedure.
 
 These input matrices are organized as follows. Input matrices always
 have a single row, just as estimation results \stcmd{e(b)} do. The column
-names follow the naming conventions that \stcmd{e(b)} impose, namely,
-the name of the variable for which the total is being computed 
+names follow the naming conventions of \stcmd{e(b)}, namely,
+the name of the variable for which the total is being computed
 (here, \stcmd{\_one}) and the numeric categories of the variable that
 was used in the \stcmd{over} option (here, \stcmd{sex}, with values 1 for males
 and 2 for females; and \stcmd{race}, with values 1 for whites, 2 for blacks,
-and 3 for other). Since that variable is not stored in the e(b) per se,
+and 3 for other). These values must be in an increasing order.
+Since that variable is not stored in the e(b) per se,
 it needs to be added to this matrix, which is done in the form of the row name.
 The entries of the matrix are the totals that the weights in the categories
 of the control variables need to sum up to. In this example, they are scaled
-to be the population totals. Alternatively, these can be made to sum up to the 
+to be the population totals. Alternatively, these can be made to sum up to the
 sample size, as is done sometimes in public opinion research, or to 1, which
 is what \stcmd{proportion} estimation command would produce.
 
@@ -930,7 +962,7 @@ is computed with \stcmd{over( \ldots, nolabel)} suboption to suppress
 the otherwise informative labeling of the categories;
 \stcmd{ipfraking} expects the numeric values of the categories
 as column names (see \pref{matrix rownames}).
-The name of the matrix itself is immaterial, but I believe it is
+The name of the matrix itself is immaterial, but it is
 a good programming practice
 to have informative names \citep{mcconnell:2004}. Thus the names
 of the matrices in the examples generally follow the convention
@@ -946,7 +978,7 @@ In this simple case with just two control variables
 and the control totals that are not very different from the
 existing sample totals, the procedure converged very quickly
 in three iterations. A diagnostic message was produced upfront
-by \stcmd{ipfraking} informing in apparent differences in
+by \stcmd{ipfraking} informing about apparent differences in
 total population counts as obtained from the different
 control total matrices. As a result, the control totals
 for the variable that was adjusted first (\stcmd{sex})
@@ -963,7 +995,9 @@ the coefficient of variation went up from 0.645 to 0.672.
 The graphic output produced by \stcmd{ipfraking} is shown on
 Figure \ref{fig:example1}. Generally, we would want to inspect these
 graphs to see if there any unexpected patterns, such as highly outlying values,
-gaps in the distribution, or concentration near the limits of the
+gaps in the distribution (here, there are only six distinct values of the 
+adjustment factor corresponding to the $2\times3$ combinations of the control
+variables) or concentration near the limits of the
 weight range (as is typical for trimmed weights, see below in section
 \ref{subsec:example:trimming}). Also, these graphs
 may inform later trimming decisions: the trimming limits can be
@@ -995,12 +1029,17 @@ from the US Census Bureau website. Using the tables
 S0101 from the 2011 American Community Survey 1-year estimates
 and NST-EST2011 from the US Census Bureau population projections,
 the latest available at the time of writing this paper,
-the following figures can be obtained.
+the figures displayed in Table \ref{tab:example2} can be obtained.
 
-\begin{tabular}{lc}
+\begin{table}
+\caption{Control totals for the 2011 US population.\label{tab:example2}}
+
+\centering
+
+\begin{tabular}{p{5cm}l}
     Group & Population \\
     \hline
-    \multicolumn{2}{c}{ACS 2011 1-year estimates, Table S0101} \\
+    \multicolumn{2}{c}{~~ACS 2011 1-year estimates, Table S0101~~} \\
     Male, total & 153,267,860 \\
     Ages 20--39 & 27.4\% \\
     Ages 40--59 & 27.5\% \\
@@ -1009,18 +1048,19 @@ the following figures can be obtained.
     Ages 20--39 & 26.0\% \\
     Ages 40--59 & 27.6\% \\
     Ages 60+    & 20.7\% \\
-    \multicolumn{2}{c}{US Census Bureau 2011 projections, Table NST-EST2011-01} \\
+    \multicolumn{2}{c}{~~US Census Bureau 2011 projections, Table NST-EST2011-01~~} \\
     Northeast & 55,521,598 \\
     Midwest   & 67,158,835 \\
     South     & 116,046,736 \\
     West      & 72,864,748 \\
-    \multicolumn{2}{c}{US Census Bureau 2011 projections, Table NC-EST2011-03} \\
+    \multicolumn{2}{c}{~~US Census Bureau 2011 projections, Table NC-EST2011-03~~} \\
     White     & 243,470,497 \\
     Black     & 40,750,746 \\
     Other     & 27,370,674 \\
     \hline
     Total     & 311,591,917
 \end{tabular}
+\end{table}
 
 Thus, we have information in the two-way age by sex table, as well
 as two additional margins. We shall need an additional sex-by-age group variable,
@@ -1048,6 +1088,7 @@ from the U.S.\ Census Bureau website.)
 
 Let us check the matrix entries and labels once again before
 producing the weights.
+Note that the values of the control variable categories are given in an increasing order.
 
 \begin{stlog}
 \input{ipfr.example2.list.log.tex}\nullskip
@@ -1081,7 +1122,7 @@ and we shall address them in the next section with trimming.
 As discussed in Section \ref{subsec:trimming} above, if variability of the weights
 becomes excessive, the weights can be trimmed by restricting the extremes.
 Using \stcmd{ipfraking} options, upper and/or lower limits can be defined
-for either the absolute values of the weights, or the relative changes from
+for either the absolute values of the weights or the relative changes from
 the base weights. The frequency of the trimming operations can also be controlled.
 Trimming can be applied once to the final data (\stcmd{trimfreq(once)})
 at step \ref{step:trimfreq:once} of Algorithm 2.
@@ -1098,7 +1139,7 @@ of the histogram reveals a somewhat greater concentration of the raked weights
 around the value of 160,000, and sparse bars beyond 200,000. This latter number
 will be used as the top cut-off point for trimming, and is provided as an input
 to \stcmd{ipfraking} via option \stcmd{trimhiabs}. Also, I specified the absolute
-lower bound of 2,000, which is the minimum of the original weights, but, 
+lower bound of 2,000, which is the minimum of the original weights, but,
 as the output in the previous example suggested, the calibrated weights tend to run
 above 4,000, so specifying the lower limit as \stcmd{trimloabs(2000)} may not really
 affect the calibration procedure.
@@ -1113,13 +1154,15 @@ that the weights were capped at 200,000, as requested.
 
 Setting the absolute limits on the range of the raked weights is often
 very subjective. A somewhat better plan might be to set limits in terms
-of the range of the base weights, as shown in the next example. The relative
-change in the weights is also bounded with \stcmd{trimhirel()} option.
+of the range of the adjustment factors, as shown in the next example. The relative
+change in the weights can be bounded with \stcmd{trimlorel()} and \stcmd{trimhirel()} 
+options.
 I also demonstrate here how to use the results of \stcmd{summarize} to feed
 into \stcmd{ipfraking}. While ensuring that accurate numbers are being carried
-over in the context of the code, simply running the single line with the sole
-\stcmd{ipfraking} command that refers to the \stcmd{r()} return values 
-may not produce the desired result if \stcmd{summarize} was not the 
+over in the context of the code, the approach is fragile for interactive 
+work: simply running the single line with the sole
+\stcmd{ipfraking} command that refers to the \stcmd{r()} return values
+may break down if \stcmd{summarize} was not the
 immediately preceding command.
 
 \begin{stlog}
@@ -1129,10 +1172,10 @@ immediately preceding command.
 \end{stexample}
 
 Setting the trimming options too aggressively may lead to adverse
-consequences. First, it may bias the estimates, as discussed in Section 
+consequences. First, it may bias the estimates, as discussed in Section
 \ref{subsec:pro:con}.
 Second, as this example demonstrates, it can impede (statistical) convergence:
-the output contains multiple warning about targets not being achieved
+the output contains multiple warnings about targets not being achieved
 within desired accuracy, while no problems were encountered without trimming.
 
 \subsection{Tracking convergence}
@@ -1151,18 +1194,29 @@ re-run the raking procedure.
 \input{ipfr.example4.sometimes.log.tex}\nullskip
 \end{stlog}
 
-The option \stcmd{trace} requests that trace plots are added to
+The option \stcmd{trace} requests that trace plots be added to
 the diagnostic plots, as shown on Figure \ref{fig:example4:sometimes}.
 The trace plots are presented on the absolute scale and on the log scale.
 The exponentially declining discrepancy appears to be a general phenomenon.
-In other words, convergence to the control totals roughly follows
-the rate of $\rm{const} \times \alpha^K$ for some $\alpha<1$, where $K$ is
-the number of iterations. When convergence is very slow, or the sample
+In other words, after the first few iterations, 
+discrepancy between the currently weighted totals to the control totals roughly follows
+the rate of $\rm{const} \times \alpha^k$ for some $\alpha<1$, where $k$ is
+the (outer cycle) iteration number. When convergence is very slow or the sample
 size is very large, this rule may be helpful in determining the number
 of iterations necessary to achieve the required accuracy, and hence
-the expected computing time.
+the expected computing time. Zero cross-cells and collinearity between 
+the control variables may make the convergence factor $\alpha$ close to 1 thus 
+hampering convergence. This happens when the control variables have 
+very similar meaning, such as age and grade of children: it is impossible
+to have children of age 8 in grade 10.
+Also, sets of interactions of categorical variables, such as interactions 
+of age group and education along with age group and race, are guaranteed to 
+produce zero cells in the cross-tabulation: it is impossible to have 
+any observations in the cells defined say by 
+(age under 40 interacted with higher education) on one margin against
+(age above 60 interacted with white race) on the other.
 
-\begin{figure}[h!]
+\begin{figure}[!th]
 \begin{center}
 \epsfig{file=ipfraking_example4_sometimes}
 \end{center}
@@ -1214,7 +1268,8 @@ The following characteristics are stored with the newly created weight variable
     \stcmd{trimfrequency} & \\
     \stcmd{maxctrl} & the greatest \stcmd{mreldif} between the targets \\
                     & and the achieved weighted totals \\
-    \stcmd{objfcn}  & the value of the objective function at exit \\
+    \stcmd{objfcn}  & the value of the relative weight change $D_k$ (\ref{eq:conv:ratio:weights}) 
+                    at exit \\
     \stcmd{converged} & whether \stcmd{ipfraking} exited due to convergence (1) \\
                     & vs. due to an increase in the objective function \\
                     & or reaching the limit on the number of iterations (0)
@@ -1230,8 +1285,7 @@ As discussed in Section \ref{subsec:variance}, one of the greater challenges
 of weight calibration is ensuring that variance estimates take into account
 the greater precision achieved by adjusting the sample towards the fixed
 population quantities. As estimating the variances using linearization
-is cumbersome, replicate variance estimation provides a more attractive
-alternative.
+is cumbersome, replicate variance estimation may be more attractive.
 
 \begin{stexample}[Example 6]
 
@@ -1239,7 +1293,7 @@ The simplest code for calibrated replicate weights is obtained by calling
 \stcmd{ipfraking} from within \stcmd{bsweights} \citep{kolenikov:2010}
 which can pass the name of a replicate weight variable to an arbitrary
 calibration routine. In this example, we shall use the same settings
-as in section \ref{subsec:acs}, and thus we shall have the calibrated weight
+as in Section \ref{subsec:acs} and thus we shall have the calibrated weight
 \stcmd{rakedwgt2} which was produced in that example as the main weight
 for which the bootstrap weights provide the measure of sampling variability.
 
@@ -1251,15 +1305,16 @@ The options of \stcmd{bsweights} request 310 replicate weights
 (a multiple of 31 strata), resample one less PSU than available in
 a given stratum, and obtain the first-order balance within a stratum.
 With the 2 PSU/stratum design and these options, \stcmd{bsweights}
-produces random half-samples of data.
+produces random half-samples of data. The at-character \stcmd{@} is a placeholder
+for the name of the replicate weight variable.
 For explanations of these and other options of \stcmd{bsweights},
 see \citet{kolenikov:2010}. The procedure took about 3 minutes
 on a laptop computer, which can be considered moderately
 computationally intensive beyond interactive.
 A new option of \stcmd{ipfraking} in the above code is
 \stcmd{nograph} that suppresses the histograms.
-The additional asserts \citep{gould:2003:tip3} following the bootstrap 
-weight generation demonstrate how the minimal quality assurance 
+The additional asserts \citep{gould:2003:tip3} following the bootstrap
+weight generation demonstrate how the minimal quality assurance
 can be done on the bootstrap weights in the weight production workflow.
 
 
@@ -1273,7 +1328,7 @@ variables:
 
 The data can be analyzed with the standard \stcmd{svy} prefix,
 and the standard errors will appropriately capture the efficiency
-gains from weight calibration. No additional action is required 
+gains from weight calibration. No additional action is required
 for the analyst or researcher.
 
 \end{stexample}
@@ -1285,6 +1340,8 @@ and are used above for demonstration purposes only.
 
 \section{Error messages and troubleshooting}
 \label{subsec:tbshooting}
+
+\subsection{Critical errors}
 
 The following critical errors will stop execution of
 \stcmd{ipfraking}.
@@ -1327,12 +1384,12 @@ The following critical errors will stop execution of
 
     \morehang
     For whatever reason, \stcmd{ipfraking} could not process this matrix.
-    The matrix may not have been defined, or the variables in this matrix
+    The matrix may not have been defined or the variables in this matrix
     cannot be found.
 
     \noindent
     {\tt variable {\it varname} corresponding to the control matrix
-    {\it matrix{\_}name} not found}
+    {\it matrix{\_}name} \\ not found}
 
     \morehang
     The variables contained in row or column names of this matrix
@@ -1344,10 +1401,10 @@ The following critical errors will stop execution of
     \morehang
     When running \stcmd{total} {\it varname1}\stcmd{, over(}{\it varname2}\stcmd{)},
     an error was encountered. One of the variables may be a string variable
-    or have missing values resulting in empty estimation sample.
+    or have missing values resulting in an empty estimation sample.
 
     \noindent
-    {\tt categories of {\it varname} do not match in the control {\it matrix{\_}name}
+    {\tt categories of {\it varname} do not match in the control {\it matrix{\_}name} \\
     and in the data (nolab option)}
 
     \morehang
@@ -1358,13 +1415,13 @@ The following critical errors will stop execution of
     in the control matrix do not correspond to the category values in the data set;
     (iv) the control matrix was obtained via \stcmd{total}
     {\it varname2}\stcmd{, over(}{\it varname}\stcmd{)}, but \stcmd{nolabel} suboption
-    of \stcmd{over()} was omitted, and the labels of the control matrix are
-    ``too nice''. Tabulate {\it varname} without labels, and compare the results
+    of \stcmd{over()} was omitted, and the labels of the control matrix may include
+    some unexpected text. Tabulate {\it varname} without labels, and compare the results
     to the matrix listing of the {\it matrix{\_}name}.
 
     \noindent
     {\tt cannot compute controls for {\it matrix{\_}name} over
-    {\it varname} with the current weights}
+    {\it varname} with the current \\ weights}
 
     \morehang
     This is a generic error message that something bad happened while
@@ -1388,12 +1445,15 @@ The following critical errors will stop execution of
     {\tt trimhirel must be greater than trimlorel}
 
     \morehang
-    Self-explanatory.
+    The trimming parameters are illogical (the lower bound is greater than the upper bound).
+    Respecify the values of the trimming parameters.
 
 \bigskip
 
+\subsection{Other errors and warnings}
+
 The following warning messages may be produced by
-\stcmd{ipfraking}. It will continue running, but you must
+\stcmd{ipfraking}. The program will continue running, but you must
 double-check the results for potential problems.
 
 \noindent
@@ -1402,37 +1462,30 @@ double-check the results for potential problems.
     \morehang
     The sum of values of the control matrices are different.
     These sums will be listed for review. Convergence is still
-    possible, but some of the control total checks are bound to fail.
+    possible, but some of the control total checks are likely to fail.
 
     \noindent
-    {\tt trimfrequency() option is specified without numeric settings; will be ignored}
+    {\tt trimfrequency() option is specified without numeric settings; will be \\ ignored}
 
     \morehang
-    The option \stcmd{trimfrequency()} was specified without any other trimming options.
+    The option \stcmd{trimfrequency()} was specified without any numeric trimming options.
     There is no way to interpret this, and \stcmd{ipfraking} will proceed without
     trimming.
 
     \noindent
-    {\tt trimfrequency() option is specified incorrectly, assume default value (sometimes)}
+    {\tt trimfrequency() option is specified incorrectly, assume default value \\ (sometimes)}
 
     \morehang
-    Self-explanatory.
-
-    \noindent
-    {\tt raking procedure appears diverging}
-
-    \morehang
-    The maximum relative difference of weights has increased since last
-    iteration. This may or may not indicate a problem. Re-run \stcmd{ipfraking}
-    with \stcmd{nodivergence} option to override the warning.
+    Something other than \stcmd{often}, \stcmd{sometimes} or \stcmd{once} was supplied
+    in \stcmd{trimfrequency}, and the default value is being used instead.
 
     \noindent
     {\tt raking procedure did not converge}
 
     \morehang
-    The maximum number of iterations was reached, but weights continued
-    changing. The user may want to increase the number of iterations
-    or relax convergence criteria.
+    The maximum number of iterations was reached, but weights never met the convergence
+    criteria (see step \ref{step:check:weight:conv} of Algorithm 2 in Section \ref{subsec:trimming}). 
+    The user may want to increase the number of iterations or relax convergence criteria.
 
     \noindent
     {\tt the controls {\it matrix{\_}name} did not match}
@@ -1452,7 +1505,7 @@ double-check the results for potential problems.
     {\it matrix{\_}name} control}
 
     \morehang
-    The weights for a category of the control variable summed up
+    The weights for a category of the control variable summed 
     to zero. \stcmd{ipfraking} will skip calibration over this
     variable and proceed to the next one.
 
@@ -1462,16 +1515,17 @@ double-check the results for potential problems.
     \morehang
     A control variable has missing values in the calibration sample.
     There is little way for \stcmd{ipfraking} to figure out how to deal
-    with the weights for the observations with missing values. The best course
-    of action is to impute them and run \stcmd{ipfraking} again.
-
-% \section{Workflow}
+    with the weights for the observations with missing values. The user would need 
+    either to restrict the sample to non-missing values of all control variables,
+    to impute the missing values or to create a separate category for the missing
+    values of a given control variable (which may lead to difficulties in defining
+    valid population control totals for it).
 
 \section*{Acknowledgements}
 
 The author is grateful to Ben Phillips, Andrew Burkey and Brady West,
 as well as the editor and an anonymous referee,
-who suggested additional functionality and provided helpful comments 
+who suggested additional functionality and provided helpful comments
 to improve the readability of this article. The opinions stated in this paper
 are of the author only, and do not represent the position of Abt SRBI.
 
@@ -1485,25 +1539,40 @@ are of the author only, and do not represent the position of Abt SRBI.
 
 \begin{tabular}{llp{9.5cm}}
     $\mathcal{C}_k$ & Sec. \ref{subsec:calibration} & Calibration cell \\
-    $i$ & & Subscript $i$ usually applies to units in population \\
-    $j$ & & Subscript $j$ usually applies to units in sample \\
+    $D_k$ & (\ref{eq:conv:ratio:weights}) & Maximum relative difference of weights 
+            from iteration $k-1$ to iteration $k$ \\
+    $\delta_D$ & Sec. \ref{subsec:trimming} & Convergence criteria for $D_k$ \\
+    $\delta_T$ & Sec. \ref{subsec:trimming} & Quality control criteria for control totals \\
+    $i$ & Sec. \ref{subsec:totals} & Subscript $i$ usually applies to units in population \\
+    $j$ & Sec. \ref{subsec:totals} & Subscript $j$ usually applies to units in sample \\
+    $k$ & Sec. \ref{subsec:trimming} & The outer cycle iteration number \\
+    $K$ & Sec. \ref{subsec:trimming} & The maximum number of the outer cycle iterations \\
+    $l$ & Sec. \ref{subsec:trimming} & Relative limit on weights: all the weights will be made
+        $\ge (l \times$ the input weight) \\
+    $l$ & & summation index, where I run out of other traditional integer letters \\
+    $L$ & Sec. \ref{subsec:trimming} & Absolute limit on weights: all the weights will be made 
+        $\ge L$ \\
     $n$ & & Sample size; number of sampled units \\
     $N$ & & Population size; number of units in population or frame \\
     $\pi_i$ & & Probability of selection of unit $i$
             specified by the sampling design \\
 %
-    $\mathcal{S}$ & & Sample; set of sampled units \\
+    $\mathcal{S}$ & Sec. \ref{subsec:totals} & Sample; set of sampled units \\
     $T[y]$ & (\ref{eq:total:pop}) & Population-based total of variable $[y]$ \\
     $t_m[y]$ & (\ref{eq:total:sample}) & Sample-based weighted estimate of the total
         $T[y]$; subscript $m=1,2,3$ indicates the type of weights used in computing
         the total \\
-    $\mathcal{U}$ & & Universe or population; set of units in population \\
+    $u$ & Sec. \ref{subsec:trimming} & Relative upper limit on weights: all the weights will be made
+        $\le (u \times$ the input weight) \\
+    $L$ & Sec. \ref{subsec:trimming} & Absolute upper limit on weights: all the weights will be made
+        $\le U$ \\
+    $\mathcal{U}$ & Sec. \ref{subsec:totals} & Universe or population; set of units in population \\
 %
     $w_{1i}$ & (\ref{eq:prob:weight}) & Probability (design) weights;
         inverse probability of selection \\
     $w_{2j}$ & (\ref{eq:ps:weight}) & Post-stratified weights;
         random; depend on group sizes in sample; analytically computable \\
-    $w_{3j}$ & (\ref{eq:prob:weight}) & Calibrated (raked) weights;
+    $w_{3j}$ & Sec. \ref{subsec:calibration} & Calibrated (raked) weights; random;
         require iterative optimization \\
 %
     $x_v$ & Sec. \ref{subsec:raking:algorithm} & the $v$-th calibration (control)

@@ -1,4 +1,4 @@
-*! v.1.1.31 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.32 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -1274,6 +1274,6 @@ exit
 1.1.30	mat2do allows -append- option
 1.1.31  -meta- better interacts with -replace-
         Stata Journal R&R is completed
-
+1.1.32  Andrew Burkey's comments are incorporated; no changes to the code.
 
 */

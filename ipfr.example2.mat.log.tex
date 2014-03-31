@@ -13,7 +13,6 @@
 {\smallskip}
 . matrix ACS2011_adult_pop = ACS2011_sex_age * J(colsof(ACS2011_sex_age),1,1)
 {\smallskip}
-\cnp
 . matrix Census2011_region = ///
 >     (55521598, 67158835, 116046736, 72864748 )
 {\smallskip}
@@ -29,6 +28,7 @@
 . matrix Census2011_race = ///
 >     (243470497, 40750746, 27370674 )
 {\smallskip}
+\cnp
 . matrix Census2011_race = Census2011_race * ACS2011_adult_pop / ACS2011_total_
 > pop
 {\smallskip}

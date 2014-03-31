@@ -24,6 +24,7 @@ program define xls2row
 		levelsof `over'
 		di "{txt}The current matrix:"
 		mat li `namelist'
+        mat drop `namelist'
 		exit (503)
 	}
 	matrix rownames `namelist' = `over'
