@@ -1,4 +1,4 @@
-*! v.1.1.32 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.1.33 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -6,7 +6,8 @@ program define ipfraking, rclass
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) trace ///
-		selfcheck rapid from(varname) noDIVergence alpha(passthru) mstep(real 1) * ]
+		selfcheck rapid from(varname) noDIVergence alpha(passthru) mstep(real 1) ///
+		KINKHIgh(passthru) KINKLOw(passthru) KINKFREQuency(passthru) kinkat(passthru) * ]
 
 	// syntax:
 	//   [pw=original weight variable]
@@ -41,8 +42,22 @@ program define ipfraking, rclass
 		exit 198
 	}	
 
+	// parse the trimming options
+	// dirty tricks: pushes back 
+	// local trimopts `trimhiabs' `trimhirel' `trimloabs' `trimlorel'
+	// updates trimfrequency with the default "sometimes" value as needed
 	CheckTrimOptions , `trimhiabs' `trimhirel' `trimloabs' `trimlorel' trimfrequency(`trimfrequency')
-		
+	
+	// parse the kink options
+	if "`kinkhigh'`kinklow'`kinkfrequency'`kinkat'" != "" {
+		// check the ranges and such
+		// dirty trick: push back updated kinkfreq as a single word; kinkat as a number
+		CheckKinkOptions, `kinkhigh' `kinklow' `kinkfrequency' `kinkat' trim(`trimopts')
+		if "`kinkatlist'"!="" {
+			assert !inlist(0, `kinkatlist')
+		}
+	}
+	
 	tempvar oldweight currweight prevweight one
 	
 	marksample touse, zeroweight
@@ -99,6 +114,7 @@ program define ipfraking, rclass
 			forvalues k=1/`nvars' {
 				PropAdjust `currweight' if `touse' , target(`mat`k'') control(`var`k'') over(`over`k'') loglevel(`loglevel') `alpha'
 				if "`trimfrequency'" == "often" & "`trimopts'" != "" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `over`k'' ) loglevel(`loglevel')
+				if "`kinkfreq'" == "often" ProcessKink `oldweight' `currweight', `kinkhigh' `kinklow' loglevel(`loglevel')
 			}
 			if "`trace'" != "" {
 				forvalues k=1/`nvars' {
@@ -109,6 +125,9 @@ program define ipfraking, rclass
 				
 			}
 			if "`trimfrequency'" == "sometimes" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
+			if "`kinkfreq'" == "sometimes" & "`kinkhigh'`kinklow'"!="" {
+				if inlist(`i',`kinkatlist') ProcessKink `oldweight' `currweight', `kinkhigh' `kinklow' loglevel(`loglevel')
+			}
 			CheckConvergence `prevweight' `currweight' if `touse', `tolerance'
 			local currobj = r(maxreldif)
 			if `loglevel' > 0 di _n
@@ -196,6 +215,7 @@ program define ipfraking, rclass
 	}
 
 	if "`trimfrequency'" == "once" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' )	
+	if "`kinkfreq'" == "once" ProcessKink `oldweight' `currweight', `kinkhigh' `kinklow' loglevel(`loglevel')
 	return add
 
 	// check if controls matched
@@ -338,6 +358,188 @@ program define DiagnoseMataDS
 	}
 
 end
+
+program define KinkError
+	syntax , [high low range freq every]
+	if "`high'`low'"!= "" di as err "kink`high'`low'() must be specified as kink`high'`low'(cutoff slope) or kink`high'`low'(*factor slope)"
+	if "`range'"!="" di as err "where the cutoff > 0 and 0 < slope < 1"
+	if "`freq'" != "" di as err `"kinkfrequency can be "often", "sometimes" or "once""'
+	if "`every'" != "" di as err "kinkat must be a list of positive integers"
+	exit 198
+end // of KinkError
+
+program define CheckKinkOptions
+
+	syntax , [kinkhigh(string) kinklow(string) kinkfrequency(string) kinkat(numlist integer >0) trim(string)]
+	
+	if "`kinkhigh'`kinklow'"!="" & trim("`trim'")!="" {
+		di as err "kink and trim options cannot be specified together"
+		exit 198
+	}
+	
+	// check kinkfrequency
+	if "`kinkfrequency'" == "" local kinkfrequency sometimes
+	
+	if !inlist("`kinkfrequency'","often","sometimes","once") KinkError, freq
+	
+	if "`kinkhigh'`kinklow'"=="" & "`kinkfrequency'"!="" {
+		di as err "Warning: kinkfrequency is specified without kinkhigh() or kinklow(); ignored"
+		c_local kinkfreq
+		exit 0
+	}
+	// dirty trick: push back kinkfrequency
+	c_local kinkfreq `kinkfrequency'
+	
+	// check kinkat
+	if "`kinkat'" != "" {	
+		if "`kinkfrequency'" != "sometimes" {
+			di as err "kinkat() only makes sense with kinkfreq(sometimes); kinkat() ignored"
+		}
+		// dirty trick: push back kinkat
+		c_local kinkatlist `: subinstr local kinkat " " ", ", all'	
+	}
+	
+	// kinkhigh must be of the format # #
+	// where the first # is the cutoff value
+	// and the second # is the slope after it
+	if "`kinkhigh'"!="" {
+		cap assert `: word count `kinkhigh'' == 2
+		if _rc KinkError , high
+		tokenize `kinkhigh'
+
+		// deal with the first argument = cutoff
+		if strpos("`1'","*")==1 {
+			// the cutoff is specified in relative terms
+			local hicutoff = subinstr("`1'","*","",1)
+		}
+		else {
+			// the cutoff is specified in absolute terms
+			local hicutoff `1'
+		}
+		cap confirm number `hicutoff'
+		if _rc KinkError , high
+		cap assert `hicutoff' > 0 
+		if _rc KinkError , high range
+		
+		// deal with the second argument = slope
+		local hislope `2'
+		cap confirm number `hislope'
+		if _rc KinkError , high
+		
+		if !inrange(`hislope',0,1) {
+			di as err "Warning: slope of kinkhigh is outside (0,1) range, results may be weird"
+		}
+		
+	}
+	else {
+		local hicutoff = .z
+	}
+
+	// kinklow must be of the format # #
+	// where the first # is the cutoff value
+	// and the second # is the slope after it
+	if "`kinklow'"!="" {
+		cap assert `: word count `kinklow'' == 2
+		if _rc KinkError , low
+		tokenize `kinklow'
+
+		// deal with the first argument = cutoff
+		if strpos("`1'","*")==1 {
+			// the cutoff is specified in relative terms
+			local lowcutoff = subinstr("`1'","*","",1)
+		}
+		else {
+			// the cutoff is specified in absolute terms
+			local lowcutoff `1'
+		}
+		cap confirm number `lowcutoff'
+		if _rc KinkError , low
+		cap assert `lowcutoff' > 0 
+		if _rc KinkError , low range
+		
+		// deal with the second argument = slope
+		local lowslope `2'
+		cap confirm number `lowslope'
+		if _rc KinkError , low
+		
+		if !inrange(`lowslope',0,1) {
+			di as err "Warning: slope of kinklow is outside (0,1) range, results may be weird"
+		}
+		
+		if `hicutoff' < `lowcutoff' {
+			di as err "the cutoff of kinkhigh() is lower than the cutoff of kinklow() which is not allowed"
+			exit 7
+		}
+		
+	}
+
+end // of CheckKinkOptions
+
+program define ProcessKink, rclass
+
+	syntax varlist(numeric min=2 max=2) [if] [in], [kinkhigh(string) kinklow(string) loglevel(real 0)]
+	
+	marksample touse, novarlist
+	
+	tokenize `varlist'
+	local oldweight `1'
+	local currweight `2'
+	
+	local kinkcount 0
+	
+	if `loglevel' == 0 local qui qui
+	
+	// parse the kinkhigh option
+	if "`kinkhigh'"!="" {
+		tempvar hicutoff 
+		tokenize `kinkhigh'
+		if strpos("`1'","*")==1 `qui' gen `hicutoff' = `oldweight' `1' if `touse'
+		else `qui' gen `hicutoff' = `1' if `touse'
+		
+		local hislope `2'
+		
+		qui count if `currweight' > `hicutoff' & `touse'
+		local kinkcount = `kinkcount' + r(N)
+		
+		if `loglevel' > 1 {
+			di "{txt}Found {res}`=r(N)' {txt}observations to kink:"
+			sum `currweight' if `currweight' > `hicutoff' & `touse'
+		}
+		
+		`qui' replace `currweight' = `hicutoff' + (`currweight' - `hicutoff')*`hislope' if `currweight' > `hicutoff' & `touse'
+
+		if `loglevel' > 1 {
+			di "{txt}Updated to:"
+			sum `currweight' if `currweight' > `hicutoff' & `touse'
+		}
+		
+	}
+
+	if "`kinklow'"!="" {
+		tempvar lowcutoff 
+		tokenize `kinklow'
+		if strpos("`1'","*")==1 `qui' gen `lowcutoff' = `oldweight' `1' if `touse'
+		else `qui' gen `lowcutoff' = `1' if `touse'
+		
+		local lowslope `2'
+		
+		qui count if `currweight' < `lowcutoff' & `touse'
+		local kinkcount = `kinkcount' + r(N)
+
+		if `loglevel' > 1 {
+			di "{txt}Found {res}`=r(N)' {txt}observations to kink:"
+			sum `currweight' if `currweight' < `lowcutoff' & `touse'
+		}
+		`qui' replace `currweight' = `lowcutoff' - (`lowcutoff' - `currweight')*`lowslope' if `currweight' < `lowcutoff' & `touse'
+		if `loglevel' > 1 {
+			di "{txt}Updated to:"
+			sum `currweight' if `currweight' < `lowcutoff' & `touse'
+		}
+	}
+	
+	return scalar anykink = sign( `kinkcount' )
+	
+end // of ProcessKink
 
 program define CheckTrimOptions
 
@@ -952,6 +1154,12 @@ program define SelfCheck
 	assert _rc == 198
 	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) trimhiabs(200) trimloabs(10000)
 	assert _rc == 198
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) kinkhigh(blah)
+	assert _rc == 198
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) kinkhigh(200)
+	assert _rc == 198
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) kinkhigh(-5 5)
+	assert _rc == 198
 	
 	
 	
@@ -1275,5 +1483,6 @@ exit
 1.1.31  -meta- better interacts with -replace-
         Stata Journal R&R is completed
 1.1.32  Andrew Burkey's comments are incorporated; no changes to the code.
+1.1.33	-kink- options are being added
 
 */
