@@ -24,7 +24,6 @@ program define xls2row
 		levelsof `over'
 		di "{txt}The current matrix:"
 		mat li `namelist'
-        mat drop `namelist'
 		exit (503)
 	}
 	matrix rownames `namelist' = `over'
@@ -41,8 +40,9 @@ void dta2row( string scalar matname, string scalar verbose, real scalar scale ) 
 	VX = vec( X[,] )
 	VX = select( VX, !rowmissing(VX) )	
 	if (verbose!="") VX
-	if (sum(VX)!=1 ) printf("\n{err}Warning! {txt}Sum of values = {res}%10.0g\n\n", sum(VX) )
+	if (sum(VX)!=scale ) printf("\n{txt}Sum of values = {res}%10.0g\n\n", sum(VX) )
 	if (scale!=0) st_matrix( matname, VX'*scale/sum(VX) )
+	else st_matrix( matname, VX' )
 }
 
 end // of Mata

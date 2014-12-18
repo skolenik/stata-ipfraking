@@ -1,4 +1,4 @@
-*! v.0.71 convert matrices to do-files. Author: Stas Kolenikov
+*! v.0.8 convert matrices to do-files. Author: Stas Kolenikov
 program define mat2do
 	version 9
 	syntax name(name=thematrix) using/ , [replace append type list]
@@ -13,17 +13,29 @@ program define mat2do
 	file open `towr' using `"`using'"', write text `replace' `append'
 	file write `towr' "* Produced automatically by mat2do on `=c(current_date)' at `=c(current_time)'" _n(2)
 	
-	file write `towr' "matrix `thematrix' = ( ///" _n
-	forvalues r=1/`rows' {
-		forvalues c=1/`cols' {
-			file write `towr' _col(6) %22.0g (`thematrix'[`r',`c'])
-			if `c' < `cols'      file write `towr' ", ///" _n
-			else if `r' < `rows' file write `towr' "\ ///" _n
+	if `rows' * `cols' < 100 {
+		file write `towr' "matrix `thematrix' = ( ///" _n
+		forvalues r=1/`rows' {
+			forvalues c=1/`cols' {
+				file write `towr' _col(6) %22.0g (`thematrix'[`r',`c'])
+				if `c' < `cols'      file write `towr' ", ///" _n
+				else if `r' < `rows' file write `towr' "\ ///" _n
+			}
 		}
+		
+		file write `towr' ")" _n(2)
 	}
+	else {
+		file write `towr' "matrix `thematrix' = J(`rows',`cols',.) " _n(2)
 	
-	file write `towr' ")" _n(2)
+		forvalues r=1/`rows' {
+			forvalues c=1/`cols' {
+				file write `towr' "matrix `thematrix'[`r',`c'] = " %22.0g (`thematrix'[`r',`c']) _n
+			}
+		}
 	
+	}
+
 	foreach attr in rownames colnames {
 		local this : `attr' `thematrix'
 		if "`this'" != "" file write `towr' `"matrix `attr' `thematrix' = `this'"' _n
