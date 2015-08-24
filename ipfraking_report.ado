@@ -1,4 +1,4 @@
-*! 1.2.1 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
+*! 1.2.3 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
 program define ipfraking_report, rclass
 
 	version 12
@@ -163,7 +163,7 @@ program define ipfraking_report, rclass
 			local topost `topost' (`=r(min)') (`=r(p25)') (`=r(p50)') (`=r(p75)') (`=r(max)')
 			local topost `topost' (`=r(mean)') (`=r(sd)') (`=1+( r(sd)/ r(mean) )^2')
 			
-			* weighted with source weights
+			* weighted with raked weights
 			qui sum `raked_weight' [aw=`totalof`k''] if `touse' & `over`k'' == `c'
 			local topost `topost' (`=r(sum)') (`=r(sum)/scalar(`sumRKDWGT')') (`=r(sum)-scalar(`cat_target')')
 			local topost `topost' (`=r(sum)/scalar(`sumRKDWGT') - scalar(`cat_target')/scalar(`overall_target')')
@@ -202,7 +202,11 @@ program define ipfraking_report, rclass
 			}
 		
 			* has it been processed before
-			if strpos( "`allover'", "`over'" ) {
+			local donebefore 0
+			forvalues m=1/`: word count `allover'' {
+				local donebefore = `donebefore' + ("`over'" == "`: word `m' of `allover''")
+			}
+			if `donebefore' {
 				di "{err}Warning: {txt}matrix {res}`thismat'{txt} refers to a variable {res}`over'{txt} that was already processed."
 				continue
 			}
@@ -243,6 +247,9 @@ program define ipfraking_report, rclass
 				
 				* category target
 				local where = colnumb("`thismat'","`c'")
+				if "`where'" == "." {
+					di `"{err}WARNING: category "`c'" not found in matrix `thismat'."' _n "This may be -total `totalof', over(`over', nolab)- issue."
+				}
 				scalar `cat_target'= `thismat'[1,`where']
 				local topost `topost' (`=scalar(`cat_target')') (`=scalar(`cat_target')/scalar(`overall_target')')
 				
@@ -259,7 +266,7 @@ program define ipfraking_report, rclass
 				local topost `topost' (`=r(min)') (`=r(p25)') (`=r(p50)') (`=r(p75)') (`=r(max)')
 				local topost `topost' (`=r(mean)') (`=r(sd)') (`=1+( r(sd)/ r(mean) )^2')
 				
-				* weighted with source weights
+				* weighted with raked weights
 				qui sum `raked_weight' [aw=`totalof'] if `touse' & `over' == `c'
 				local topost `topost' (`=r(sum)') (`=r(sum)/scalar(`sumRKDWGT')') (`=r(sum)-scalar(`cat_target')')
 				local topost `topost' (`=r(sum)/scalar(`sumRKDWGT') - scalar(`cat_target')/scalar(`overall_target')')
@@ -403,5 +410,7 @@ History
 				. added variable describing the class of the analysis variable
 				. added variable: unweighted % discrepancy
 1.2.1		Checks hash/meta
+1.2.2		Checks missing categories of the other known matrices (nolab issue)
+1.2.3		Improved "processed before" identification: specific words rather than blunt strpos that misses interactions
 
 */

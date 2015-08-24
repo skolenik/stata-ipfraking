@@ -1,4 +1,4 @@
-*! v.1.1.34.23 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.2.35 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -6,7 +6,7 @@ program define ipfraking, rclass
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) trace ///
-		selfcheck rapid from(varname) noDIVergence alpha(passthru) mstep(real 1) ///
+		selfcheck rapid from(varname) noDIVergence alpha(passthru) mstep(real 1) mataoptevaltype(string) ///
 		/// KINKHIgh(passthru) KINKLOw(passthru) KINKFREQuency(passthru) kinkat(passthru) 
 		KINKABSHIgh(passthru) KINKRELHIgh(passthru) KINKABSLOw(passthru) KINKRELLOw(passthru) KINKFREQuency(passthru) ///
 		* ]
@@ -72,7 +72,7 @@ program define ipfraking, rclass
 	display
 	
 	// parse and check the control totals
-	ControlCheckParse `ctotal' , one( `one' ) loglevel(`loglevel')
+	ControlCheckParse `ctotal' , one( `one' ) loglevel(`loglevel') touse( `touse' )
 	
 	generate double `oldweight' = `exp' if `touse'
 	generate double `prevweight' = `oldweight'
@@ -106,6 +106,11 @@ program define ipfraking, rclass
 			local traceplot `traceplot' `mreldif`k'var'
 		}
 		local traceplot `traceplot' )
+	}
+	
+	if !inlist("`mataoptevaltype'","","d0","d1","d1debug","d2","d2debug") {
+		di "{err}invalid mataoptevaltype(`mataoptevaltype')"
+		exit 198
 	}
 	
 	// choose the method
@@ -149,6 +154,8 @@ program define ipfraking, rclass
 	else {
 		// use Mata Newton-Raphson optimization
 
+		if "`mataoptevaltype'"=="" local mataoptevaltype d0
+		
 		tempname prefix allctotals scale
 		GenerateCalibVars , ctotal(`ctotal') prefix(`prefix')
 		local ctrlvarlist_u `r(varlist)'
@@ -702,7 +709,7 @@ end // of PropAdjust
 
 program define ControlCheckParse
 
-	syntax namelist , one( varname ) [ loglevel(int 0) ]
+	syntax namelist , one( varname ) [ touse(varname) loglevel(int 0) ]
 
 	tempname b
 	
@@ -746,7 +753,7 @@ program define ControlCheckParse
 				display as error "variable `over`k'' tabulating the control matrix `mat`k'' not found"
 				exit 111
 			}
-			capture total `var`k'', over( `over`k'', nolab )
+			capture total `var`k'' if `touse', over( `over`k'', nolab )
 			if _rc {
 				display as error "`var`k'' and `over`k'' variables are not compatible"
 				exit 111
@@ -754,10 +761,16 @@ program define ControlCheckParse
 			matrix `b' = e(b)
 			if "`: colfullnames `mat`k'''" != "`: colfullnames `b''" {
 				display as error "categories of `over`k'' do not match in the control `mat`k'' and in the data (nolab option)"
+				local matknames : colfullnames `mat`k''
+				local bnames    : colfullnames `b'
+				display as error "This is what `mat`k'' gives: "  _n as res "  `matknames'"
+				display as error "This is what I found in data: " _n as res "  `bnames'"
+				display as error "This is what `mat`k'' has that data don't: "  _n as res "  `: list `matknames' - `b''"
+				display as error "This is what data have that `mat`k'' doesn't: "  _n as res "  `: list `b' - `matknames''"				
 				exit 111
 			}
 			
-			quietly count if missing(`over`k'')
+			quietly count if missing(`over`k'') & `touse'
 			if r(N) {
 				display as error "Warning: `=r(N)' missing values of `over`k'' encountered; convergence will be impaired"
 			}
@@ -1372,8 +1385,11 @@ void calibrate( string scalar wgtname, string scalar newwgtname, ///
 	// initial value
 	lambda = J(1,p,0)
 
-	for(k=1;k<=iter;k++) {
+	// for(k=1;k<=iter;k++) {
 		
+		tmtd = target-dtotal
+		
+		/*
 		if (method == "DS6") {
 			diff = target - dtotal - phi( lambda, &F_DS6(), X, q, d, lower, upper, center)  // DS6
 			outer  = quadcross( X, d :* dF_DS6_du( q, X*lambda', lower, upper, center ), X ) // DS6
@@ -1396,7 +1412,45 @@ void calibrate( string scalar wgtname, string scalar newwgtname, ///
 			converged = 1
 			break
 		}
-	}
+		*/
+		
+		if (method == "DS6") {
+			// not implemented
+		}
+		else if (method == "DS2") {
+			S = optimize_init()
+			optimize_init_evaluator(S, &obj_DS2() )
+			optimize_init_which(S, "min")
+			evaltype = st_local( "mataoptevaltype" )
+			optimize_init_evaluatortype(S, evaltype)
+			/*
+			if (evaltype=="d1debug") {
+				optimize_init_tracelevel(S, "gradient")
+			};
+			*/
+			optimize_init_technique(S, "nr")
+			optimize_init_params(S, lambda)
+			optimize_init_narguments(S,4)
+			optimize_init_argument(S,1,tmtd)
+			optimize_init_argument(S,2,X)
+			optimize_init_argument(S,3,q)
+			optimize_init_argument(S,4,d)
+			optimize_init_conv_ptol(S,1e-14)
+			optimize_init_conv_vtol(S,1e-24)
+			optimize_init_conv_ignorenrtol(S, "on")
+			optimize_init_singularHmethod(S, "hybrid")
+			optimize_evaluate(S)
+			if (_optimize(S)==0) {
+				lambda = optimize_result_params(S)
+				lambda
+				converged = 1
+			}
+			else {
+				converged = 0
+			}
+		}
+		
+	// }
 	
 	// the only thing that is to be changed are the new weights; hence view rather than st_data
 	st_view( w=., ., newwgtname, tousename )
@@ -1426,10 +1480,34 @@ void calibrate( string scalar wgtname, string scalar newwgtname, ///
 }
 
 
+void obj_DS2(todo, lambda, tmtd, X, q, d, v, g, H) 
+{
+
+	phi = (F_DS2( q, X * lambda' ) :- 1) :* X
+
+	// this is a row vector
+	diff = (tmtd - quadcross(1, d, phi)) // DS2
+	
+	v = norm( diff )^2
+
+	if (todo >= 1) {
+		// return the derivative
+		
+		// this must be a colvector
+		term1 = - X * diff' 
+		assert( (rows(term1) == rows(X)) & (cols(term1) == 1) )
+		
+		// this must be a colvector
+		term2 = dF_DS2_du( q, X*lambda' )
+		assert( (rows(term2) == rows(X)) & (cols(term2) == 1) )
+		
+		g = quadcolsum( 2 :* d :* term1 :* term2 :* X )
+		
+	}
+}
+
+
 end // of Mata
-
-
-
 
 
 
@@ -1479,7 +1557,9 @@ exit
 1.1.34	-kink- scheme is rewritten as kink[abs|rel][high|low], but it seems like only kinkrel* makes sense
 1.1.34.22	debugging kink options (the numbering system reflects commits in 5878 project)
 1.1.34.23	better meta data for ipfraking_report
+1.2.35	-rapid- options are being tinkered with
+		-touse- is passed to ControlCheckParse
 
-1.1.xx	-trim- options are refactured through -kink- options
+1.1.xx	-trim- options are refactored through -kink- options
 
 */
