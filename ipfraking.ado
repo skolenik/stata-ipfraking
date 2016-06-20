@@ -1,4 +1,4 @@
-*! v.1.2.36 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.2.37 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -237,6 +237,9 @@ program define ipfraking, rclass
 
 	tempname pass
 	local mrdmax = 0
+
+	local worstvar
+	local worstcat
 	
 	forvalues k=1/`nvars' {
 		CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') : total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
@@ -251,6 +254,16 @@ program define ipfraking, rclass
 		local mrdmax = max( `mrdmax', r(mreldif) )
 		local badcontrols = `badcontrols' + r(badcontrols)
 		local whicharebad `whicharebad' `mat`k''
+
+		matrix `pass' = return(reldif`k')
+		local thesecats : colnames `pass'
+		forvalues j=1/`=colsof(`pass')' {
+			if reldif(`pass'[1,`j'],`mrdmax')<c(epsfloat) {
+				* update the worst 
+				local worstvar `k'
+				local worstcat : word `j' of `thesecats'
+			}
+		}
 	}
 	/*
 	if `badcontrols' {
@@ -259,7 +272,19 @@ program define ipfraking, rclass
 	*/
 	return scalar maxctrl = `mrdmax'
 	return scalar badcontrols = `badcontrols'
+	
+	* display what we've found
+	di "{txt}The worst relative discrepancy of {res}" %7.0g return(maxctrl) "{txt} is observed for {res}`over`worstvar''{txt} == {res}" `worstcat'
+	di "{txt}Target value = {res}" _c
+	matrix `pass' = return(target`worstvar')
+	di "{res}" %10.0g `pass'[1,colnumb("`pass'","`worstcat'")] _c
+	di "{txt}; achieved value = {res}" _c
+	matrix `pass' = return(result`worstvar')
+	di "{res}" %10.0g `pass'[1,colnumb("`pass'","`worstcat'")]
 
+	return local worstvar `over`worstvar''
+	return scalar worstcat = `worstcat'
+	
 	* DEBUGGING
 	* set trace on	
 
@@ -306,6 +331,9 @@ program define ipfraking, rclass
 	
 		if length(`"`0'"')<240 char `theweight'[command] `=itrim(`"`0'"')'
 		else char `theweight'[command] `0'
+		
+		char `theweight'[worstvar] `over`worstvar''
+		char `theweight'[worstcat] `worstcat'
 
 	}
 	char `theweight'[converged] `=return(converged)'
@@ -1565,6 +1593,7 @@ exit
 1.2.35	-rapid- options are being tinkered with
 		-touse- is passed to ControlCheckParse
 1.2.36	-one()- variable is passed through to ControlCheckParse; otherewise report breaks down :(
+1.2.37	the worst fitted target is explicitly reported
 1.1.xx	-trim- options are refactored through -kink- options
 
 */
