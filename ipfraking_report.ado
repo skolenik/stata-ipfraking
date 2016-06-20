@@ -1,9 +1,9 @@
-*! 1.2.3 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
+*! 1.2.5 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
 program define ipfraking_report, rclass
 
 	version 12
 	
-	syntax using/ , raked_weight(varname numeric min=1 max=1) [by(varlist numeric) matrices(string) xls replace]
+	syntax using/ , raked_weight(varname numeric min=1 max=1) [by(varlist numeric) matrices(string) xls replace force]
 	
 	* (i) extract everything we need from chars
 	local oldweight : char `raked_weight'[source]
@@ -100,6 +100,7 @@ program define ipfraking_report, rclass
 		double(Mean_RKDWGT) ///
 		double(SD_RKDWGT) ///
 		double(DEFF_RKDWGT) ///
+		str36(Source) ///
 		str240(Comment) ///
 		using `using', `replace'
 	
@@ -172,6 +173,8 @@ program define ipfraking_report, rclass
 			local topost `topost' (`=r(min)') (`=r(p25)') (`=r(p50)') (`=r(p75)') (`=r(max)')
 			local topost `topost' (`=r(mean)') (`=r(sd)') (`=1+( r(sd)/ r(mean) )^2')
 			
+			* source: matrix
+			local topost `topost' ("`mat`k''")
 			
 			post `postf' `topost' ("`comment_var' `comment_cat'")
 		}
@@ -208,7 +211,7 @@ program define ipfraking_report, rclass
 			}
 			if `donebefore' {
 				di "{err}Warning: {txt}matrix {res}`thismat'{txt} refers to a variable {res}`over'{txt} that was already processed."
-				continue
+				if "`force'" == "" continue
 			}
 			
 			di "{txt}Known targets variable {res}`over'{txt} (total variable: {res}`totalof'{txt}; " _c
@@ -275,6 +278,8 @@ program define ipfraking_report, rclass
 				local topost `topost' (`=r(min)') (`=r(p25)') (`=r(p50)') (`=r(p75)') (`=r(max)')
 				local topost `topost' (`=r(mean)') (`=r(sd)') (`=1+( r(sd)/ r(mean) )^2')
 				
+				* source: matrix
+				local topost `topost' ("`thismat'")
 				
 				post `postf' `topost' ("`comment_var' `comment_cat'")
 			}
@@ -354,7 +359,7 @@ program define ipfraking_report, rclass
 			local topost `topost' (`=r(mean)') (`=r(sd)') (`=1+( r(sd)/ r(mean) )^2')
 			
 			
-			post `postf' `topost' ("`comment_var' `comment_cat'")
+			post `postf' `topost' ("") ("`comment_var' `comment_cat'")
 		}
 		
 	}
@@ -412,5 +417,7 @@ History
 1.2.1		Checks hash/meta
 1.2.2		Checks missing categories of the other known matrices (nolab issue)
 1.2.3		Improved "processed before" identification: specific words rather than blunt strpos that misses interactions
-
+1.2.4		-force- option to process the variables that may have already been encountered
+			Source variable provides the reference to the source / matrix
+1.2.5		Better treatment of continuous targets
 */

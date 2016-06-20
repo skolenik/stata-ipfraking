@@ -1,11 +1,11 @@
-*! v.1.2.35 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.2.36 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
 
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
-		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) trace ///
+		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) trace one(varlist min=1 max=1 numeric) ///
 		selfcheck rapid from(varname) noDIVergence alpha(passthru) mstep(real 1) mataoptevaltype(string) ///
 		/// KINKHIgh(passthru) KINKLOw(passthru) KINKFREQuency(passthru) kinkat(passthru) 
 		KINKABSHIgh(passthru) KINKRELHIgh(passthru) KINKABSLOw(passthru) KINKRELLOw(passthru) KINKFREQuency(passthru) ///
@@ -50,11 +50,14 @@ program define ipfraking, rclass
 	// updates trimfrequency with the default "sometimes" value as needed
 	CheckTrimOptions , `trimhiabs' `trimhirel' `trimloabs' `trimlorel' trimfrequency(`trimfrequency')
 	
-	tempvar oldweight currweight prevweight one
+	tempvar oldweight currweight prevweight 
 	
 	marksample touse, zeroweight
-	
-	quietly generate byte `one' = 1
+
+	if "`one'" == "" {
+		tempvar one
+		quietly generate byte `one' = 1
+	}
 	
 	if ("`generate'"!="") + ("`replace'"!= "") != 1 {
 		display as error "one and only one of generate() or replace must be specified"
@@ -119,6 +122,7 @@ program define ipfraking, rclass
 
 		forvalues i=1/`iterate' {
 			quietly replace `prevweight' = `currweight'
+			if `loglevel' > 1 di
 			forvalues k=1/`nvars' {
 				PropAdjust `currweight' if `touse' , target(`mat`k'') control(`var`k'') over(`over`k'') loglevel(`loglevel') `alpha'
 				if "`trimfrequency'" == "often" & "`trimopts'" != "" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `over`k'' ) loglevel(`loglevel')
@@ -681,7 +685,7 @@ program define PropAdjust
 		if scalar(`ctrl1') == 0 {
 			display as error "Warning: division by zero weighted total encountered with `control' control"
 		}
-		if `loglevel' > 1 display "{txt}Control {res}`control'{txt}: " _c
+		if `loglevel' > 1 display "{txt}Control {res}`control'{txt}: {res}" %10.0g `=`target'[1,1]' "{txt}/{res}" %10.0g scalar(`ctrl1') " " _c
 		`quietly' replace `currweight' = `currweight' * `target'[1,1] / scalar(`ctrl1') if `touse' & `currweight' != 0 & `control' != 0
 	}
 	else {
@@ -699,7 +703,8 @@ program define PropAdjust
 				display as error "Warning: division by zero weighted total encountered with `control' control with `over' == `k'"
 			}
 			
-			if `loglevel' > 1 display "{txt}Control {res}`over'{txt}, category {res}`: word `k' of `allover''{txt}: " _c
+			if `loglevel' > 1 display "{txt}Control {res}`over'{txt}, category {res}`: word `k' of `allover''{txt}: {res}" ///
+				%10.0g `=`target'[1,`k']' "{txt}/{res}" %10.0g scalar(`ctrl`k'') " " _c
 			`quietly' replace `currweight' = `currweight' * (`target'[1,`k'] / scalar(`ctrl`k''))^`alpha' if `touse' & `over' == `: word `k' of `allover'' & `currweight'!=0
 		}
 	}
@@ -765,8 +770,8 @@ program define ControlCheckParse
 				local bnames    : colfullnames `b'
 				display as error "This is what `mat`k'' gives: "  _n as res "  `matknames'"
 				display as error "This is what I found in data: " _n as res "  `bnames'"
-				display as error "This is what `mat`k'' has that data don't: "  _n as res "  `: list `matknames' - `b''"
-				display as error "This is what data have that `mat`k'' doesn't: "  _n as res "  `: list `b' - `matknames''"				
+				display as error "This is what `mat`k'' has that data don't: "  _n as res "  `: list matknames - bnames'"
+				display as error "This is what data have that `mat`k'' doesn't: "  _n as res "  `: list bnames - matknames'"				
 				exit 111
 			}
 			
@@ -1559,7 +1564,7 @@ exit
 1.1.34.23	better meta data for ipfraking_report
 1.2.35	-rapid- options are being tinkered with
 		-touse- is passed to ControlCheckParse
-
+1.2.36	-one()- variable is passed through to ControlCheckParse; otherewise report breaks down :(
 1.1.xx	-trim- options are refactored through -kink- options
 
 */
