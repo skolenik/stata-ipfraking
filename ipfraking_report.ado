@@ -1,4 +1,4 @@
-*! 1.2.5 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
+*! 1.2.6 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
 program define ipfraking_report, rclass
 
 	version 12
@@ -24,6 +24,10 @@ program define ipfraking_report, rclass
 		else local lost`k' 0
 		
 		local allover `allover' `over`k''
+		local alliover `alliover' i.`over`k''
+		
+		* base category, for later regression
+		fvset base freq `over`k''
 		
 		local ++k
 	}
@@ -45,8 +49,10 @@ program define ipfraking_report, rclass
 		local changed changed
 	}
 	
-	tempvar touse
+	tempvar touse rkratio lrkratio
 	qui gen byte `touse' = !mi( `raked_weight' )
+	qui gen double `rkratio' = `raked_weight' / `oldweight'
+	qui gen double `lrkratio' = log( `rkratio' )
 	
 	* (iii) set up the post
 	tempname postf
@@ -92,6 +98,7 @@ program define ipfraking_report, rclass
 		double(Category_Prop_Discrep_RKDWGT) ///
 		double(Category_RelDiff_RKDWGT) ///
 		double(Overall_Total_RKDWGT) ///
+		///
 		double(Min_RKDWGT) ///
 		double(P25_RKDWGT) ///
 		double(P50_RKDWGT) ///
@@ -100,6 +107,16 @@ program define ipfraking_report, rclass
 		double(Mean_RKDWGT) ///
 		double(SD_RKDWGT) ///
 		double(DEFF_RKDWGT) ///
+		///
+		double(Min_RKRATIO) ///
+		double(P25_RKRATIO) ///
+		double(P50_RKRATIO) ///
+		double(P75_RKRATIO) ///
+		double(Max_RKRATIO) ///
+		double(Mean_RKRATIO) ///
+		double(SD_RKRATIO) ///
+		double(DEFF_RKRATIO) ///
+		///
 		str36(Source) ///
 		str240(Comment) ///
 		using `using', `replace'
@@ -170,6 +187,11 @@ program define ipfraking_report, rclass
 			local topost `topost' (`=r(sum)/scalar(`sumRKDWGT') - scalar(`cat_target')/scalar(`overall_target')')
 			local topost `topost' (`=r(sum)/scalar(`cat_target')-1') (`=scalar(`sumRKDWGT')')
 			qui sum `raked_weight' if `touse' & `over`k'' == `c', det
+			local topost `topost' (`=r(min)') (`=r(p25)') (`=r(p50)') (`=r(p75)') (`=r(max)')
+			local topost `topost' (`=r(mean)') (`=r(sd)') (`=1+( r(sd)/ r(mean) )^2')
+			
+			* raking ratio summary statistics
+			qui sum `rkratio' if `touse' & `over`k'' == `c', det
 			local topost `topost' (`=r(min)') (`=r(p25)') (`=r(p50)') (`=r(p75)') (`=r(max)')
 			local topost `topost' (`=r(mean)') (`=r(sd)') (`=1+( r(sd)/ r(mean) )^2')
 			
@@ -246,7 +268,12 @@ program define ipfraking_report, rclass
 				local topost ("`raked_weight'") ("`over'") ("`: var label `over''") ("Other known target") 
 				local topost `topost' ("`totalof'") ("`: var label `totalof''") 
 				* category text
-				local topost `topost' (`c') ("`: label (`over') `c' '") 
+				local thiscatlab : label (`over') `c'
+				local topost `topost' (`c') ("`thiscatlab'") 
+				cap confirm number `thiscatlab'
+				if _rc == 0 | `"`thiscatlab'"'==`""' {
+					di "{txt}NOTE: category {res}`thiscatlab'{txt} of variable {res}`over'{txt} appears unlabeled."
+				}				
 				
 				* category target
 				local where = colnumb("`thismat'","`c'")
@@ -275,6 +302,11 @@ program define ipfraking_report, rclass
 				local topost `topost' (`=r(sum)/scalar(`sumRKDWGT') - scalar(`cat_target')/scalar(`overall_target')')
 				local topost `topost' (`=r(sum)/scalar(`cat_target')-1') (`=scalar(`sumRKDWGT')')
 				qui sum `raked_weight' if `touse' & `over' == `c', det
+				local topost `topost' (`=r(min)') (`=r(p25)') (`=r(p50)') (`=r(p75)') (`=r(max)')
+				local topost `topost' (`=r(mean)') (`=r(sd)') (`=1+( r(sd)/ r(mean) )^2')
+				
+				* raking ratio summary statistics
+				qui sum `rkratio' if `touse' & `over' == `c', det
 				local topost `topost' (`=r(min)') (`=r(p25)') (`=r(p50)') (`=r(p75)') (`=r(max)')
 				local topost `topost' (`=r(mean)') (`=r(sd)') (`=1+( r(sd)/ r(mean) )^2')
 				
@@ -358,13 +390,17 @@ program define ipfraking_report, rclass
 			local topost `topost' (`=r(min)') (`=r(p25)') (`=r(p50)') (`=r(p75)') (`=r(max)')
 			local topost `topost' (`=r(mean)') (`=r(sd)') (`=1+( r(sd)/ r(mean) )^2')
 			
-			
+			* raking ratio summary statistics
+			qui sum `rkratio' if `touse' & `byvar' == `c', det
+			local topost `topost' (`=r(min)') (`=r(p25)') (`=r(p50)') (`=r(p75)') (`=r(max)')
+			local topost `topost' (`=r(mean)') (`=r(sd)') (`=1+( r(sd)/ r(mean) )^2')
+						
 			post `postf' `topost' ("") ("`comment_var' `comment_cat'")
 		}
 		
 	}
 	
-	* (vi) done with the posting
+	* (vii) done with the posting
 	postclose `postf'
 	
 	preserve
@@ -385,6 +421,8 @@ program define ipfraking_report, rclass
 		else                  local thislab : subinstr local thislab "SRCWGT" ", with Source Weight", all
 		if length("`x'") < 12 local thislab : subinstr local thislab "RKDWGT" "of Raked Weight", all
 		else                  local thislab : subinstr local thislab "RKDWGT" ", with Raked Weight", all
+		if length("`x'") < 12 local thislab : subinstr local thislab "RKRATIO" "of raking ratio", all
+		else                  local thislab : subinstr local thislab "RKRATIO" ", with raking ratio", all
 		local thislab : subinstr local thislab "RelDiff" "Relative Difference", all
 		local thislab : subinstr local thislab "SD" "Std. dev.", all
 		local thislab : subinstr local thislab " , " ", ", all
@@ -401,6 +439,52 @@ program define ipfraking_report, rclass
 	save, replace
 	
 	restore
+	
+	* (ix) regression of the log raking ratio on the margins
+	regress `lrkratio' `alliover'
+	
+	di
+	
+	* process the variables and the categories
+	tempname bb
+	mat `bb' = e(b)
+	forvalues k=1/`p' {
+		
+		local bmin = c(maxfloat)
+		local bmax = - c(maxfloat)
+		local omitted
+		
+		qui levelsof `over`k'' if !mi(`raked_weight') & e(sample)
+		foreach c of numlist `r(levels)' {
+			* hope it's not omitted
+			if strpos( "`: colfullnames `bb''", "`c'o.`over`k''" ) {
+				local omitted `omitted' `c'
+			}
+			else {
+				* find the coefficient
+				local where = colnumb( `bb', "`c'.`over`k''" )
+				if !mi(`where') {
+					if _b[`c'.`over`k''] > `bmax' {
+						local bmax = _b[`c'.`over`k'']
+						local wmax = `c'
+					}
+					if _b[`c'.`over`k''] < `bmin' {
+						local bmin = _b[`c'.`over`k'']
+						local wmin = `c'
+					}
+				}
+			}
+		}
+		di `"{txt}Raking adjustments for {res}`over`k''{txt} variable"' _c
+		if !mi(`"`: var label `over`k'' '"') di `"{txt} ({res}`: var label `over`k'' '{txt})"' _c
+		di "{txt}:"
+		di "  {txt}the smallest was {res}" %12.3f exp(_b[_cons]+`bmin') "{txt} for category {res}`wmin'" _c
+		if `"`: label (`over`k'') `wmin' '"' != `""' di `"{txt} ({res}`: label (`over`k'') `wmin' '{txt})"'
+		di "  {txt}the greatest was {res}" %12.3f exp(_b[_cons]+`bmax') "{txt} for category {res}`wmax'" _c
+		if `"`: label (`over`k'') `wmax' '"' != `""' di `"{txt} ({res}`: label (`over`k'') `wmax' '{txt})"'
+		if "`omitted'" != "" di "{txt}  Note that the following categories were omitted: {res}`omitted'"
+	}
+	
 	
 end // of ipfraking_report
 
@@ -420,4 +504,5 @@ History
 1.2.4		-force- option to process the variables that may have already been encountered
 			Source variable provides the reference to the source / matrix
 1.2.5		Better treatment of continuous targets
+1.2.6		Summary statistics of raking ratio; regression of log raking ratio
 */
