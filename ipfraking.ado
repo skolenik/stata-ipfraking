@@ -1,4 +1,4 @@
-*! v.1.2.37 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.2.38 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -286,7 +286,11 @@ program define ipfraking, rclass
 	return scalar worstcat = `worstcat'
 	
 	* DEBUGGING
-	* set trace on	
+	* set trace on
+	
+	* report trimming results
+	ReportTrims `oldweight' `currweight' if `touse', `trimhirel' `trimlorel' `trimhiabs' `trimloabs'
+	return add
 
 	DiagDisplay `oldweight' `currweight' , `graph' `traceplot' `options'
 	return add
@@ -328,6 +332,11 @@ program define ipfraking, rclass
 		foreach trimpar in trimfrequency trimhiabs trimloabs trimhirel trimlorel kinkrelhigh kinkrellow kinkfrequency {
 			if "``trimpar''" != "" char `theweight'[`trimpar'] ``trimpar''
 		}
+		
+		* return values to chars
+		foreach retval in n_trimhiabs n_trimloabs n_trimhirel n_trimlorel {
+			if "``retval''" != "" char `theweight'[`retval'] ``retval''
+		}
 	
 		if length(`"`0'"')<240 char `theweight'[command] `=itrim(`"`0'"')'
 		else char `theweight'[command] `0'
@@ -347,7 +356,7 @@ program define ipfraking, rclass
 		
 	return local ctotal `ctotal'
 
-	end // of ipfraking
+end // of ipfraking
 
 // orphan?
 program GenerateTrimLimits
@@ -728,12 +737,14 @@ program define PropAdjust
 				exit 111
 			}
 			if scalar(`ctrl`k'') == 0 {
-				display as error "Warning: division by zero weighted total encountered with `control' control with `over' == `k'"
+				qui count if `touse' & `over' == `: word `k' of `allover'' & `currweight'!=0 & `control' != 0
+				if r(N) display as error "Warning: division by zero weighted total encountered with `control' control with `over' == `: word `k' of `allover''"
 			}
 			
 			if `loglevel' > 1 display "{txt}Control {res}`over'{txt}, category {res}`: word `k' of `allover''{txt}: {res}" ///
 				%10.0g `=`target'[1,`k']' "{txt}/{res}" %10.0g scalar(`ctrl`k'') " " _c
-			`quietly' replace `currweight' = `currweight' * (`target'[1,`k'] / scalar(`ctrl`k''))^`alpha' if `touse' & `over' == `: word `k' of `allover'' & `currweight'!=0
+			`quietly' replace `currweight' = `currweight' * (`target'[1,`k'] / scalar(`ctrl`k''))^`alpha' ///
+				if `touse' & `over' == `: word `k' of `allover'' & `currweight'!=0 & `control' != 0
 		}
 	}
 	
@@ -1105,6 +1116,16 @@ program define SelfCheck
 	matrix `bb' = e(b)
 	assert mreldif( `bb',total_race ) < c(epsfloat)
 
+	// for later use with factors
+	gen byte female_race = (sex==2) * race
+	total female [pw=finalwgt], over(female_race, nolab)
+	matrix total_female_race = e(b)
+	matrix rownames total_female_race = female_race
+	
+	assert total_female_race[1,1] == 0
+	matrix total_female_race[1,2] = total_female_race[1,2] + 8000
+	matrix total_female_race[1,3] = total_female_race[1,3] + 2000
+	matrix total_female_race[1,4] = total_female_race[1,4] + 600
 	
 	// somewhat unbalanced sample
 	set seed 12345
@@ -1180,24 +1201,43 @@ program define SelfCheck
 	assert r(converged)   == 0
 	assert r(badcontrols) > 0
 	
-	di as inp _n ">> 9. intentional syntax errors"
+	di as inp _n ">> 9. test raking with non-trivial factors"
+	capture noisily ipfraking [pw=finalwgt] , ctotal( total_sex total_race total_female_race ) generate( rweight9 ) trimhiabs(200000) trimloabs(10000) iter(50)
+	return list
+
+	assert r(converged) == 1
+	
+	total _one [pw=rweight9], over(sex, nolab)
+	matrix `bb' = e(b)
+	assert mreldif( `bb',total_sex ) < 100*c(epsfloat)
+
+	total _one [pw=rweight9], over(race, nolab)
+	matrix `bb' = e(b)
+	assert mreldif( `bb',total_race ) < 100*c(epsfloat)
+	
+	total female [pw=rweight9], over(female_race, nolab)
+	matrix `bb' = e(b)
+	assert mreldif( `bb',total_female_race ) < 100*c(epsdouble)
+	
+	
+	di as inp _n ">> 99. intentional syntax errors"
 	capture noisily ipfraking
 	assert _rc == 198
 	capture noisily ipfraking [pw=finalwgt]
 	assert _rc == 198
 	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race )
 	assert _rc == 198
-	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) replace
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) replace
 	assert _rc == 198
-	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) trimhiabs(0)
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) trimhiabs(0)
 	assert _rc == 198
-	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) trimhiabs(200) trimloabs(10000)
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) trimhiabs(200) trimloabs(10000)
 	assert _rc == 198
-	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) kinkhigh(blah)
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) kinkhigh(blah)
 	assert _rc == 198
-	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) kinkhigh(200)
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) kinkhigh(200)
 	assert _rc == 198
-	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight9 ) kinkhigh(-5 5)
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) kinkhigh(-5 5)
 	assert _rc == 198
 	
 	
@@ -1207,7 +1247,7 @@ program define SelfCheck
 	
 	restore
 	
-	di _n "{txt}ALL TESTS PASSED."
+	di _n _col(24) "{inp}ALL TESTS PASSED."
 	
 end // of SelfCheck
 
@@ -1252,6 +1292,36 @@ program define GenerateCalibVars , rclass
 	
 end // of GenerateCalibVars
 
+program define ReportTrims, rclass
+	syntax varlist(numeric min=2 max=2) [if] [in], [ one(varname numeric) over(varlist) ///
+		trimhirel(real `=c(maxdouble)') trimhiabs(real `=c(maxdouble)') trimlorel(real 0) trimloabs(real 0) loglevel(int 0) ]
+
+	local oldweight : word 1 of `varlist'
+	local newweight : word 2 of `varlist'
+	
+	marksample touse
+	
+	qui {
+		count if `touse' & `newweight'/`trimhiabs' > 1 - 1e-6 
+		if r(N) noi di "{txt}Trimmed due to the upper absolute limit: {res}" r(N) "{txt} weights."
+		return scalar n_trimhiabs = r(N)
+		
+		count if `touse' & `newweight'/`trimloabs' < 1 + 1e-6 
+		if r(N) noi di "{txt}Trimmed due to the lower absolute limit: {res}" r(N) "{txt} weights."
+		return scalar n_trimloabs = r(N)
+		
+		count if `touse' & `newweight'/`oldweight' > (1 - 1e-6)*(`trimhirel')
+		if r(N) noi di "{txt}Trimmed due to the upper relative limit: {res}" r(N) "{txt} weights."
+		return scalar n_trimhirel = r(N)
+		
+		count if `touse' & `newweight'/`oldweight' < (1 + 1e-6 ) * (`trimlorel' )
+		if r(N) noi di "{txt}Trimmed due to the lower relative limit: {res}" r(N) "{txt} weights."
+		return scalar n_trimlorels = r(N)
+		
+		
+	}
+	
+end // of ReportTrims
 
 mata
 
@@ -1594,6 +1664,11 @@ exit
 		-touse- is passed to ControlCheckParse
 1.2.36	-one()- variable is passed through to ControlCheckParse; otherewise report breaks down :(
 1.2.37	the worst fitted target is explicitly reported
+1.2.38	PropAdjust only adjusts the weights when the control/multiplication factor is not equal to zero
+		This allows multiplicative factors together with -over()- specification
+		Unit test is added on the functionality of nontrivial multiplicative factors
+		Number of trimmed cases reported
+
 1.1.xx	-trim- options are refactored through -kink- options
 
 */
