@@ -1,4 +1,4 @@
-*! v.1.2.38 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.2.41 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -6,7 +6,7 @@ program define ipfraking, rclass
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) trace one(varlist min=1 max=1 numeric) ///
-		selfcheck rapid from(varname) noDIVergence alpha(passthru) mstep(real 1) mataoptevaltype(string) ///
+		selfcheck rapid from(varname) noDIVergence alpha(passthru) mstep(real 1) mataoptevaltype(string) LINear ///
 		/// KINKHIgh(passthru) KINKLOw(passthru) KINKFREQuency(passthru) kinkat(passthru) 
 		KINKABSHIgh(passthru) KINKRELHIgh(passthru) KINKABSLOw(passthru) KINKRELLOw(passthru) KINKFREQuency(passthru) ///
 		* ]
@@ -117,7 +117,50 @@ program define ipfraking, rclass
 	}
 	
 	// choose the method
-	if "`rapid'" == "" {
+	if "`linear'" == "linear" {
+		// linear calibration -- through Mata
+		
+		di "{txt}Linear calibration"
+		
+		if "`trimopts'" != "" {
+			display as error "Trimming is not supported with linear weights"
+			exit (198)
+		}
+
+		tempname prefix allctotals scale orig_scale
+		GenerateCalibVars , ctotal(`ctotal') prefix(`prefix')
+		local ctrlvarlist_u `r(varlist)'
+	
+		// vectorize the control totals; label the matrix rows for later use to create tempvars
+		MergeCtotals `ctotal', noscale
+		matrix `allctotals' = r(Merged)
+	
+		// touse
+		mata : st_view( touse=., ., "`touse'" )
+		// input weights
+		mata : st_view( currweight=., ., "`currweight'", "`touse'" )
+		// calibration variables
+		mata : st_view( X=., ., "`ctrlvarlist_u'", "`touse'" )
+		// weighted total
+		mata : wtotal = quadcross( X, currweight )'
+	
+		// targets
+		mata : targets = st_matrix("`allctotals'")
+	
+		// X'X
+		mata : XtX = quadcross( X, currweight, X )
+		mata : invXtX = makesymmetric( pinv( XtX ) )
+	
+		// difference
+		mata : lambda = (targets - wtotal) * invXtX
+		
+		// linear weights: overwrite
+		mata : currweight[,] = currweight :* (1 :+ X * lambda')
+
+		return local flavor Linear
+		return scalar converged = 1		
+	}
+	else if "`rapid'" == "" {
 		// use iterative proportional fitting
 
 		forvalues i=1/`iterate' {
@@ -128,6 +171,7 @@ program define ipfraking, rclass
 				if "`trimfrequency'" == "often" & "`trimopts'" != "" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `over`k'' ) loglevel(`loglevel')
 				if "`kinkfreq'" == "often" ProcessKink `oldweight' `currweight', `kinkrelhigh' `kinkrellow' loglevel(`loglevel')
 			}
+
 			if "`trace'" != "" {
 				forvalues k=1/`nvars' {
 					CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') quietly : ///
@@ -221,6 +265,7 @@ program define ipfraking, rclass
 			
 		}
 		
+		return local flavor Raked
 		* qui replace `currweight' = `currweight'*`scale'
 	}
 
@@ -385,18 +430,23 @@ program GenerateTrimLimits
 end // of GenerateTrimLimits
 
 program define MergeCtotals, rclass
-	tokenize `0'
-	tempname merged
+	syntax anything, [noscale]
+	tokenize `anything'
+	tempname merged orig_scale
 	while "`1'" != "" {
 		mat `merged' = nullmat(`merged'), `1'
+		mata : st_numscalar( "`orig_scale'", sum( st_matrix( "`1'" ) ) )
 		mac shift
 	}
-	tempname scale
-	mata : st_numscalar("`scale'",sum(st_matrix("`merged'")))
-	scalar `scale' = `scale' / (_N * `: word count `0'')
-	matrix `merged' = `merged' / `scale'
+	if "`scale'" != "noscale" {
+		tempname nscale
+		mata : st_numscalar("`nscale'",sum(st_matrix("`merged'")))
+		scalar `nscale' = `nscale' / (_N * `: word count `0'')
+		matrix `merged' = `merged' / `nscale'
+		return scalar scale = `scale'
+		return scalar orig_scale = `orig_scale'
+	}
 	return matrix Merged `merged'
-	return scalar scale = `scale'
 end // of MergeCtotals
 
 program define DiagnoseMataDS
@@ -1010,7 +1060,7 @@ program define DiagDisplay, rclass
 		// histograms
 		tempname histnew histratio histboth
 		
-		label variable `newweight' "Raked weights"
+		label variable `newweight' "Calib weights"
 		quietly histogram `newweight', freq nodraw name( `histnew' )
 		
 		label variable `wratio' "Adjustment factor"
@@ -1668,7 +1718,8 @@ exit
 		This allows multiplicative factors together with -over()- specification
 		Unit test is added on the functionality of nontrivial multiplicative factors
 		Number of trimmed cases reported
-
+1.2.41	Linear calibration with -linear- option
+		
 1.1.xx	-trim- options are refactored through -kink- options
 
 */
