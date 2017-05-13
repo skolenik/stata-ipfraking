@@ -1,4 +1,4 @@
-*! v.1.2.41 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.2.42 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -6,20 +6,20 @@ program define ipfraking, rclass
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) trace one(varlist min=1 max=1 numeric) ///
-		selfcheck rapid from(varname) noDIVergence alpha(passthru) mstep(real 1) mataoptevaltype(string) LINear ///
-		/// KINKHIgh(passthru) KINKLOw(passthru) KINKFREQuency(passthru) kinkat(passthru) 
-		KINKABSHIgh(passthru) KINKRELHIgh(passthru) KINKABSLOw(passthru) KINKRELLOw(passthru) KINKFREQuency(passthru) ///
-		* ]
+		selfcheck from(varname) noDIVergence alpha(passthru) LINear	* ]
 
 	// syntax:
 	//   [pw=original weight variable]
 	//   ctotal        is the list of matrix names, each matrix is a e(b) of an appropriate -total y, over()- command
 	//   generate()    is the name of the variable to be created
 	//   replace       indicates that the weight variable is to be overwritten
-	//   trimrel       is the upper bound on the relative weight adjustment ratio
-	//   trimabs       is the maximum weight allowed
+	//   from()        is the variable to start from
 	//   iterate       is the maximum number of iterations
 	//   tolerance     is the difference in weight adjustment ratios over an iteration cycle
+	//   alpha         is the relative adjustment (1 by default)
+	//   linear        linear calibration
+	//   nodivergence  usually makes sense; sometimes, especially with trimming, the objective function fails to go down
+	//   trim[hi|lo][abs|rel]  trimming values: HI from above, LO from below; ABS in absolute values, REL in ratios
 
 	if "`exp'"=="" & "`selfcheck'" == "" {
 		display as error "pweight is required"
@@ -81,17 +81,6 @@ program define ipfraking, rclass
 	generate double `prevweight' = `oldweight'
 	if "`from'" == "" generate double `currweight' = `oldweight'
 	else generate double `currweight' = `from'
-	
-	// parse the kink options
-	if "`kinkabshigh'`kinkrelhigh'`kinkabslow'`kinkrellow'`kinkfrequency'" != "" {
-		// check the ranges and such
-		// dirty trick: push back updated kinkfreq as a single word; kinkat as a number
-		tempvar atlow athigh
-		qui gen double `atlow' = 0
-		qui gen double `athigh' = .y
-		CheckKinkOptions `atlow' `athigh' `oldweight', `kinkabshigh' `kinkrelhigh' `kinkabslow' `kinkrellow' `kinkfrequency' ///
-			loglevel(`loglevel') trim("`trimopts'") 
-	}
 	
 	local nvars : word count `ctotal'
 
@@ -169,7 +158,6 @@ program define ipfraking, rclass
 			forvalues k=1/`nvars' {
 				PropAdjust `currweight' if `touse' , target(`mat`k'') control(`var`k'') over(`over`k'') loglevel(`loglevel') `alpha'
 				if "`trimfrequency'" == "often" & "`trimopts'" != "" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `over`k'' ) loglevel(`loglevel')
-				if "`kinkfreq'" == "often" ProcessKink `oldweight' `currweight', `kinkrelhigh' `kinkrellow' loglevel(`loglevel')
 			}
 
 			if "`trace'" != "" {
@@ -181,8 +169,6 @@ program define ipfraking, rclass
 				
 			}
 			if "`trimfrequency'" == "sometimes" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' ) loglevel(`loglevel')
-			if "`kinkfreq'" == "sometimes" & "`kinkrelhigh'`kinkrellow'"!="" ///
-				ProcessKink `oldweight' `currweight', `kinkrelhigh' `kinkrellow' loglevel(`loglevel')
 			
 			CheckConvergence `prevweight' `currweight' if `touse', `tolerance'
 			local currobj = r(maxreldif)
@@ -274,7 +260,6 @@ program define ipfraking, rclass
 	}
 
 	if "`trimfrequency'" == "once" & "`trimopts'"!="" TrimWeights `oldweight' `currweight', `trimopts' one( `one' ) over( `overlist' )	
-	if "`kinkfreq'" == "once" ProcessKink `oldweight' `currweight', `kinkrelhigh' `kinkrellow' loglevel(`loglevel')
 	return add
 
 	// check if controls matched
@@ -374,7 +359,7 @@ program define ipfraking, rclass
 		
 		char `theweight'[hash1] `=scalar(`hash1')'
 		
-		foreach trimpar in trimfrequency trimhiabs trimloabs trimhirel trimlorel kinkrelhigh kinkrellow kinkfrequency {
+		foreach trimpar in trimfrequency trimhiabs trimloabs trimhirel trimlorel {
 			if "``trimpar''" != "" char `theweight'[`trimpar'] ``trimpar''
 		}
 		
@@ -462,175 +447,6 @@ program define DiagnoseMataDS
 	}
 
 end
-
-program define KinkError
-	syntax , [high low range freq every abs rel]
-	if "`high'`low'"!= "" di as err "kink`abs'`rel'`high'`low'() must be specified as kink`abs'`rel'`high'`low'(cutoff slope)"
-	if "`range'"!="" di as err "where the cutoff > 0 and 0 < slope < 1"
-	if "`freq'" != "" di as err `"kinkfrequency can be "often", "sometimes" or "once""'
-	if "`every'" != "" di as err "kinkat must be a list of positive integers"
-	exit 198
-end // of KinkError
-
-program define CheckKinkOptions
-
-	syntax varlist(numeric min=3 max=3), [ ///
-		kinkrelhigh(numlist min=2 max=2 >=0) ///
-		kinkrellow(numlist min=2 max=2 >=0) ///
-		kinkfrequency(string) trim(string) loglevel(integer 0) * ]
-/*
-		
-		
-*/
-	
-	local kinkhigh `kinkabshigh' `kinkrelhigh'
-	local kinklow `kinkabslow' `kinkrellow'
-
-	if `loglevel' < 2 local show2 quietly
-	if `loglevel' < 1 local show1 quietly
-	
-	if "`kinkhigh'`kinklow'"!="" & trim("`trim'")!="" {
-		di as err "kink and trim options cannot be specified together"
-		exit 198
-	}
-	
-	// check kinkfrequency
-	if "`kinkfrequency'" == "" local kinkfrequency sometimes
-	
-	if !inlist("`kinkfrequency'","often","sometimes","once") KinkError, freq
-	
-	if "`kinkhigh'`kinklow'"=="" & "`kinkfrequency'"!="" {
-		di as err "Warning: kinkfrequency is specified without any of kink*high() or kink*low() options; ignored"
-		c_local kinkfreq
-		exit 0
-	}
-	// dirty trick: push back kinkfrequency
-	c_local kinkfreq `kinkfrequency'
-
-	// the case-specific limits
-	local atlow  : word 1 of `varlist'
-	local athigh : word 2 of `varlist'
-	local oldweight : word 3 of `varlist'
-
-	// kink[abs|rel][high|low]high must be of the format # #
-	// where the first # is the cutoff value
-	// and the second # is the slope after it
-	if "`kinkrelhigh'"!="" {
-	
-		tokenize `kinkrelhigh'
-		
-		local hicutoff `1'
-		cap assert `hicutoff' > 0
-		if _rc KinkError , high rel range
-		
-		// deal with the second argument = slope
-		local hislope `2'
-		cap confirm number `hislope'
-		if _rc KinkError , high rel
-		
-		if !inrange(`hislope',0,1) {
-			di as err "Warning: slope of kinkrelhigh is outside (0,1) range, results may be weird"
-		}	
-	}
-	else {
-		local hicutoff = .z
-	}
-
-	// kinklow must be of the format # #
-	// where the first # is the cutoff value
-	// and the second # is the slope after it
-	if "`kinkrellow'"!="" {
-		tokenize `kinkrellow'
-
-		// deal with the first argument = cutoff
-		local lowcutoff `1'
-
-		cap confirm number `lowcutoff'
-		if _rc KinkError , low rel
-		cap assert `lowcutoff' > 0 
-		if _rc KinkError , low rel range
-		
-		// deal with the second argument = slope
-		local lowslope `2'
-		cap confirm number `lowslope'
-		if _rc KinkError , low rel
-		
-		if !inrange(`lowslope',0,1) {
-			di as err "Warning: slope of kinkrellow is outside (0,1) range, results may be weird"
-		}
-		
-		if `hicutoff' < `lowcutoff' {
-			di as err "the cutoff of kinkrelhigh() is lower than the cutoff of kinkrellow() which is not allowed"
-			exit 7
-		}
-		
-	}
-
-end // of CheckKinkOptions
-
-program define ProcessKink, rclass
-
-	syntax varlist(numeric min=2 max=2) [if] [in], ///
-		[kinkrelhigh(numlist min=2 max=2 >=0) kinkrellow(numlist min=2 max=2 >=0) loglevel(real 0)]
-	
-	marksample touse, novarlist
-	
-	tokenize `varlist'
-	local oldweight `1'
-	local currweight `2'
-	
-	local kinkcount 0
-	
-	if `loglevel' == 0 local qui qui
-	
-	// parse the kinkhigh option
-	if "`kinkrelhigh'"!="" {
-		tokenize `kinkrelhigh'
-
-		local hicutoff `1'
-		local hislope `2'
-		
-		qui count if (`currweight' > `oldweight' * `hicutoff') & `touse'
-		local kinkcount = `kinkcount' + r(N)
-		
-		if `loglevel' > 1 {
-			di "{txt}Found {res}`=r(N)' {txt}observations to kink:"
-			sum `currweight' (`currweight' > `oldweight' * `hicutoff') & `touse'
-		}
-		
-		`qui' replace `currweight' = `oldweight'*`hicutoff' + (`currweight' - `oldweight'*`hicutoff')*`hislope' ///
-			if (`currweight' > `oldweight' * `hicutoff') & `touse'
-
-		if `loglevel' > 1 {
-			di "{txt}Updated to:"
-			sum `currweight' if `currweight' > `hicutoff' & `touse'
-		}
-		
-	}
-
-	if "`kinkrellow'"!="" {
-		tokenize `kinkrellow'
-		local lowcutoff `1'
-		local lowslope `2'
-		
-		qui count if (`currweight' < `lowcutoff'*`oldweight') & `touse'
-		local kinkcount = `kinkcount' + r(N)
-
-		if `loglevel' > 1 {
-			di "{txt}Found {res}`=r(N)' {txt}observations to kink:"
-			sum `currweight' if `(`currweight' < `lowcutoff'*`oldweight') & `touse'
-		}
-		`qui' replace `currweight' = `lowcutoff'*`oldweight' - (`lowcutoff'*`oldweight' - `currweight')*`lowslope' ///
-			if (`currweight' < `lowcutoff'*`oldweight') & `touse'
-		if `loglevel' > 1 {
-			di "{txt}Updated to:"
-			sum `currweight' if `currweight' < `lowcutoff' & `touse'
-		}
-	}
-	
-	return scalar anykink = sign( `kinkcount' )
-	
-end // of ProcessKink
 
 program define CheckTrimOptions
 
@@ -1269,6 +1085,22 @@ program define SelfCheck
 	matrix `bb' = e(b)
 	assert mreldif( `bb',total_female_race ) < 100*c(epsdouble)
 	
+	di as inp _n ">> 10. test linear weights"
+	capture noisily ipfraking [pw=finalwgt] , ctotal( total_sex total_race ) generate( lweight10 ) linear
+	return list
+
+	assert r(converged) == 1
+	
+	total _one [pw=lweight10], over(sex, nolab)
+	matrix `bb' = e(b)
+	assert mreldif( `bb',total_sex ) < 100*c(epsfloat)
+
+	total _one [pw=lweight10], over(race, nolab)
+	matrix `bb' = e(b)
+	assert mreldif( `bb',total_race ) < 100*c(epsfloat)
+	
+	compare lweight10 rweight3
+	reg lweight10 rweight3
 	
 	di as inp _n ">> 99. intentional syntax errors"
 	capture noisily ipfraking
@@ -1283,11 +1115,13 @@ program define SelfCheck
 	assert _rc == 198
 	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) trimhiabs(200) trimloabs(10000)
 	assert _rc == 198
-	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) kinkhigh(blah)
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) trimhiabs(blah)
 	assert _rc == 198
-	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) kinkhigh(200)
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) whatever(200)
 	assert _rc == 198
-	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) kinkhigh(-5 5)
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) trimhiabs(-5 5)
+	assert _rc == 198
+	capture noisily ipfraking [pw=finalwgt], ctotal( total_sex total_race ) generate( rweight99 ) trimhiabs(200) linear
 	assert _rc == 198
 	
 	
@@ -1366,8 +1200,7 @@ program define ReportTrims, rclass
 		
 		count if `touse' & `newweight'/`oldweight' < (1 + 1e-6 ) * (`trimlorel' )
 		if r(N) noi di "{txt}Trimmed due to the lower relative limit: {res}" r(N) "{txt} weights."
-		return scalar n_trimlorels = r(N)
-		
+		return scalar n_trimlorel = r(N)
 		
 	}
 	
@@ -1719,6 +1552,8 @@ exit
 		Unit test is added on the functionality of nontrivial multiplicative factors
 		Number of trimmed cases reported
 1.2.41	Linear calibration with -linear- option
+1.2.42	All -kink- and -rapid- options removed
+		Unit test for -linear- added
 		
 1.1.xx	-trim- options are refactored through -kink- options
 
