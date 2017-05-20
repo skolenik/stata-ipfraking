@@ -1,4 +1,4 @@
-*! v.1.2.43 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.3.44 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -264,7 +264,11 @@ program define ipfraking, rclass
 			di "{err}`exp' is not a numeric variable; cannot replace"
 		}
 		else {
-			replace `exp' = `currweight'
+			if "`from'" != "" replace `from' = `currweight'
+			else {
+				di "{err}WARNING: `exp' variable is being replaced"
+				replace `exp' = `currweight'
+			}
 		}
 		local theweight `exp'
 	}
@@ -1191,7 +1195,6 @@ exit
 1.2.41	Linear calibration with -linear- option
 1.2.42	All -kink- and -rapid- options removed
 		Unit test for -linear- added
-		
-1.1.xx	-trim- options are refactored through -kink- options
-
+1.3.44	Treatment of -replace- is changed: if -from- is specified, then the -from- variable is the one being replaced
+		minor version bumped to reflect the important changes in functionality: kinks are gone, linear is added
 */
