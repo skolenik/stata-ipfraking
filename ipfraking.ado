@@ -1,4 +1,4 @@
-*! v.1.3.44 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.3.46 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -204,7 +204,8 @@ program define ipfraking, rclass
 	local worstcat
 	
 	forvalues k=1/`nvars' {
-		CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') : total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
+		CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') : ///
+			total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
 		matrix `pass' = r(target)
 		matrix rowname `pass' = `over`k''
 		return matrix target`k' = `pass'
@@ -442,6 +443,53 @@ program define CheckTrimOptions
 
 end // of CheckTrimOptions
 
+program define my_total, eclass sortpreserve
+
+	syntax varlist(numeric min=1 max=1) [if] [in] [pw/], [over(str)]
+	
+	tempvar touse
+	mark `touse' `if' `in'
+	
+	local y `varlist'
+
+	if "`exp'" != "" local wexp `exp'
+	else {
+		tempvar wexp
+		qui gen byte `wexp' = 1
+	}
+	
+	* parse the `over' option
+	if "`over'" != "" {
+		local 0 `over'
+		syntax varlist(numeric min=1), [nolabel]
+		local overx `varlist'
+	}
+	else {
+		tempvar overx
+		qui gen byte `overx' = 1
+	}
+	
+	tempname bb
+	
+	sort `touse' `overx' 
+	
+	* produce the matrix of totals in Mata
+	li `y' `wexp' `touse' `overx' 
+	mata : my_total("`y'","`wexp'","`touse'","`overx'","`bb'")
+	
+	* beautify bb
+	mat li `bb'
+	matrix coleq    `bb' = `y'
+	matrix rownames `bb' = y1
+	qui levelsof `overx' if `touse'
+	matrix colnames `bb' = `r(levels)'
+	mat li `bb'
+	
+	* e(b) is all we care about
+	ereturn post `bb'
+	
+end // of my_total
+
 program define CheckResults, rclass
 
 	gettoken cropt rest  : 0    , parse(":")
@@ -454,7 +502,15 @@ program define CheckResults, rclass
 	
 	confirm matrix `target'
 	
-	quietly `torun'
+	cap `torun'
+	if _rc == 402 & "`linear'" == "linear" {
+		* negative weights encountered, as may be the case with linear weights
+		* typical syntax is total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
+		* -syntax- does not check for negative weights -- only -total- itself does
+		* let us replace this call with my_total
+		my_`torun'
+	}
+	else if _rc qui `torun'
 	
 	tempname bb
 	matrix `bb' = e(b)
@@ -1143,6 +1199,25 @@ program define ReportTrims, rclass
 	
 end // of ReportTrims
 
+
+mata
+real rowvector my_total(string scalar yname, string scalar wname, string scalar tousename, string scalar overname, string scalar bname) {
+
+	st_view(X=.,.,(yname,wname),tousename)
+	st_view(over=.,.,overname,tousename)
+	info = panelsetup(over,1)
+	bb = J(1,rows(info),.)
+	for (i=1; i<=rows(info); i++) {
+		XX = panelsubmatrix(X, i, info)
+		XX
+		quadcross( XX[,1] , XX[,2] )
+		bb[1,i] = quadcross( XX[,1] , XX[,2] )
+	}
+	st_matrix(bname,bb)
+	return(bb)
+}		
+end // of mata within program
+
 exit
 
 
@@ -1197,4 +1272,6 @@ exit
 		Unit test for -linear- added
 1.3.44	Treatment of -replace- is changed: if -from- is specified, then the -from- variable is the one being replaced
 		minor version bumped to reflect the important changes in functionality: kinks are gone, linear is added
+1.3.46	Negative weights with linear calibration can still be used in CheckResults via my_total subroutine
+
 */
