@@ -1,4 +1,4 @@
-*! v.1.3.46 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.3.49 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -204,7 +204,7 @@ program define ipfraking, rclass
 	local worstcat
 	
 	forvalues k=1/`nvars' {
-		CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') : ///
+		CheckResults ,  target(`mat`k'') `ctrltolerance' loglevel(`loglevel') `linear' : ///
 			total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
 		matrix `pass' = r(target)
 		matrix rowname `pass' = `over`k''
@@ -236,8 +236,17 @@ program define ipfraking, rclass
 	return scalar maxctrl = `mrdmax'
 	return scalar badcontrols = `badcontrols'
 	
+	if "`linear'" == "linear" {
+		* check for negative weights
+		qui count if `currweight' < 0 & `touse'
+		if r(N) {
+			local negwt = r(N)
+			di "{err}WARNING: `negwt' negative weights were produced as a result of linear calibration{txt}"
+		}
+	}
+	
 	* display what we've found
-	di "{txt}The worst relative discrepancy of {res}" %7.0g return(maxctrl) "{txt} is observed for {res}`over`worstvar''{txt} == {res}" `worstcat'
+	di "{txt}The worst relative discrepancy of {res}" %7.0g return(maxctrl) "{txt} is observed for {res}`over`worstvar''{txt} == {res}" %-12.0f `worstcat'
 	di "{txt}Target value = {res}" _c
 	matrix `pass' = return(target`worstvar')
 	di "{res}" %10.0g `pass'[1,colnumb("`pass'","`worstcat'")] _c
@@ -301,7 +310,7 @@ program define ipfraking, rclass
 		}
 		
 		* return values to chars
-		foreach retval in n_trimhiabs n_trimloabs n_trimhirel n_trimlorel {
+		foreach retval in n_trimhiabs n_trimloabs n_trimhirel n_trimlorel negwt {
 			if "``retval''" != "" char `theweight'[`retval'] ``retval''
 		}
 	
@@ -461,7 +470,7 @@ program define my_total, eclass sortpreserve
 	* parse the `over' option
 	if "`over'" != "" {
 		local 0 `over'
-		syntax varlist(numeric min=1), [nolabel]
+		syntax varlist(numeric min=1), [noLABel]
 		local overx `varlist'
 	}
 	else {
@@ -469,21 +478,21 @@ program define my_total, eclass sortpreserve
 		qui gen byte `overx' = 1
 	}
 	
-	tempname bb
+	tempname bb ll
 	
 	sort `touse' `overx' 
 	
 	* produce the matrix of totals in Mata
-	li `y' `wexp' `touse' `overx' 
-	mata : my_total("`y'","`wexp'","`touse'","`overx'","`bb'")
+	* li `y' `wexp' `touse' `overx' 
+	qui mata : my_total("`y'","`wexp'","`touse'","`overx'","`bb'","`ll'")
 	
 	* beautify bb
-	mat li `bb'
+	* mat li `bb'
 	matrix coleq    `bb' = `y'
 	matrix rownames `bb' = y1
 	qui levelsof `overx' if `touse'
 	matrix colnames `bb' = `r(levels)'
-	mat li `bb'
+	* mat li `bb'
 	
 	* e(b) is all we care about
 	ereturn post `bb'
@@ -498,7 +507,7 @@ program define CheckResults, rclass
 	assert "`colon'" == ":"
 	
 	local 0 `cropt'
-	syntax , target(name) [ ctrltolerance(real 1e-6) loglevel(int 0) quietly ]
+	syntax , target(name) [ ctrltolerance(real 1e-6) loglevel(int 0) quietly linear ]
 	
 	confirm matrix `target'
 	
@@ -508,7 +517,8 @@ program define CheckResults, rclass
 		* typical syntax is total `var`k'' if `touse' [pw=`currweight'] , over(`over`k'', nolab)
 		* -syntax- does not check for negative weights -- only -total- itself does
 		* let us replace this call with my_total
-		my_`torun'
+		assert "`: word 1 of `torun''" == "total"
+		my_`=trim("`torun'")'
 	}
 	else if _rc qui `torun'
 	
@@ -1201,19 +1211,20 @@ end // of ReportTrims
 
 
 mata
-real rowvector my_total(string scalar yname, string scalar wname, string scalar tousename, string scalar overname, string scalar bname) {
+real rowvector my_total(string scalar yname, string scalar wname, string scalar tousename, string scalar overname, string scalar bname, string scalar lname) {
 
 	st_view(X=.,.,(yname,wname),tousename)
 	st_view(over=.,.,overname,tousename)
 	info = panelsetup(over,1)
 	bb = J(1,rows(info),.)
+	ll = J(1,rows(info),.)
 	for (i=1; i<=rows(info); i++) {
 		XX = panelsubmatrix(X, i, info)
-		XX
-		quadcross( XX[,1] , XX[,2] )
 		bb[1,i] = quadcross( XX[,1] , XX[,2] )
+		ll[1,i] = over[info[i,1],1]
 	}
 	st_matrix(bname,bb)
+	st_matrix(lname,ll)
 	return(bb)
 }		
 end // of mata within program
@@ -1273,5 +1284,6 @@ exit
 1.3.44	Treatment of -replace- is changed: if -from- is specified, then the -from- variable is the one being replaced
 		minor version bumped to reflect the important changes in functionality: kinks are gone, linear is added
 1.3.46	Negative weights with linear calibration can still be used in CheckResults via my_total subroutine
+1.3.49	Debugging the interaction of CheckResults with mytotal
 
 */
