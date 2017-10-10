@@ -77,7 +77,7 @@ sjlog close, replace
 
 sjlog using ipfr.example2.run, replace
 ipfraking [pw=finalwgt], gen( rakedwgt2 ) ///
-    ctotal( ACS2011_sex_age Census2011_region Census2011_race ) 
+    ctotal( ACS2011_sex_age Census2011_region Census2011_race )
 sjlog close, replace
 
 graph export ipfraking_example2.eps, replace
@@ -151,14 +151,20 @@ generate byte _one = 1
 generate byte age_grp = 1 + (age>=40) + (age>=60) if !mi(age)
 generate sex_age = sex*10 + age_grp
 ipfraking [pw=finalwgt], gen( rakedwgt2 ) ///
-    ctotal( ACS2011_sex_age Census2011_region Census2011_race ) 
+    ctotal( ACS2011_sex_age Census2011_region Census2011_race )
 forvalues k=1/32 {
     quietly ipfraking [pw=brr_`k'], gen( brrc_`k' ) nograph ///
         ctotal( ACS2011_sex_age Census2011_region Census2011_race )
-    _dots `k' 0 
+    _dots `k' 0
 }
 svyset [pw=rakedwgt2], vce(brr) brrw( brrc* ) dof( 31 )
 svy : proportion highbp
+sjlog close, replace
+
+sjlog using ipfr.whatsdeff, report
+webuse nhanes2, clear
+whatsdeff finalwgt
+return list
 sjlog close, replace
 
 exit
