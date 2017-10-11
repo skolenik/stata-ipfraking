@@ -1,0 +1,46 @@
+. ipfraking_report using rakedwgt3-report, raked_weight(rakedwgt3) replace by(_one)
+Margin variable sex_age (total variable: _one; categories: 11 12 13 21 22 23).
+Margin variable region (total variable: _one; categories: 1 2 3 4).
+Margin variable race (total variable: _one; categories: 1 2 3).
+Auxiliary variable _one (categories: 1).
+
+file rakedwgt3-report.dta saved
+
+      Source |       SS           df       MS      Number of obs   =    10,351
+-------------+----------------------------------   F(10, 10340)    >  99999.00
+       Model |  2086.13859        10  208.613859   Prob > F        =    0.0000
+    Residual |   .78315703    10,340  .000075741   R-squared       =    0.9996
+-------------+----------------------------------   Adj R-squared   =    0.9996
+       Total |  2086.92175    10,350  .201634952   Root MSE        =     .0087
+
+------------------------------------------------------------------------------
+    __000003 |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     sex_age |
+         11  |   .0644365   .0002775   232.21   0.000     .0638925    .0649804
+         12  |   .4545577   .0003154  1441.25   0.000     .4539395     .455176
+         13  |   .6782466   .0002804  2418.71   0.000     .6776969    .6787963
+         22  |   .3966406   .0003049  1300.84   0.000     .3960429    .3972383
+         23  |   .7304392   .0002726  2679.97   0.000     .7299049    .7309734
+             |
+      region |
+         NE  |  -.4455127   .0002536 -1756.49   0.000    -.4460099   -.4450155
+         MW  |  -.4428144   .0002335 -1896.53   0.000    -.4432721   -.4423567
+          W  |  -.6672675   .0002407 -2772.21   0.000    -.6677393   -.6667957
+             |
+        race |
+      Black  |   .3360321   .0002848  1180.08   0.000     .3354739    .3365902
+      Other  |   1.613276   .0006303  2559.34   0.000     1.612041    1.614512
+             |
+       _cons |   .5864801   .0002455  2388.48   0.000     .5859988    .5869614
+------------------------------------------------------------------------------
+
+Raking adjustments for sex_age variable:
+  the smallest was        1.798 for category 21 (21)
+  the greatest was        3.732 for category 23 (23)
+Raking adjustments for region variable (1=NE, 2=MW, 3=S, 4=W):
+  the smallest was        0.922 for category 4 (W)
+  the greatest was        1.798 for category 3 (S)
+Raking adjustments for race variable (1=white, 2=black, 3=other):
+  the smallest was        1.798 for category 1 (White)
+  the greatest was        9.023 for category 3 (Other)

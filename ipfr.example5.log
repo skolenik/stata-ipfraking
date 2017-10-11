@@ -1,0 +1,56 @@
+. capture drop rakedwgt3
+
+. ipfraking [pw=finalwgt], gen( rakedwgt3 ) ///
+>     ctotal( ACS2011_sex_age Census2011_region Census2011_race ) ///
+>     trimhiabs(200000) trimloabs(2000) meta
+
+ Iteration 1, max rel difference of raked weights = 14.95826
+ Iteration 2, max rel difference of raked weights = .21474256
+ Iteration 3, max rel difference of raked weights = .02754514
+ Iteration 4, max rel difference of raked weights = .00511347
+ Iteration 5, max rel difference of raked weights = .00095888
+ Iteration 6, max rel difference of raked weights = .00018036
+ Iteration 7, max rel difference of raked weights = .00003391
+ Iteration 8, max rel difference of raked weights = 6.377e-06
+ Iteration 9, max rel difference of raked weights = 1.199e-06
+ Iteration 10, max rel difference of raked weights = 2.254e-07
+The worst relative discrepancy of  3.0e-08 is observed for race == 3           
+Target value =   20053682; achieved value =   20053682
+Trimmed due to the upper absolute limit: 5 weights.
+
+   Summary of the weight changes
+
+              |    Mean    Std. dev.    Min        Max       CV
+--------------+-------------------------------------------------- 
+Orig weights  |    11318       7304      2000       79634   .6453
+Raked weights |    22055      18908      4033      200000   .8573
+Adjust factor |   2.1486               0.9220     18.9828
+
+. char li rakedwgt3[]
+  rakedwgt3[source]:          finalwgt
+  rakedwgt3[objfcn]:          2.25435521346e-07
+  rakedwgt3[maxctrl]:         3.00266822363e-08
+  rakedwgt3[converged]:       1
+  rakedwgt3[worstcat]:        3
+  rakedwgt3[worstvar]:        race
+  rakedwgt3[command]:         [pw=finalwgt], gen( rakedwgt3 ) ctotal( ACS2011_sex_age Census2011_region ..
+  rakedwgt3[trimloabs]:       trimloabs(2000)
+  rakedwgt3[trimhiabs]:       trimhiabs(200000)
+  rakedwgt3[trimfrequency]:   sometimes
+  rakedwgt3[hash1]:           2347674164
+  rakedwgt3[mat3]:            Census2011_race
+  rakedwgt3[over3]:           race
+  rakedwgt3[totalof3]:        _one
+  rakedwgt3[Census2011_race]: 7.48567503861e-09
+  rakedwgt3[mat2]:            Census2011_region
+  rakedwgt3[over2]:           region
+  rakedwgt3[totalof2]:        _one
+  rakedwgt3[Census2011_region]:
+                              3.00266822363e-08
+  rakedwgt3[mat1]:            ACS2011_sex_age
+  rakedwgt3[over1]:           sex_age
+  rakedwgt3[totalof1]:        _one
+  rakedwgt3[ACS2011_sex_age]: 4.13778410340e-09
+  rakedwgt3[note1]:           Raking controls used: ACS2011_sex_age Census2011_region Census2011_race
+  rakedwgt3[note0]:           1
+

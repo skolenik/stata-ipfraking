@@ -1,16 +1,16 @@
 \inserttype[st0001]{article}
 \author{S. Kolenikov}{%
-  Stanislav Kolenikov\\Abt SRBI\\kolenikovs@srbi.com
+  Stanislav Kolenikov\\Abt Associates\\stas\_kolenikovs@abtassoc.com
 }
-\title[Raking survey data]{Updates to the \cmd{ipfraking} ecosystem}
+\title[Raking survey data: updates]{Updates to the ipfraking ecosystem}
 \maketitle
 
 \begin{abstract}
-\citet{kolenikov:2014 } introduced package \stcmd{ipfraking} 
+\citet{kolenikov:2014} introduced package \stcmd{ipfraking} 
 for weight calibration procedures known as iterative proportional fitting,
 or raking, of complex survey weights.
 This article briefly describes the original package,
-and adds updates to the core program, as well as a host of 
+and adds updates to the core program, as well as a host of
 additional programs that are used to support the process of creating
 survey weights in the authors' production code.
 
@@ -39,7 +39,7 @@ affecting imbalance between the population and the sample, thus making
 the analyses conducted on such microdata generalizable to the target population.
 
 Earlier, I introduced \citep{kolenikov:2014} a Stata package
-called \stcmd{ipfraking} that implements 
+called \stcmd{ipfraking} that implements
 calibration of survey weights to known control totals to ensure
 that the resulting weighted data are representative of the population
 of interest. The process of calibration is aimed at aligning the sample totals
@@ -115,14 +115,14 @@ set of weights as that of constrained optimization with the control
 equations (\ref{eq:control:totals}) serving as constraints,
 and optimization targeted at making the discrepancy between
 the design weights $w_{1j}$ and calibrated weights
-$w_{3j}$ as close as possible, in a suitable sense. 
+$w_{3j}$ as close as possible, in a suitable sense.
 
 In package \stcmd{ipfraking} \citep{kolenikov:2014}, I implemented
 a popular calibration algorithm, known as \textit{iterated proportional fitting},
 or as \textit{raking}, which consists of iterative updating (post-stratification) of
 each of the margins. (For an in-depth discussion of distinctions between
-raking and post-stratification, see \citet{kolenikov:2016}.) 
-Since 2014, the continuing code development resulted 
+raking and post-stratification, see \citet{kolenikov:2016}.)
+Since 2014, the continuing code development resulted
 in additional features that this update documents.
 
 \section{Package description}
@@ -162,8 +162,6 @@ nograph
 \hangpara
 Note that the weight statement \stcmd{[pw=\varname]} is required, and must contain the initial weights.
 
-\subsection{Options}
-
 \subsubsection{Required options}
 
 \hangpara
@@ -194,62 +192,36 @@ contains the name of the new variable to contain the raked weights.
 
 One and only one of \stcmd{generate()} or \stcmd{replace} must be specified.
 
-\subsubsection{Options to control convergence}
-
-\begin{sttech}
-Convergence in \stcmd{ipfraking} is defined in terms of the maximum relative
-change in weights:
-\begin{equation}
-    D_k = \max_{j \in \mathcal{S}} \frac{|w_j^{k,p}-w_j^{k-1,p}|}{w_j^{k-1,p}}
-    \label{eq:conv:ratio:weights}
-\end{equation}
-When $D_k$ is small, $D_k < \delta_D$, it means that the weights stop
-changing between iterations, i.e., the algorithm came to its steady state.
-On the other hand, if $D_k > D_{k-1}$, it means that the algorithm
-may start diverging, at which point it might be reasonable to terminate it.
-See step \ref{step:check:weight:conv} of Algorithm 2 in Section \ref{subsec:trimming}.
-
-Once the algorithm terminates, it also checks whether the control totals
-are satisfied. Specifically, for each of the control total matrices
-$M_1, \ldots, M_p$, the relative difference vs.\ the corresponding weighted
-sample totals $\hat M_1, \ldots, \hat M_p$ is computed:
-\begin{equation}
-    m_c = {\rm mreldif}( \hat M_c, M_c )
-    \label{eq:conv:mreldif}
-\end{equation}
-where the maximum relative difference of two matrices
-$$
-{\rm mreldif}(A,B) = \max_{ij} \frac{|a_{ij}-b_{ij}|}{1+|b_{ij}|}
-$$
-as defined in \dref{functions}. A control relation is satisfied
-if $m_c < \delta_T$; otherwise, a warning is issued.
-See step \ref{step:check:ctotal:conv} of Algorithm 2 in Section \ref{subsec:trimming}.
-
-Iterations continue until either $k = K$, a specified number of iterations;
-$D_k < \delta_D$; or $D_k > D_{k-1}$.
-\end{sttech}
+\subsubsection{Linear calibration}
 
 \hangpara
-\stcmd{\underbar{tol}erance(\num)} defines the $D_k$-convergence
-criterion, i.e., $\delta_D$. The default is $\delta_D = 10^{-6}$.
+\stcmd{\underbar{lin}ear}
+requests linear calibration of weights.
+
+\subsubsection{Options to control convergence}
+
+\hangpara
+\stcmd{\underbar{tol}erance(\num)} defines convergence criteria
+(the change of weights from one iteration to next). The default is $10^{-6}$.
 
 \hangpara
 \stcmd{\underbar{iter}ate(\num)} specifies the maximum number
-of iterations $K$. The default is $K=2000$.
+of iterations. The default is 2000.
 
 \hangpara
 \stcmd{\underbar{nodiv}ergence} overrides the check
-that $D_k > D_{k-1}$, i.e., ignores this termination condition.
+that the change in weights is greater at the current iteration
+than in the previous one, i.e., ignores this termination condition.
+It is generally recommended, especially in calibration with simultaneous trimming.
 
 \hangpara
-\stcmd{\underbar{ctrltol}erance(\num)} defines the criterion $\delta_T$ to
+\stcmd{\underbar{ctrltol}erance(\num)} defines the criterion to
 assess the accuracy of the control totals. It does not impact
-iterations or convergence criteria; it only serves as the final quality control check
-after the algorithm terminates as defined above. The default value is $\delta_T=10^{-6}$.
+iterations or convergence criteria, but rather only triggers alerts in the output.
+The default value is $10^{-6}$.
 
 \hangpara
-\stcmd{trace} requests a trace plot to be added. See
-Section \ref{subsec:example:trace}.
+\stcmd{trace} requests a trace plot to be added.
 
 \subsubsection{Trimming options}
 \label{subsubsec:trimming}
@@ -282,23 +254,20 @@ Section \ref{subsec:example:trace}.
     are to be performed. The following keywords are recognized:
 
 \morehang \stcmd{often} means that trimming will be performed
-    after each marginal adjustment, i.e., within each iteration of the inner
-    cycle inside Step \ref{step:trimfreq:often} of Algorithm 2.
+    after each marginal adjustment.
 
 \morehang \stcmd{sometimes} means that trimming will be performed
-    after a full set of variables has been used for post-stratification, i.e.,
-    at the end of each outer cycle iteration at step \ref{step:trimfreq:sometimes} of
-    Algorithm 2. This is the default behavior if any of the numeric trimming
+    after a full set of variables has been used for post-stratification.
+    This is the default behavior if any of the numeric trimming
     options above are specified.
 
 \morehang \stcmd{once}
-    means that trimming will be performed after the outer loop converges
-    at step \ref{step:trimfreq:once} of Algorithm 2.
+    means that trimming will be performed after the raking process
+    is declared to have converged.
 
 The numeric trimming options \stcmd{trimhiabs(\num)}, \stcmd{trimhirel(\num)},
 \stcmd{trimloabs(\num)}, \stcmd{trimlorel(\num)} can be specified in any combination,
 or entirely omitted to produce untrimmed weights. By default, there is no trimming.
-See Section \ref{subsec:example:trimming} for examples.
 
 \subsubsection{Miscellaneous options}
 
@@ -307,21 +276,243 @@ See Section \ref{subsec:example:trimming} for examples.
 option should be generated as double type. See \dref{data types}.
 
 \hangpara
-\stcmd{meta} puts the name(s) of the control vectors and the achieved control
-    accuracies $m_c$ as characteristics stored with the variable specified in
+\stcmd{meta} puts information taken by \stcmd{ipfraking} as inputs and produced
+    throughout the process into characteristics stored with the variable specified in
     \stcmd{generate()} option. See Section \ref{subsec:example:meta}.
 
 \hangpara
 \stcmd{nograph} omits the histogram of the calibrated weights, which can be
-used to speed up \stcmd{ipfraking} once the diagnostics on the weights
-are completed (e.g., in replicate weight production).
+used to speed up \stcmd{ipfraking} (e.g., in replicate weight production).
 
-\subsection{New features}
+\subsection{New features of \stcmd{ipfraking}}
 
 Since the first publication, the following features and options were added.
 
+Reporting of results and errors by \stcmd{ipfraking} was improved in several directions.
+\begin{enumerate}
+    \item The discrepancy for the worst fitting category is now being reported.
+    \item The number of trimmed observations is reported.
+    \item If \stcmd{ipfraking} determines that the categories do not match
+        in the control totals received from \stcmd{ctotals()} and those found in
+        the data, a full listing of categories is provided, and the categories
+        not found in one or the other are explicitly shown.
+\end{enumerate}
+
+Linear calibration (Case 1 of \citet{deville:sarndal:1992}) is provided with
+\stcmd{linear} option. The weights are calculated analytically:
+\begin{equation}
+    \label{eq:linear:weight}
+    w_{j,\rm{lin}} = w_{1j} (1+\mathbf{x}_j'\mathbf{\lambda}).
+    \quad
+    \mathbf{\lambda} = \Bigl( \sum_{j \in \mathcal{S}} w_{1j} \mathbf{x}_j \mathbf{x}_j' \Bigr)^{-1}
+        ( T [ \mathbf{X}_j  ] - t_{1}[y] )
+\end{equation}
+This works very fast, but has an undesirable artefact of producing negative weights,
+as the range of weights is not controlled. (As raking works by multiplying the currents
+weights by positive factors, if the input weights are all positive, the output weights
+will be positive as well.) Negative weights are not allowed by the official \stcmd{svy} commands
+or commands that work with \stcmd{[pweights]}.
+In my experience, running linear weights first,
+pulling up the negative weights (\stcmd{replace weight = 1 if weight <= 1})
+and re-raking using the iterative proportional fitting ``proper'' runs faster than
+raking from scratch.
+
 Option \stcmd{meta} saves more information in characteristics of the calibrated
 weight variables.
+
+\cnp
+
+\begin{stlog}
+\input{ipfr.example5.log.tex}\nullskip
+\end{stlog}
+
+The following characteristics are stored with the newly created weight variable
+(see \pref{char}).
+
+\begin{tabular}{ll}
+    \stcmd{command} & The full command as typed by the user \\
+    {\it matrix name} & The relative matrix difference from the corresponding \\
+                    & control total, see \dref{functions} \\
+    \stcmd{trimhiabs}, \stcmd{trimloabs}, & Corresponding trimming options,
+                    if specified \\
+    \stcmd{trimhirel}, \stcmd{trimlorel}, & \\
+    \stcmd{trimfrequency} & \\
+    \stcmd{maxctrl} & the greatest \stcmd{mreldif} between the targets and the achieved \\
+                    & weighted totals \\
+    \stcmd{objfcn}  & the value of the relative weight change at exit \\
+    \stcmd{converged} & whether \stcmd{ipfraking} exited due to convergence (1) \\
+                    & vs. due to an increase in the objective function \\
+                    & or reaching the limit on the number of iterations (0) \\\
+    \stcmd{source}  & weight variable specified as the \stcmd{[pw=]} input \\
+    \stcmd{worstvar}& the variable in which the greatest discrepancy between \\
+                    & the targets and the achieved weighted totals \\
+                    & (\stcmd{maxctrl}) was observed \\
+    \stcmd{worstcat}& the category of the \stcmd{worstvar} variable in which the  \\
+                    & greatest discrepancy was observed
+\end{tabular}
+
+For the control total matrices \num$=1,2,\ldots$, the following
+meta-information is stored.
+
+\begin{tabular}{ll}
+    \stcmd{mat\num} & the name of the control total matrix \\
+    \stcmd{totalof\num}& the multiplier variable (matrix' \stcmd{coleq} \\
+    \stcmd{over\num}& the margin associated with the matrix \\
+                    & (i.e., the categories represented by the columns)
+\end{tabular}
+
+Also, \stcmd{ipfraking} stores the notes regarding the control matrices
+used, and which of the margins did not match the control totals, if any.
+See \dref{notes}.
+
+\subsection{Excel reports on raked weights:  \stcmd{ipfraking\_report}}
+
+\begin{stsyntax}
+ipfraking\_report
+using \textit{filename}
+,
+raked\_weight(\varname)
+\optional{
+matrices(\textit{namelist})
+by(\varlist)
+xls
+replace
+force
+}
+\end{stsyntax}
+
+The utility command \stcmd{ipfraking\_report} produces a detailed report
+describing the raked weights, and places it into \textit{filename}\stcmd{.dta} file
+(or, if \stcmd{xls} option is specified, both \textit{filename}\stcmd{.dta} and \textit{filename}\stcmd{.xls}
+files).
+
+Along the way, \stcmd{ipfraking\_report} runs a regression of the log raking ratio $w_{3j}/w_{1j}$
+on the calibration variables. This regression is expected to have $R^2$ very close to 1,
+and the regression coefficients provide insights regarding which categories received
+greater vs. smaller adjustments.
+
+\cnp
+
+\begin{stlog}
+\input{ipfr.report1.log.tex}\nullskip
+\end{stlog}
+
+\subsubsection{Options of \stcmd{ipfraking\_report}}
+
+\hangpara
+\stcmd{raked\_weight(\varname)} specifies the name of the raked weight variable to create
+    the report for. This is a required option.
+
+\hangpara
+\stcmd{matrices(\textit{namelist})} specifies a list of matrices (formatted as the matrices
+    supplied to \stcmd{ctotal()} option of \stcmd{ipfraking}) to produce weighting reports for.
+    In particular, the variables and their categories are picked up from these matrices;
+    and the control totals/proportions are compared to those defined by the weight being reported on.
+
+\hangpara
+\stcmd{by(\varlist)} specifies a list of additional variables for which the weights are to
+    be tabulated in the raking weights report. The difference with the \stcmd{matrices()} option
+    is that the control totals for these variables may not be known (or may not be relevant).
+    In particular, \stcmd{by(\_one)}, where \stcmd{\_one} is identically one, will produce
+    the overall report.
+
+\hangpara
+\stcmd{xls} requests exporting the report to an Excel file.
+
+\hangpara
+\stcmd{replace} specifies that the files produced by \stcmd{ipfraking\_report} (i.e., the \stcmd{.dta}
+    and the {\stmcd{.xls}} file if \stcmd{xls} option is specified) should be overwritten.
+
+\hangpara
+\stcmd{force} requires that a variable that may be found repeatedly (between the calibration variables
+    supplied originally to \stcmd{ipfraking}, the variables found in the independent total \stcmd{matrices()},
+    and the variables without the control totals provided in \stcmd{by()} option) is processed every
+    time it is encountered. (Otherwise, it is only processed once.)
+
+\subsubsection{Variables in the raking report}
+
+The following variables are saved in the raking report.
+
+\cnp
+
+\begin{tabular}{ll}
+  \hline
+  Variable name & Definition \\
+  \hline
+  \stcmd{Weight\_Variable} & The name of the weight variable, \stcmd{generate()} \\
+  \stcmd{C\_Total\_Margin\_Variable\_Name} & The name of the control margin, \\
+            & \stcmd{rowname} of the corresponding \stcmd{ctotal()} matrix \\
+  \stcmd{C\_Total\_Margin\_Variable\_Label} & The label of the control margin variable \\
+  \stcmd{Variable\_Class} & The role of the variable in the report: \\
+        & Raking margin: a variable used as a calibration margin \\
+        & (picked up automatically from the \stcmd{ctotal()} \\
+        & matrix, provided \stcmd{meta} option was specified) \\
+        & Other known target: supplied with \stcmd{matrices()} \\
+        & option of \stcmd{ipfraking\_report} \\
+        & Auxiliary variable: additional variable supplied \\
+        & with \stcmd{by()} option of \stcmd{ipfraking\_report} \\
+  \stcmd{C\_Total\_Arg\_Variable\_Name} & The name of the multiplier variable \\
+  \stcmd{C\_Total\_Arg\_Variable\_Label} & The label of the multiplier variable \\
+  \stcmd{C\_Total\_Margin\_Category\_Number} & Numeric value of the control total category \\
+  \stcmd{C\_Total\_Margin\_Category\_Label} &  Label of the control total category \\
+  \stcmd{Category\_Total\_Target} & The control total to be calibrated to \\
+        & (the specific entry in the \stcmd{ctotal()} matrix) \\
+  \stcmd{Category\_Total\_Prop} & Control total proportion \\
+        & (the ratio of the specific entry in the \stcmd{ctotal()} \\
+        & matrix to the matrix total) \\
+  \stcmd{Unweighted\_Count} & Number of sample observations in the category \\
+  \stcmd{Unweighted\_Prop} & Unweighted proportion \\
+  \stcmd{Unweighted\_Prop\_Discrep} & Difference \stcmd{Unweighted\_Prop} - \stcmd{Category\_Total\_Prop} \\
+  \stcmd{Category\_Total\_SRCWGT} & Weighted category total, with source weight \\
+  \stcmd{Category\_Prop\_SRCWGT} & Weighted category proportion, with source weight \\
+  \stcmd{Category\_Total\_Discrep\_SRCWGT} & Difference \stcmd{Category\_Total\_SRCWGT} - \\ 
+        & - \stcmd{Category\_Total\_Target} \\
+  \stcmd{Category\_Prop\_Discrep\_SRCWGT} & Difference \stcmd{Category\_Prop\_SRCWGT} - \\ 
+        & - \stcmd{Category\_Total\_Prop} \\
+  \stcmd{Category\_RelDiff\_SRCWGT} & \stcmd{reldif(Category\_Total\_SRCWGT,} \\ 
+        & \stcmd{Category\_Total\_Target)} \\
+  \stcmd{Overall\_Total\_SRCWGT} & Sum of source weights \\
+  \stcmd{Source} & The name of the matrix from which the totals \\ 
+        & were obtained \\
+  \stcmd{Comment} & Placeholder for comments, to be entered during \\ 
+        & manual review \\
+  \hline
+\end{tabular}
+
+For each of the input weights (\stcmd{SRCWGT} suffix), raked weights (\stcmd{RKDWGT} suffix) and raking ratio
+(the ratio of raked and input weights, \stcmd{RKDRATIO} suffix), the following summaries are provided.
+
+\begin{tabular}{ll}
+  \hline
+  Variable name & Definition \\
+  \hline
+  \stcmd{Min\_\textit{WEIGHT}} & Min of source weights \\
+  \stcmd{P25\_\textit{WEIGHT}} & 25th percentile of source weights \\
+  \stcmd{P50\_\textit{WEIGHT}} & Median of source weights \\
+  \stcmd{P75\_\textit{WEIGHT}} & 75th percentile of source weights \\
+  \stcmd{Max\_\textit{WEIGHT}} & Max of source weights \\
+  \stcmd{Mean\_\textit{WEIGHT}} & Mean of source weights \\
+  \stcmd{SD\_\textit{WEIGHT}} & Standard deviation of source weights \\
+  \stcmd{DEFF\_\textit{WEIGHT}} & Apparent UWE DEFF of source weights \\
+  \hline
+\end{tabular}
+
+\subsubsection{Example}
+
+\begin{stlog}
+\input{ipfr.report2.log.tex}\nullskip
+\end{stlog}
+
+Functionality of \stcmd{ipfraking\_report} is aimed at the manual review 
+of its reporting of the categories that differ the most in the output,
+and the resulting report file in Excel,
+although for some aspects of automated quality control, it will be useful, as well.
+
+\subsection{Collapsing weighting cells:  \stcmd{wgtcellcollapse}}
+
+An additional new component of \stcmd{ipfraking} package is a tool to 
+semi-automatically collapse weighting cells, in order to achieve
+some minimal sample size.
 
 \subsection{Utility programs}
 
@@ -329,16 +520,16 @@ The original package \stcmd{ipfraking} provided two additional utility programs,
 \stcmd{mat2do} and \stcmd{xls2row}. An additional utility program was added
 to compute the design effects and margins of error, common tasks associated
 with describing survey weights. Specifically, the Transparency Initiative
-of the American Association for Public Opinion Research 
+of the American Association for Public Opinion Research
 \citep{aapor:2014:ti:terms}
-requires that 
+requires that
 
-\begin{cite}
+\begin{quote}
 For probability samples, the estimates of sampling error will be reported, and the discussion will state whether or not the reported margins of sampling error or statistical analyses have been adjusted for the design effect due to weighting, clustering, or other factors.
-\end{cite}
+\end{quote}
 
 \begin{stsyntax}
-whatsdeff 
+whatsdeff
 {\it weight\_variable}
 \optif\
 \optin\
@@ -349,15 +540,17 @@ by(\varlist)
 \end{stsyntax}
 
 The utility program \stcmd{whatsdeff} calculates the apparent design effect due to unequal weighting,
-${\rm DEFF_{UWE}}=1 + {CV}^2_w = $ \stcmd{1 + r(Var)/(r(mean))^2} from \stcmd{summarize} {\it weight\_variable}.
+${\rm DEFF_{UWE}}=1 + {CV}^2_w = $ \stcmd{1 + r(Var)/(r(mean))\^2} from \stcmd{summarize} {\it weight\_variable}.
 Additionally, it reports the effective sample size, $n/{\rm DEFF_{UWE}}$, and also returns
-the margins of error for the sample proportions that estimate the population proportions of 
+the margins of error for the sample proportions that estimate the population proportions of
 10\% and 50\%.
 
 \begin{stlog}
-\input{ipfr.whastdeff.log.tex}\nullskip
+\input{ipfr.whatsdeff.log.tex}\nullskip
 \end{stlog}
 
+
+\clearpage\newpage
 
 
 \section{Examples}
@@ -982,64 +1175,20 @@ The author is grateful to Ben Phillips, Andrew Burkey and Brady West,
 as well as the editor and an anonymous referee,
 who suggested additional functionality and provided helpful comments
 to improve the readability of this article. The opinions stated in this paper
-are of the author only, and do not represent the position of Abt SRBI.
+are of the author only, and do not represent the position of Abt Associates.
 
 \bibliographystyle{sj}
-% \bibliography{everything}
-\bibliography{ipfraking}
-
-\appendix
-
-\section*{Appendix: Common notation}
-
-\begin{tabular}{llp{9.5cm}}
-    $\mathcal{C}_k$ & Sec. \ref{subsec:calibration} & Calibration cell \\
-    $D_k$ & (\ref{eq:conv:ratio:weights}) & Maximum relative difference of weights
-            from iteration $k-1$ to iteration $k$ \\
-    $\delta_D$ & Sec. \ref{subsec:trimming} & Convergence criteria for $D_k$ \\
-    $\delta_T$ & Sec. \ref{subsec:trimming} & Quality control criteria for control totals \\
-    $i$ & Sec. \ref{subsec:totals} & Subscript $i$ usually applies to units in population \\
-    $j$ & Sec. \ref{subsec:totals} & Subscript $j$ usually applies to units in sample \\
-    $k$ & Sec. \ref{subsec:trimming} & The outer cycle iteration number \\
-    $K$ & Sec. \ref{subsec:trimming} & The maximum number of the outer cycle iterations \\
-    $l$ & Sec. \ref{subsec:trimming} & Relative limit on weights: all the weights will be made
-        $\ge (l \times$ the input weight) \\
-    $l$ & & summation index, where I run out of other traditional integer letters \\
-    $L$ & Sec. \ref{subsec:trimming} & Absolute limit on weights: all the weights will be made
-        $\ge L$ \\
-    $n$ & & Sample size; number of sampled units \\
-    $N$ & & Population size; number of units in population or frame \\
-    $\pi_i$ & & Probability of selection of unit $i$
-            specified by the sampling design \\
-%
-    $\mathcal{S}$ & Sec. \ref{subsec:totals} & Sample; set of sampled units \\
-    $T[y]$ & (\ref{eq:total:pop}) & Population-based total of variable $[y]$ \\
-    $t_m[y]$ & (\ref{eq:total:sample}) & Sample-based weighted estimate of the total
-        $T[y]$; subscript $m=1,2,3$ indicates the type of weights used in computing
-        the total \\
-    $u$ & Sec. \ref{subsec:trimming} & Relative upper limit on weights: all the weights will be made
-        $\le (u \times$ the input weight) \\
-    $L$ & Sec. \ref{subsec:trimming} & Absolute upper limit on weights: all the weights will be made
-        $\le U$ \\
-    $\mathcal{U}$ & Sec. \ref{subsec:totals} & Universe or population; set of units in population \\
-%
-    $w_{1i}$ & (\ref{eq:prob:weight}) & Probability (design) weights;
-        inverse probability of selection \\
-    $w_{2j}$ & (\ref{eq:ps:weight}) & Post-stratified weights;
-        random; depend on group sizes in sample; analytically computable \\
-    $w_{3j}$ & Sec. \ref{subsec:calibration} & Calibrated (raked) weights; random;
-        require iterative optimization \\
-%
-    $x_v$ & Sec. \ref{subsec:raking:algorithm} & the $v$-th calibration (control)
-        variable, $v=1,\ldots,p$. The population total $T[x_v]$ is known. \\
-\end{tabular}
+\bibliography{everything}
+% \bibliography{ipfraking}
 
 \begin{aboutauthor}
-  Stanislav (Stas) Kolenikov is a Senior Survey Statistician at Abt SRBI.
-  His research interests include
-  applications of statistical methods in public opinion research,
-  such as advanced sampling techniques, survey weighting,
-  calibration, missing data imputation, and variance estimation.
+  Stanislav (Stas) Kolenikov is a Senior Scientist at Abt Associates.
+  His work involves applications of statistical methods in data collection
+  for public opinion research, public health, transportation, and other disciplines 
+  that utilize collection of survey data.
+  Within survey methodology, his expertise includes advanced sampling techniques, 
+  survey weighting, calibration, missing data imputation, variance estimation, 
+  nonresponse analysis and adjustment, and small area estimation.
   Besides survey statistics, Stas has extensive experience developing and applying
   statistical methods in social sciences, with focus on structural equation
   modeling and microeconometrics. He has been writing Stata programs since

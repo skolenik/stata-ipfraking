@@ -1,0 +1,46 @@
+{com}. ipfraking_report using rakedwgt3-report, raked_weight(rakedwgt3) replace by(_one)
+{res}{txt}Margin variable {res}sex_age{txt} (total variable: {res}_one{txt}; {res}{txt}categories: {res}11 12 13 21 22 23{txt}).
+{txt}Margin variable {res}region{txt} (total variable: {res}_one{txt}; {res}{txt}categories: {res}1 2 3 4{txt}).
+{txt}Margin variable {res}race{txt} (total variable: {res}_one{txt}; {res}{txt}categories: {res}1 2 3{txt}).
+{txt}Auxiliary variable {res}_one{txt} {txt}(categories: {res}1{txt}).
+
+file rakedwgt3-report.dta saved
+
+      Source {c |}       SS           df       MS      Number of obs   ={res}    10,351
+{txt}{hline 13}{c +}{hline 34}   F(10, 10340)    > {res} 99999.00
+{txt}       Model {c |} {res} 2086.13859        10  208.613859   {txt}Prob > F        ={res}    0.0000
+{txt}    Residual {c |} {res}  .78315703    10,340  .000075741   {txt}R-squared       ={res}    0.9996
+{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}    0.9996
+{txt}       Total {c |} {res} 2086.92175    10,350  .201634952   {txt}Root MSE        =   {res}  .0087
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}    __000003{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}sex_age {c |}
+{space 9}11  {c |}{col 14}{res}{space 2} .0644365{col 26}{space 2} .0002775{col 37}{space 1}  232.21{col 46}{space 3}0.000{col 54}{space 4} .0638925{col 67}{space 3} .0649804
+{txt}{space 9}12  {c |}{col 14}{res}{space 2} .4545577{col 26}{space 2} .0003154{col 37}{space 1} 1441.25{col 46}{space 3}0.000{col 54}{space 4} .4539395{col 67}{space 3}  .455176
+{txt}{space 9}13  {c |}{col 14}{res}{space 2} .6782466{col 26}{space 2} .0002804{col 37}{space 1} 2418.71{col 46}{space 3}0.000{col 54}{space 4} .6776969{col 67}{space 3} .6787963
+{txt}{space 9}22  {c |}{col 14}{res}{space 2} .3966406{col 26}{space 2} .0003049{col 37}{space 1} 1300.84{col 46}{space 3}0.000{col 54}{space 4} .3960429{col 67}{space 3} .3972383
+{txt}{space 9}23  {c |}{col 14}{res}{space 2} .7304392{col 26}{space 2} .0002726{col 37}{space 1} 2679.97{col 46}{space 3}0.000{col 54}{space 4} .7299049{col 67}{space 3} .7309734
+{txt}{space 12} {c |}
+{space 6}region {c |}
+{space 9}NE  {c |}{col 14}{res}{space 2}-.4455127{col 26}{space 2} .0002536{col 37}{space 1}-1756.49{col 46}{space 3}0.000{col 54}{space 4}-.4460099{col 67}{space 3}-.4450155
+{txt}{space 9}MW  {c |}{col 14}{res}{space 2}-.4428144{col 26}{space 2} .0002335{col 37}{space 1}-1896.53{col 46}{space 3}0.000{col 54}{space 4}-.4432721{col 67}{space 3}-.4423567
+{txt}{space 10}W  {c |}{col 14}{res}{space 2}-.6672675{col 26}{space 2} .0002407{col 37}{space 1}-2772.21{col 46}{space 3}0.000{col 54}{space 4}-.6677393{col 67}{space 3}-.6667957
+{txt}{space 12} {c |}
+{space 8}race {c |}
+{space 6}Black  {c |}{col 14}{res}{space 2} .3360321{col 26}{space 2} .0002848{col 37}{space 1} 1180.08{col 46}{space 3}0.000{col 54}{space 4} .3354739{col 67}{space 3} .3365902
+{txt}{space 6}Other  {c |}{col 14}{res}{space 2} 1.613276{col 26}{space 2} .0006303{col 37}{space 1} 2559.34{col 46}{space 3}0.000{col 54}{space 4} 1.612041{col 67}{space 3} 1.614512
+{txt}{space 12} {c |}
+{space 7}_cons {c |}{col 14}{res}{space 2} .5864801{col 26}{space 2} .0002455{col 37}{space 1} 2388.48{col 46}{space 3}0.000{col 54}{space 4} .5859988{col 67}{space 3} .5869614
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{txt}Raking adjustments for {res}sex_age{txt} variable{txt}:
+  {txt}the smallest was {res}       1.798{txt} for category {res}21{txt} ({res}21{txt})
+  {txt}the greatest was {res}       3.732{txt} for category {res}23{txt} ({res}23{txt})
+{txt}Raking adjustments for {res}region{txt} variable{txt} ({res}1=NE, 2=MW, 3=S, 4=W{txt}){txt}:
+  {txt}the smallest was {res}       0.922{txt} for category {res}4{txt} ({res}W{txt})
+  {txt}the greatest was {res}       1.798{txt} for category {res}3{txt} ({res}S{txt})
+{txt}Raking adjustments for {res}race{txt} variable{txt} ({res}1=white, 2=black, 3=other{txt}){txt}:
+  {txt}the smallest was {res}       1.798{txt} for category {res}1{txt} ({res}White{txt})
+  {txt}the greatest was {res}       9.023{txt} for category {res}3{txt} ({res}Other{txt})

@@ -1,0 +1,129 @@
+\ifnum 20=1 \def\bibname{Reference}
+\else \def\bibname{References} \fi
+\begin{thebibliography}{20}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+
+\bibitem[{{AAPOR}(2014)}]{aapor:2014:ti:terms}
+{AAPOR}. 2014.
+\newblock \emph{{AAPOR} Terms and Conditions for Transparency Certification}.
+\newblock The American Association for Public Opinion Research.
+\newblock Available at
+  http://www.aapor.org/AAPOR_Main/media/MainSiteFiles/TI-Terms-and-Conditions-10-4-17.pdf.
+
+\bibitem[{Binder and Roberts(2003)}]{binder:roberts:2003}
+Binder, D.~A., and G.~R. Roberts. 2003.
+\newblock Design-based and Model-based Methods for Estimating Model Parameters.
+\newblock In \emph{Analysis of Survey Data}, ed. R.~L. Chambers and C.~J.
+  Skinner, chap.~3. New York: John Wiley \& Sons.
+
+\bibitem[{Deville and S{\"a}rndal(1992)}]{deville:sarndal:1992}
+Deville, J.~C., and C.~E. S{\"a}rndal. 1992.
+\newblock Calibration Estimators in Survey Sampling.
+\newblock \emph{Journal of the American Statistical Association} 87(418):
+  376--382.
+
+\bibitem[{Deville et~al.(1993)Deville, S{\"a}rndal, and
+  Sautory}]{deville:sarndal:sautory:1993}
+Deville, J.~C., C.~E. S{\"a}rndal, and O.~Sautory. 1993.
+\newblock Generalized Raking Procedures in Survey Sampling.
+\newblock \emph{Journal of the American Statistical Association} 88(423):
+  1013--1020.
+
+\bibitem[{Gould(2003)}]{gould:2003:tip3}
+Gould, W. 2003.
+\newblock Stata tip 3: How to be assertive.
+\newblock \emph{Stata Journal} 3(4).
+
+\bibitem[{Groves et~al.(2001)Groves, Dillman, Eltinge, and
+  Little}]{groves:dillman:eltinge:little:2001}
+Groves, R.~M., D.~A. Dillman, J.~L. Eltinge, and R.~J.~A. Little. 2001.
+\newblock \emph{Survey Nonresponse}.
+\newblock Wiley Series in Survey Methodology, Wiley-Interscience.
+
+\bibitem[{Holt and Smith(1979)}]{holt:smith:1979}
+Holt, D., and T.~M.~F. Smith. 1979.
+\newblock Post Stratification.
+\newblock \emph{Journal of the Royal Statistical Society, Series A} 142(1):
+  33--46.
+
+\bibitem[{Horvitz and Thompson(1952)}]{horvitz:thompson:1952}
+Horvitz, D.~G., and D.~J. Thompson. 1952.
+\newblock A Generalization of Sampling Without Replacement From a Finite
+  Universe.
+\newblock \emph{Journal of the American Statistical Association} 47(260):
+  663--685.
+
+\bibitem[{Kolenikov(2010)}]{kolenikov:2010}
+Kolenikov, S. 2010.
+\newblock Resampling inference with complex survey data.
+\newblock \emph{The Stata Journal} 10: 165--199.
+
+\bibitem[{Kolenikov(2014)}]{kolenikov:2014}
+---------. 2014.
+\newblock Calibrating survey data using iterative proportional fitting.
+\newblock \emph{The Stata Journal} 14(1): 22--59.
+
+\bibitem[{Kolenikov(2016)}]{kolenikov:2016}
+---------. 2016.
+\newblock Post-stratification or non-response adjustment?
+\newblock \emph{Survey Practice} 9(3).
+\newblock Available at
+  http://www.surveypractice.org/index.php/SurveyPractice/article/view/315.
+
+\bibitem[{Korn and Graubard(1995)}]{korn:graubard:1995}
+Korn, E.~L., and B.~I. Graubard. 1995.
+\newblock Analysis of Large Health Surveys: Accounting for the Sampling Design.
+\newblock \emph{Journal of the Royal Statistical Society, Series A} 158(2):
+  263--295.
+
+\bibitem[{Korn and Graubard(1999)}]{korn:graubard:1999}
+---------. 1999.
+\newblock \emph{Analysis of Health Surveys}.
+\newblock John Wiley and Sons.
+
+\bibitem[{Kott(2006)}]{kott:2006}
+Kott, P.~S. 2006.
+\newblock Using Calibration Weighting to Adjust for Nonresponse and Coverage
+  Errors.
+\newblock \emph{Survey Methodology} 32(2): 133--142.
+
+\bibitem[{Kott(2009)}]{kott:2009}
+---------. 2009.
+\newblock Calibration Weighting: Combining Probability Samples and Linear
+  Prediction Models.
+\newblock In \emph{Sample Surveys: Inference and Analysis}, ed. D.~Pfeffermann
+  and C.~R. Rao, vol. 29B of \emph{Handbook of Statistics}, chap.~25. Oxford,
+  UK: Elsevier.
+
+\bibitem[{McConnell(2004)}]{mcconnell:2004}
+McConnell, S. 2004.
+\newblock \emph{Code Complete: A Practical Handbook of Software Construction}.
+\newblock 2nd ed. Microsoft Press.
+
+\bibitem[{{Pew Research Center}(2012)}]{pew:2012}
+{Pew Research Center}. 2012.
+\newblock Assessing the Representativeness of Public Opinion Surveys.
+\newblock Technical report, Pew Research Center for People and Press.
+\newblock Available at http://www.people-press.org/files/legacy-pdf/Assessing
+  the Representativeness of Public Opinion Surveys.pdf.
+
+\bibitem[{Pfeffermann(1993)}]{pfeff:1993}
+Pfeffermann, D. 1993.
+\newblock The role of sampling weights when modeling survey data.
+\newblock \emph{International Statistical Review} 61: 317--337.
+
+\bibitem[{S{\"{a}}rndal(2007)}]{sarndal:2007}
+S{\"{a}}rndal, C.-E. 2007.
+\newblock The calibration approach in survey theory and practice.
+\newblock \emph{Survey Methodology} 33(2): 99--119.
+
+\bibitem[{Thompson(1997)}]{thompson:1997}
+Thompson, M.~E. 1997.
+\newblock \emph{Theory of Sample Surveys}, vol.~74 of \emph{Monographs on
+  Statistics and Applied Probability}.
+\newblock New York: Chapman \& Hall/CRC.
+
+\end{thebibliography}

@@ -1,0 +1,28 @@
+. use rakedwgt3-report, clear
+(Weighting report on rakedwgt3)
+{\smallskip}
+. list C_Total_Margin_Variable_Name C_Total_Margin_Category_Label ///
+>         Category_Total_Target Category_Total_RKDWGT DEFF_SRCWGT DEFF_RKDWGT , ///
+>         sepby( C_Total_Margin_Variable_Name )
+{\smallskip}
+     {\TLC}\HLI{69}{\TRC}
+     {\VBAR} C_Tota..   {\tytilde}y_Label   Categor{\tytilde}t   Categor..   DEFF_SR{\tytilde}T   DEFF_RK{\tytilde}T {\VBAR}
+     {\LFTT}\HLI{69}{\RGTT}
+  1. {\VBAR}  sex_age         11    41995394    41995394   1.2148059   1.6259899 {\VBAR}
+  2. {\VBAR}  sex_age         12    42148662    42148662   1.2462168   1.5716613 {\VBAR}
+  3. {\VBAR}  sex_age         13    26515340    26515340   1.2241095   1.5460785 {\VBAR}
+  4. {\VBAR}  sex_age         21    41164255    41164255   1.2325105   1.5639529 {\VBAR}
+  5. {\VBAR}  sex_age         22    43697440    43697440   1.1937826   1.5175312 {\VBAR}
+  6. {\VBAR}  sex_age         23    32773080    32773080    1.233902    1.664307 {\VBAR}
+     {\LFTT}\HLI{69}{\RGTT}
+  7. {\VBAR}   region         NE    40679030    40679030   1.3056639   1.3657837 {\VBAR}
+  8. {\VBAR}   region         MW    49205289    49205289   1.3475551   1.4909581 {\VBAR}
+  9. {\VBAR}   region          S    85024007    85024006   1.4950056   1.4912995 {\VBAR}
+ 10. {\VBAR}   region          W    53385843    53385844    1.459859   2.3772667 {\VBAR}
+     {\LFTT}\HLI{69}{\RGTT}
+ 11. {\VBAR}     race      White   1.784e+08   1.784e+08   1.4059259   1.4337901 {\VBAR}
+ 12. {\VBAR}     race      Black    29856865    29856865   1.5173846   1.5092533 {\VBAR}
+ 13. {\VBAR}     race      Other    20053682    20053682   1.3179136   1.2264706 {\VBAR}
+     {\LFTT}\HLI{69}{\RGTT}
+ 14. {\VBAR}     _one          1           .   2.283e+08   1.4164382   1.7349278 {\VBAR}
+     {\BLC}\HLI{69}{\BRC}

@@ -161,10 +161,25 @@ svyset [pw=rakedwgt2], vce(brr) brrw( brrc* ) dof( 31 )
 svy : proportion highbp
 sjlog close, replace
 
-sjlog using ipfr.whatsdeff, report
+********************************************* UPDATE
+
+sjlog using ipfr.whatsdeff, replace
 webuse nhanes2, clear
 whatsdeff finalwgt
 return list
+whatsdeff finalwgt, by(sex)
+return list
+sjlog close, replace
+
+sjlog using ipfr.report1, replace
+ipfraking_report using rakedwgt3-report, raked_weight(rakedwgt3) replace by(_one)
+sjlog close, replace
+
+sjlog using ipfr.report2, replace
+use rakedwgt3-report, clear
+list C_Total_Margin_Variable_Name C_Total_Margin_Category_Label ///
+	Category_Total_Target Category_Total_RKDWGT DEFF_SRCWGT DEFF_RKDWGT , ///
+	sepby( C_Total_Margin_Variable_Name )
 sjlog close, replace
 
 exit

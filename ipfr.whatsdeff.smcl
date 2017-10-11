@@ -1,0 +1,40 @@
+{com}{sf}{ul off}
+. webuse nhanes2, clear
+
+. whatsdeff finalwgt
+
+{txt}    Group{col 15}{c |}   Min{col 27}{c |}   Mean{col 39}{c |}   Max{col 51}{c |}    CV{col 61}{c |}   DEFF{col 71}{c |}   N{col 79}{c |}  N eff
+{txt}{dup 14:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 9:{c -}}{c +}{dup 9:{c -}}{c +}{dup 7:{c -}}{c +}{dup 8:{c -}}
+{txt}      Overall{col 15}{txt}{c |}{res}   2000.00{col 27}{txt}{c |}{res}  11318.47{col 39}{txt}{c |}{res}  79634.00{col 51}{txt}{c |}{res}  0.6453{col 61}{txt}{c |}{res}  1.4164{col 71}{txt}{c |}{res} 10351{col 79}{txt}{c |}{res} 7307.97
+
+{com}. return list
+
+{txt}scalars:
+                  r(N) =  {res}10351
+              {txt}r(MOE10) =  {res}.0068792766212984
+              {txt}r(MOE50) =  {res}.0114654610354974
+       {txt}r(Neff_Overall) =  {res}7307.97435325364
+       {txt}r(DEFF_Overall) =  {res}1.416397964696134
+
+{com}. whatsdeff finalwgt, by(sex)
+
+{txt}    Group{col 15}{c |}   Min{col 27}{c |}   Mean{col 39}{c |}   Max{col 51}{c |}    CV{col 61}{c |}   DEFF{col 71}{c |}   N{col 79}{c |}  N eff
+{txt}{dup 14:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 9:{c -}}{c +}{dup 9:{c -}}{c +}{dup 7:{c -}}{c +}{dup 8:{c -}}
+{res}sex{col 15}{txt}{c |}{col 27}{txt}{c |}{col 39}{c |}{col 51}{c |}{col 61}{c |}{col 71}{c |}{col 79}{c |}
+{txt}         Male{col 15}{txt}{c |}{res}   2000.00{col 27}{txt}{c |}{res}  11426.14{col 39}{txt}{c |}{res}  79634.00{col 51}{txt}{c |}{res}  0.6578{col 61}{txt}{c |}{res}  1.4326{col 71}{txt}{c |}{res}  4915{col 79}{txt}{c |}{res} 3430.94
+{txt}       Female{col 15}{txt}{c |}{res}   2130.00{col 27}{txt}{c |}{res}  11221.12{col 39}{txt}{c |}{res}  61534.00{col 51}{txt}{c |}{res}  0.6333{col 61}{txt}{c |}{res}  1.4010{col 71}{txt}{c |}{res}  5436{col 79}{txt}{c |}{res} 3880.01
+{txt}{dup 14:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 9:{c -}}{c +}{dup 9:{c -}}{c +}{dup 7:{c -}}{c +}{dup 8:{c -}}
+{txt}      Overall{col 15}{txt}{c |}{res}   2000.00{col 27}{txt}{c |}{res}  11318.47{col 39}{txt}{c |}{res}  79634.00{col 51}{txt}{c |}{res}  0.6453{col 61}{txt}{c |}{res}  1.4164{col 71}{txt}{c |}{res} 10351{col 79}{txt}{c |}{res} 7307.97
+
+{com}. return list
+
+{txt}scalars:
+                  r(N) =  {res}10351
+              {txt}r(MOE10) =  {res}.0068792766212984
+              {txt}r(MOE50) =  {res}.0114654610354974
+       {txt}r(Neff_Overall) =  {res}7307.97435325364
+       {txt}r(DEFF_Overall) =  {res}1.416397964696134
+        {txt}r(Neff_Female) =  {res}3880.00710397866
+        {txt}r(DEFF_Female) =  {res}1.40102836266093
+          {txt}r(Neff_Male) =  {res}3430.938195872213
+          {txt}r(DEFF_Male) =  {res}1.432552765279559

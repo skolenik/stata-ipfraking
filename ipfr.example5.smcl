@@ -1,0 +1,56 @@
+{com}. capture drop rakedwgt3
+{txt}
+{com}. ipfraking [pw=finalwgt], gen( rakedwgt3 ) ///
+>     ctotal( ACS2011_sex_age Census2011_region Census2011_race ) ///
+>     trimhiabs(200000) trimloabs(2000) meta
+
+{res}{txt} Iteration 1, max rel difference of raked weights = {res}14.95826
+{txt} Iteration 2, max rel difference of raked weights = {res}.21474256
+{txt} Iteration 3, max rel difference of raked weights = {res}.02754514
+{txt} Iteration 4, max rel difference of raked weights = {res}.00511347
+{txt} Iteration 5, max rel difference of raked weights = {res}.00095888
+{txt} Iteration 6, max rel difference of raked weights = {res}.00018036
+{txt} Iteration 7, max rel difference of raked weights = {res}.00003391
+{txt} Iteration 8, max rel difference of raked weights = {res}6.377e-06
+{txt} Iteration 9, max rel difference of raked weights = {res}1.199e-06
+{txt} Iteration 10, max rel difference of raked weights = {res}2.254e-07
+{txt}The worst relative discrepancy of {res} 3.0e-08{txt} is observed for {res}race{txt} == {res}3           
+{txt}Target value = {res}{res}  20053682{txt}; achieved value = {res}{res}  20053682
+{txt}Trimmed due to the upper absolute limit: {res}5{txt} weights.
+
+{txt}   Summary of the weight changes
+
+{col 15}{txt}{c |}    Mean    Std. dev.    Min        Max       CV
+{txt}{dup 14:{c -}}{c +}{dup 50:{c -}} 
+{txt}Orig weights  {c |} {col 15}{res}   11318{col 28}    7304{col 38}    2000{col 49}    79634{col 60} .6453
+{txt}Raked weights {c |} {col 15}{res}   22055{col 28}   18908{col 38}    4033{col 49}   200000{col 60} .8573
+{txt}Adjust factor {c |} {col 17}{res}  2.1486{col 38}  0.9220{col 49}  18.9828
+{txt}
+{com}. char li rakedwgt3[]
+  {txt}rakedwgt3[source]:{space 10}{res}finalwgt
+  {txt}rakedwgt3[objfcn]:{space 10}{res}2.25435521346e-07
+  {txt}rakedwgt3[maxctrl]:{space 9}{res}3.00266822363e-08
+  {txt}rakedwgt3[converged]:{space 7}{res}1
+  {txt}rakedwgt3[worstcat]:{space 8}{res}3
+  {txt}rakedwgt3[worstvar]:{space 8}{res}race
+  {txt}rakedwgt3[command]:{space 9}{res}[pw=finalwgt], gen( rakedwgt3 ) ctotal( ACS2011_sex_age Census2011_region {txt}..
+  rakedwgt3[trimloabs]:{space 7}{res}trimloabs(2000)
+  {txt}rakedwgt3[trimhiabs]:{space 7}{res}trimhiabs(200000)
+  {txt}rakedwgt3[trimfrequency]:{space 3}{res}sometimes
+  {txt}rakedwgt3[hash1]:{space 11}{res}2347674164
+  {txt}rakedwgt3[mat3]:{space 12}{res}Census2011_race
+  {txt}rakedwgt3[over3]:{space 11}{res}race
+  {txt}rakedwgt3[totalof3]:{space 8}{res}_one
+  {txt}rakedwgt3[Census2011_race]:{space 1}{res}7.48567503861e-09
+  {txt}rakedwgt3[mat2]:{space 12}{res}Census2011_region
+  {txt}rakedwgt3[over2]:{space 11}{res}region
+  {txt}rakedwgt3[totalof2]:{space 8}{res}_one
+  {txt}rakedwgt3[Census2011_region]:
+{space 30}{res}3.00266822363e-08
+  {txt}rakedwgt3[mat1]:{space 12}{res}ACS2011_sex_age
+  {txt}rakedwgt3[over1]:{space 11}{res}sex_age
+  {txt}rakedwgt3[totalof1]:{space 8}{res}_one
+  {txt}rakedwgt3[ACS2011_sex_age]:{space 1}{res}4.13778410340e-09
+  {txt}rakedwgt3[note1]:{space 11}{res}Raking controls used: ACS2011_sex_age Census2011_region Census2011_race
+  {txt}rakedwgt3[note0]:{space 11}{res}1
+{txt}
