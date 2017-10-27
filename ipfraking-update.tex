@@ -514,6 +514,50 @@ An additional new component of \stcmd{ipfraking} package is a tool to
 semi-automatically collapse weighting cells, in order to achieve
 some minimal sample size.
 
+\begin{stsyntax}
+wgtcellcollapse \textit{task}
+\optif\
+\optin\
+,
+\optional{task\_options}
+}
+\end{stsyntax}
+
+where \textit{task} is one of:
+
+\hangpara
+\stcmd{define} to define collapsing rules explicitly
+
+\hangpara
+\stcmd{sequence} to create collapsing rules for a sequence of categories
+
+\hangpara
+\stcmd{report} to list the currently defined collapsing rules
+
+\hangpara
+\stcmd{candidate} to find rules applicable to a given category
+
+\hangpara
+\stcmd{collapse} to perform cell collapsing
+
+\hangpara
+\stcmd{label} to label collapsed cells using the original labels
+
+\subsubsection{Motivation}
+
+Development of \stcmd{wgtcellcollapse} was to address the need
+to collapse cells of the margin variables so that each cell has a minimum sample size;
+and to do so in a way that can be easily made consistent between the sample data
+and the population targets data. The problem arises when some of the target
+variables have dozens of categories, most of which have small counts. 
+While the primary motivation comes from transportation surveys,
+the ideas are also applicable to other domains, e.g., 
+continuous age variables or highly detailed race/ethnicity or region of origin 
+categories in health or economic surveys.
+
+
+
+
 \subsection{Utility programs}
 
 The original package \stcmd{ipfraking} provided two additional utility programs,
