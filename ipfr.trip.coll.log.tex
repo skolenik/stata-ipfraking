@@ -1,0 +1,14 @@
+. use trip_sample, clear
+{\smallskip}
+. wgtcellcollapse sequence , var(daypart) from(2 3 4) depth(3)
+{\smallskip}
+. levelsof board_id, local(stations_on)
+3 6 10 13 17 21 25 28 32 36 39 42 46 49 52 56 59 63 66 70
+{\smallskip}
+. levelsof alight_id, local(stations_off)
+6 10 13 17 21 25 28 32 36 39 42 46 49 52 56 59 63 66 70 73
+{\smallskip}
+. local all_stations : list stations_on | stations_off
+{\smallskip}
+. wgtcellcollapse sequence , var(board_id alight_id) from(`all_stations') depth(9)
+{\smallskip}

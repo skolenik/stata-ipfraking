@@ -182,4 +182,43 @@ list C_Total_Margin_Variable_Name C_Total_Margin_Category_Label ///
 	sepby( C_Total_Margin_Variable_Name )
 sjlog close, replace
 
+sjlog using ipfr.collapse1, replace
+clear
+set obs 4
+gen byte x = _n
+label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
+label values x x_lbl
+wgtcellcollapse define, var(x) from(1 2 3) to(123)
+wgtcellcollapse report, var(x)
+sjlog close, replace
+
+sjlog using ipfr.collapse2, replace
+wgtcellcollapse report, var(x) break
+wgtcellcollapse define, var(x) clear
+wgtcellcollapse define, var(x) from(1 2 3) to(123) label("One through three")
+wgtcellcollapse report, var(x) break
+sjlog close, replace
+
+sjlog using ipfr.collapse3, replace
+clear
+set obs 4
+gen byte x = _n
+label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
+label values x x_lbl
+wgtcellcollapse sequence, var(x) from(1 2 3 4) depth(3)
+wgtcellcollapse report, var(x)
+sjlog close, replace
+
+sjlog using ipfr.collapse4, replace
+wgtcellcollapse candidate, var(x) cat(2)
+sreturn list
+wgtcellcollapse candidate, var(x) cat(2) max(9)
+sreturn list
+wgtcellcollapse candidate, var(x) cat(212)
+sreturn list
+wgtcellcollapse candidate, var(x) cat(55)
+sreturn list
+sjlog close, replace
+
+
 exit

@@ -1,0 +1,34 @@
+
+. 
+. use stations, clear
+
+. 
+. list station_id, sep(0)
+
+     +----------------------+
+     |           station_id |
+     |----------------------|
+  1. |           3. Alewife |
+  2. |         6. Brookline |
+  3. |        10. Carmenton |
+  4. |         13. Dogville |
+  5. |         17. East End |
+  6. |       21. Framington |
+  7. |   25. Grand Junction |
+  8. |       28. High Point |
+  9. |       32. Irvingtown |
+ 10. |       36. Johnsville |
+ 11. |      39. King Street |
+ 12. |         42. Limerick |
+ 13. |      46. Moscow City |
+ 14. |     49. Ninth Street |
+ 15. |     52. Ontario Lake |
+ 16. | 56. Picadilly Square |
+ 17. |       59. Queens Zoo |
+ 18. |   63. Redline Circle |
+ 19. |    66. Silver Spring |
+ 20. |      70. Toledo Town |
+ 21. |    73. Union Station |
+     +----------------------+
+
+. 

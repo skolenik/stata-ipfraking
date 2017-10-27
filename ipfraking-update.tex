@@ -6,7 +6,7 @@
 \maketitle
 
 \begin{abstract}
-\citet{kolenikov:2014} introduced package \stcmd{ipfraking} 
+\citet{kolenikov:2014} introduced package \stcmd{ipfraking}
 for weight calibration procedures known as iterative proportional fitting,
 or raking, of complex survey weights.
 This article briefly describes the original package,
@@ -465,16 +465,16 @@ The following variables are saved in the raking report.
   \stcmd{Unweighted\_Prop\_Discrep} & Difference \stcmd{Unweighted\_Prop} - \stcmd{Category\_Total\_Prop} \\
   \stcmd{Category\_Total\_SRCWGT} & Weighted category total, with source weight \\
   \stcmd{Category\_Prop\_SRCWGT} & Weighted category proportion, with source weight \\
-  \stcmd{Category\_Total\_Discrep\_SRCWGT} & Difference \stcmd{Category\_Total\_SRCWGT} - \\ 
+  \stcmd{Category\_Total\_Discrep\_SRCWGT} & Difference \stcmd{Category\_Total\_SRCWGT} - \\
         & - \stcmd{Category\_Total\_Target} \\
-  \stcmd{Category\_Prop\_Discrep\_SRCWGT} & Difference \stcmd{Category\_Prop\_SRCWGT} - \\ 
+  \stcmd{Category\_Prop\_Discrep\_SRCWGT} & Difference \stcmd{Category\_Prop\_SRCWGT} - \\
         & - \stcmd{Category\_Total\_Prop} \\
-  \stcmd{Category\_RelDiff\_SRCWGT} & \stcmd{reldif(Category\_Total\_SRCWGT,} \\ 
+  \stcmd{Category\_RelDiff\_SRCWGT} & \stcmd{reldif(Category\_Total\_SRCWGT,} \\
         & \stcmd{Category\_Total\_Target)} \\
   \stcmd{Overall\_Total\_SRCWGT} & Sum of source weights \\
-  \stcmd{Source} & The name of the matrix from which the totals \\ 
+  \stcmd{Source} & The name of the matrix from which the totals \\
         & were obtained \\
-  \stcmd{Comment} & Placeholder for comments, to be entered during \\ 
+  \stcmd{Comment} & Placeholder for comments, to be entered during \\
         & manual review \\
   \hline
 \end{tabular}
@@ -503,14 +503,14 @@ For each of the input weights (\stcmd{SRCWGT} suffix), raked weights (\stcmd{RKD
 \input{ipfr.report2.log.tex}\nullskip
 \end{stlog}
 
-Functionality of \stcmd{ipfraking\_report} is aimed at the manual review 
+Functionality of \stcmd{ipfraking\_report} is aimed at the manual review
 of its reporting of the categories that differ the most in the output,
 and the resulting report file in Excel,
 although for some aspects of automated quality control, it will be useful, as well.
 
 \subsection{Collapsing weighting cells:  \stcmd{wgtcellcollapse}}
 
-An additional new component of \stcmd{ipfraking} package is a tool to 
+An additional new component of \stcmd{ipfraking} package is a tool to
 semi-automatically collapse weighting cells, in order to achieve
 some minimal sample size.
 
@@ -541,21 +541,358 @@ where \textit{task} is one of:
 \stcmd{collapse} to perform cell collapsing
 
 \hangpara
-\stcmd{label} to label collapsed cells using the original labels
+\stcmd{label} to label collapsed cells using the original labels after \stcmd{wgtcellcollapse collapse}
 
-\subsubsection{Motivation}
+\subsection{Syntax of \stcmd{wgtcellcollapse report}}
+
+\begin{stsyntax}
+wgtcellcollapse report
+,
+\underbar{var}iables(\varlist)
+\optional{
+break
+}
+\end{stsyntax}
+
+\hangpara
+\stcmd{\underbar{var}iables(\varlist)} is the list of variables for which the collapsing rule are to be reported
+
+\hangpara
+\stcmd{break} requires \stcmd{wgtcellcollapse report} to exit with error when technical inconsistencies are encountered
+
+\subsection{Syntax of \stcmd{wgtcellcollapse define}}
+
+\begin{stsyntax}
+wgtcellcollapse define
+,
+\underbar{var}iables(\varlist) 
+\optional{
+from(\textit{numlist}) 
+to(\num) 
+label(\ststring)
+max(\num) 
+clear 
+}
+\end{stsyntax}
+
+\hangpara
+\stcmd{\underbar{var}iables(\varlist)} is the list of variables for which the collapsing rule can be used
+
+\hangpara
+\stcmd{from(\textit{numlist})} is the list of categories that can be collapsed according to this rule
+
+\hangpara
+\stcmd{to(\num)} is the numeric value of the new, collapsed category
+
+\hangpara
+\stcmd{label(\ststring)} is the value label to be attached to the new, collapsed category
+
+\hangpara
+\stcmd{max(\num)} overrides the automatically determined max value of the collapsed variable
+
+\hangpara
+\stcmd{clear} clears all the rules currently defined
+
+Individual collapsing rules can be defined as follows.
+
+\begin{stlog}
+\input{ipfr.collapse1.log.tex}\nullskip
+\end{stlog}
+
+Note how \stcmd{break} option of \stcmd{wgtcellcollapse} can be used to abort the execution 
+when technical deficiencies in the rules or in the data are encountered. In this case,
+the label of the new category 123 was not defined, and this is considered a serious
+enough deficiency to stop.
+
+\begin{stlog}
+\input{ipfr.collapse2.log.tex}\nullskip
+\end{stlog}
+
+\subsection{Syntax of \stcmd{wgtcellcollapse sequence}}
+
+
+\begin{stsyntax}
+wgtcellcollapse sequence
+,
+\underbar{var}iables(\varlist)
+from(\textit{numlist})
+depth(\num)
+\end{stsyntax}
+
+\hangpara
+\stcmd{\underbar{var}iables(\varlist)} is the list of variables for which the collapsing rule can be used
+
+\hangpara
+\stcmd{from(\textit{numlist})} is the sequence of values from which the plausible subsequences can be constructed
+
+\hangpara
+\stcmd{depth(\num)} is the maximum number of the original categories that can be collapsed
+
+Moderate length sequences of collapsing categories can be defined as follows.
+
+\begin{stlog}
+\input{ipfr.collapse3.log.tex}\nullskip
+\end{stlog}
+
+When creating sequential collapses, \stcmd{wgtcellcollapse sequence} uses the following mnemonics 
+in creating the new labels:
+\begin{itemize}
+    \item First comes the length of the collapsed subsequence (up to \stcmd{depth(\num)}).
+    \item Then comes the starting value of the category in the subsequence (padded by zeroes as needed).
+    \item Then comes the ending value of the category in the subsequence (padded by zeroes as needed).
+\end{itemize}
+
+In the example above, rules 7 through 9 lead to collapsing into the new category 324. This 
+should be interpreted as ``the subsequence of length 3 that starts with category 2 and ends with category 4''.
+A numeric value of the collapsed category that reads like 50412 means 
+``the subsequence of length 5 that starts with category 4 and ends with category 12''.
+
+Note that \stcmd{wgtcellcollapse sequence} respects the order in which the categories are
+supplied in the \stcmd{from()} option, and does not sort them.
+
+\subsection{Syntax of \stcmd{wgtcellcollapse candidate}}
+
+\begin{stsyntax}
+wgtcellcollapse candidate
+,
+\underbar{var}iable(\varname)
+category(\num)
+\optional{ \max{\num} }
+\end{stsyntax}
+
+\hangpara
+\stcmd{\underbar{var}iable(\varname)} is the variable whose collapsing rules are to be searched
+
+\hangpara
+\stcmd{category(\num)} is the category for which the candidate rules are to be identified
+
+\hangpara
+\stcmd{max(\num)} is the maximum value of the categories in the candidate rules to be returned
+
+The rules found are quietly returned through the mechanism of \stcmd{sreturn},
+see \pref{return}, as they are intended to be stay in memory sufficiently long for 
+\stcmd{wgtcellcollapse collapse} to evaluate each rule.
+
+\begin{stlog}
+\input{ipfr.collapse4.log.tex}\nullskip
+\end{stlog}
+
+In the second call to 
+the option \stcmd{max(9)} was used to restrict the returned rules to the rules
+that deal with the original categories only. In the third call, a list of rules
+that involve a collapsed category \stcmd{cat(212)} was requested. Requests
+for nonexisting categories are not considered errors, but simply produce empty lists
+of ``good rules''
+
+\subsection{Syntax of \stcmd{wgtcellcollapse collapse}}
+
+\begin{stsyntax}
+wgtcellcollapse collapse \optif \optin
+,
+\underbar{var}iables(\varlist)
+mincellsize(\num)
+\underbar{sav}ing(\textit{dofile\_name})
+\optional{ 
+\underbar{gen}erate(\newvarname) 
+replace
+append
+feed(\varname) 
+strict 
+sort(\varlist) 
+run 
+maxpass(\num) 
+\underbar{maxcat}egory(\num)
+\underbar{zer}oes(\textit{numlist}) 
+greedy
+}
+\end{stsyntax}
+
+\hangpara
+\stcmd{\underbar{var}iables(\varlist)} provides the list of variables whose cells are to be collapsed.
+When more than one variable is specified, \stcmd{wgtcellcollapse collapse} proceeds from right to left,
+i.e., first attempts to collapse the rightmost variable.
+
+\hangpara
+\stcmd{mincellsize(\num)} specifies the minimum cell size for the collapsed cells. For most weighting
+purposes, values of 30 to 50 can be recommended.
+
+\hangpara
+\stcmd{\underbar{gen}erate(\newvarname)} specifies the name of the collapsed variable to be created.
+
+\hangpara
+\stcmd{feed(\varname)} provides the name of an already existing collapsed variable.
+
+\hangpara
+\stcmd{strict} modifies the behavior of \stcmd{wgtcellcollapse collapse} so that only 
+collapsing rules for which all participating categories have nonzero counts are utilized.
+
+\hangpara
+\stcmd{sort(\varlist)} sorts the data set before proceeding to collapse the cell. 
+The default sort order is in terms of the values of the collapsed variable.
+A different sort order may produce a different set of collapsed cell when
+cells are tied on size.
+
+\hangpara
+\stcmd{maxpass(\num)} specifies the maximum number of passes through the data set. The default value is 10000.}
+
+\hangpara
+\stcmd{\underbar{maxcat}egory(\num)} is the maximum category value of the variable being collapsed.
+It is passed to the internal calls to \stcmd{wgtcellcollapse candidate}, see above.
+
+\hangpara
+\stcmd{\underbar{zer}oes(\textit{numlist})} provides a list of the categories of the collapsed
+variable that may have zero counts in the data. 
+
+\hangpara
+\stcmd{greedy} modifies the behavior \stcmd{wgtcellcollapse collapse} to prefer the rules
+that collapse the maximum number of categories.
+
+Options to deal with the do-file to write the collapsing code to:	
+
+\hangpara
+\stcmd{\underbar{sav}ing(\textit{dofile\_name})} specifies the name of the do-file that will contain the cell collapsing code.
+
+\hangpara
+\stcmd{replace} overwrites the do-file if one exists.
+
+\hangpara
+\stcmd{append} appends the code to the existing do-file.
+
+\hangpara
+\stcmd{run} specifies that the do-file created is run upon completion. This option is typically specified with most runs.
+
+The primary intent of \stcmd{wgtcellcollapse collapse} is to create the code that can be
+utilized for both the survey data file and the population targets data file that 
+are assumed to have identically named variables. Thus it does not only manipulate the data in the memory
+and collapses the cells, but also produces the do-file code that can be recycled.
+To that effect, when a do-file is created with the \stcmd{replace} and \stcmd{saving()} options,
+the user needs to specify \stcmd{generate()} option to provide the name of the collapsed variable;
+and when the said do-file is appended with the the \stcmd{replace} and \stcmd{saving()} options,
+the name of that variable is provided with the \stcmd{feed()} option.
+
+The algorithm \stcmd{wgtcellcollapse collapse} uses to identify the cells to be collapsed is 
+a variation of greedy search.
+It first identifies the cells with the lowest (positive) counts; finds the candidate rules 
+for the variable(s) to be collapsed; and uses the rule that has produces the smallest size of the 
+collapsed cell across all applicable rules. So when it finds several rules that are applicable 
+to the cell being currently processed that has a size of 5, and the candidate rules produces cells 
+of sizes 7, 10 and 15, \stcmd{wgtcellcollapse collapse} will use the rule that produces the cell
+of size 7. The algorithm runs until all cells have sizes of at least
+\stcmd{mincellsize(\num)} or until \stcmd{maxpass(\num)} passes through the data are executed.
+It is a pretty dumb algorithm, actually, and it fails quite often. For that reason,
+a number of hooks are provided to modify its behavior.
+
+\textit{Hint 1}. Since \stcmd{wgtcellcollapse collapse} works with the sample data,
+it will not be able to identify categories that are not observed in the sample (e.g., rare categories),
+but may be present in the population. This will lead to errors at the raking stage,
+when the control total matrices have more categories than the data, forcing \stcmd{ipfraking} to stop.
+To help with that, the option \stcmd{zeroes()} allows the user to pass the categories
+of the variables that are known to exist in the population but not in the sample.
+
+\textit{Hint 2}. The behavior of \stcmd{wgtcellcollapse collapse, zeroes()} may still not be 
+satisfactory. As it evaluates the sample sizes of the collapsed cells across a number 
+of candidate rules that involve zero cells, it will probably pick up the rule with lowest
+number, and that rule may as well leave some other candidate rules with zero cells untouched.
+This may create problems when \stcmd{wgtcellcollapse collapse} returns to those untouched cells,
+and looks for the existing cells to collapse them with, creating collapsing rules with breaks
+in the sequences. To improve upon that behavior, option \stcmd{greedy} makes 
+\stcmd{wgtcellcollapse collapse} look for a rule that has many categories as possible, thus collapsing
+as many categories with zero counts in one swipe as it can.
+
+\textit{Hint 3}. Other than for dealing with zero cells, the option \stcmd{strict} should be specified
+most of the times. It effectively makes sure that the candidate rules correspond to the actual data.
+
+\textit{Hint 4}. Sometimes, you see some combinations in the data that seem like a nobrainer
+to collapse. Well, they are nobrainers to you, but \stcmd{wgtcellcollapse collapse} is not that smart.
+If you want to guarantee some specific combination of cells to be collapsed by \stcmd{wgtcellcollapse collapse},
+your best bet may be to explicitly identify them with the \ifexp condition, and specify some 
+ridiculously large cell size like \stcmd{mincellsize(10000)} so that \stcmd{wgtcellcollapse collapse} makes every possible
+effort to collapse those cells. It will exit with a complaint that this size could not be achieved,
+but hopefully the cells will be collapsed as needed.
+
+\subsection{Syntax of \stcmd{wgtcellcollapse label}}
+
+\begin{stsyntax}
+wgtcellcollapse label
+,
+\underbar{var}iable(\varname)
+category(\num)
+\optional{ verbose force }
+\end{stsyntax}
+
+\hangpara
+\stcmd{\underbar{var}iable(\varname)} is the collapsed variable to be labeled.
+
+\hangpara
+\stcmd{verbose} outputs the labeling results. There may be a lot of output.
+
+\hangpara
+\stcmd{force} instructs \stcmd{wgtcellcollapse label} to only use categories present in the data.
+
+\subsubsection{Motivating example}
 
 Development of \stcmd{wgtcellcollapse} was to address the need
 to collapse cells of the margin variables so that each cell has a minimum sample size;
 and to do so in a way that can be easily made consistent between the sample data
 and the population targets data. The problem arises when some of the target
-variables have dozens of categories, most of which have small counts. 
+variables have dozens of categories, most of which have small counts.
 While the primary motivation comes from transportation surveys,
-the ideas are also applicable to other domains, e.g., 
-continuous age variables or highly detailed race/ethnicity or region of origin 
+the ideas are also applicable to other domains, e.g.,
+continuous age variables or highly detailed race/ethnicity or region of origin
 categories in health or economic surveys.
 
+The workflow of \stcmd{wgtcellcollapse} is demonstrated with the following
+simulated data set of trips along a metro line composed of 21 stations:
 
+\begin{stlog}
+\input{ipfr.trip.sta.log.tex}\nullskip
+\end{stlog}
+
+Turnstile counts were collected at entrances and exits of the stations, producing the following
+population figures.
+
+\noindent
+\begin{stlog}
+\input{ipfr.trip.pop.log.tex}\nullskip
+\end{stlog}
+
+A survey was administered to a sample of the metro line users, with the following counts 
+of cases collected.
+
+\noindent
+\begin{stlog}
+\input{ipfr.trip.samp.log.tex}\nullskip
+\end{stlog}
+
+As only \input{sample.size.tex}\nullskip surveys were collected from a total of 
+\input{pop.size.tex}\nullskip riders, we would reasonably expect
+that things do not align quite well. We expect weighting to correct for at least a portion of 
+that nonresponse. The data available for calibration includes the population turnstile counts
+listed above, and we will produce interactions of daypart and station that will serve as two 
+weighting margins (one for the stations where the metro users boarded, and one for the stations
+where they got off). 
+
+First, we need to define the weighting rules. In this case, the stations are numbered sequentially,
+with the northernmost, say, station Alewife being number 3, and the southernmost station,
+Union Station, where everybody gets off to rush to their city jobs or attractions, being number 73.
+Below, we create a list of stations and provide it to \stcmd{wgtcellcollapse sequence}.
+We would be collapsing stations along the line, with the expectation that travelers boarding or leaving
+at adjacent stations within the same day part are more similar to one another than the travelers
+boarding or leaving a particular station at different times of the day. Still, some collapsing rules
+can be defined for the \stcmd{daypart} variable as well --- mostly because \stcmd{wgtcellcollapse collapse}
+expects all variables to have collapsing rules defined.
+
+\begin{stlog}
+\input{ipfr.trip.rule.log.tex}\nullskip
+\end{stlog}
+
+The number of collapsing rules for variables \stcmd{board\_id} and \stcmd{alight\_id}
+is \input{station.nrules.tex}\nullskip each.
+
+Let us say that we want to define weighting cells with at least 20 cases in each. 
+We will thus start with weighting cells defined as station-by-daypart interaction,
+and collapsing stations within daypart to achieve the cell sizes of at least 20 cases.
+Here is what a simple run of \stcmd{wgtcellcollapse collapse} might look like.
 
 
 \subsection{Utility programs}
@@ -1228,10 +1565,10 @@ are of the author only, and do not represent the position of Abt Associates.
 \begin{aboutauthor}
   Stanislav (Stas) Kolenikov is a Senior Scientist at Abt Associates.
   His work involves applications of statistical methods in data collection
-  for public opinion research, public health, transportation, and other disciplines 
+  for public opinion research, public health, transportation, and other disciplines
   that utilize collection of survey data.
-  Within survey methodology, his expertise includes advanced sampling techniques, 
-  survey weighting, calibration, missing data imputation, variance estimation, 
+  Within survey methodology, his expertise includes advanced sampling techniques,
+  survey weighting, calibration, missing data imputation, variance estimation,
   nonresponse analysis and adjustment, and small area estimation.
   Besides survey statistics, Stas has extensive experience developing and applying
   statistical methods in social sciences, with focus on structural equation

@@ -1,9 +1,9 @@
-*! v.0.2 WgtCellCollapse: collapsing weighting cells; Stas Kolenikov
+*! v.0.3 WgtCellCollapse: collapsing weighting cells; Stas Kolenikov
 program define wgtcellcollapse, rclass
 
 	version 12
 	
-	* syntax namelist(name=task id="task" min=1 max=1) [if] [in], [*]* 
+	* syntax namelist(name=task id="task" min=1 max=1) [if] [in], [*]*
 	* marksample touse
 	
 	gettoken task rest : 0, parse(" ,")
@@ -295,10 +295,10 @@ program define Report_Rules
 		}
 		macro shift
 		di "{txt}  into {res}`x'{txt} == {res}`1' {txt}({res}`: label (`x') `1''{txt})"
-		if "`: label (`x') `1''" == "" {
+		if "`: label (`x') `1', strict'" == "" {
 			if "`break'" != "" {
 				di "  {err}ERROR: unlabeled value `x' == `1'"
-				assert "`: label (`x') `1''" != ""
+				assert "`: label (`x') `1', strict'" != ""
 			}
 			else di "  {err}WARNING: unlabeled value `x' == `1'"
 		}
@@ -350,7 +350,7 @@ program define Find_Candidate_Rules, sclass
 			if "`1'" != ":" {
 				if `1' > `themax' local themax `1'
 			}
-			if "`1'" == "`cat'" local found 1 
+			if "`1'" == "`cat'" local found 1
 			mac shift
 		}
 		if `found' & `themax' < `maxcategory' {
@@ -465,7 +465,7 @@ program define Label_Collapsed_Cells
 	label values `main' `main'_numlbl
 	
 	if "`verbose'" != "" {
-		tab `main' 
+		tab `main'
 		lab li `main'_numlbl
 	}
 	
@@ -474,7 +474,7 @@ program define Label_Collapsed_Cells
 	label values `main' `main'_txtlbl
 
 	if "`verbose'" != "" {
-		tab `main' 
+		tab `main'
 		lab li `main'_txtlbl
 	}
 	
@@ -484,11 +484,11 @@ program define Label_Collapsed_Cells
 	
 	* instruct the user what to do
 	di
-	di `"{txt}To attach the numeric labels (of the kind "{res}`main'==`: word 1 of `maincats''"{txt}), type:"' 
+	di `"{txt}To attach the numeric labels (of the kind "{res}`main'==`: word 1 of `maincats''"{txt}), type:"'
 	di "   {stata label language numbered_ccells}"
-	di `"{txt}To attach the text labels (of the kind "{res}`main'==`: label `main'_txtlbl `: word 1 of `maincats'''"{txt}), type:"' 
+	di `"{txt}To attach the text labels (of the kind "{res}`main'==`: label `main'_txtlbl `: word 1 of `maincats'''"{txt}), type:"'
 	di "   {stata label language texted_ccells}"
-	di `"{txt}The original state, which is also the current state, is:"' 
+	di `"{txt}The original state, which is also the current state, is:"'
 	di "   {stata label language unlabeled_ccells}"
 	di
 
@@ -525,7 +525,7 @@ program define Collapse_Cells, sortpreserve rclass
 		cap confirm variable `generate'
 		if _rc == 0 {
 			gen double `generate' = .
-			format `generate' %12.0f 
+			format `generate' %12.0f
 		}
 	}
 	
@@ -608,7 +608,7 @@ program define Collapse_Cells, sortpreserve rclass
 		
 		di _n "{txt}Processing zero cells..." _n
 	
-		tempvar prefix 
+		tempvar prefix
 		* everything up to the factor
 		qui {
 			gen long `prefix' = floor(`this'/`lastfactor')
@@ -748,7 +748,7 @@ program define Collapse_Cells, sortpreserve rclass
 				sreturn clear
 			}
 		}
-		else if "`clevel'" == "2" { 
+		else if "`clevel'" == "2" {
 			Find_Candidate_Rules, var(`prevx') cat(`thisprev') loglevel(`loglevel') max(`maxcategory')
 			if "`s(goodrule)'" == "" {
 				di "{err}NOTE: no applicable collapsing rules were found for `prevx' == `thisprev'; skipping"
@@ -888,7 +888,7 @@ program define FindBestRule, rclass
 			if _rc {
 				di "{err}ERROR: FindBestRule found inconsistencies in the data"
 				noi sum `countvar' if `longvar' == `longcat'
-				return local bestrule 
+				return local bestrule
 				exit
 			}
 		}
@@ -918,7 +918,7 @@ program define FindBestRule, rclass
 		* convert to inlist-able format
 		local inlistcats = subinstr(trim("`thesecats'"), " ", ",", .)
 		
-		local thiscount 0 
+		local thiscount 0
 		foreach c of local thesecats {
 			if `loglevel' > 0 di "{txt}  Attempting {res}`longvar'{txt} == {res}" `basecat' + `c'
 			sum `countvar' if `longvar' == `basecat' + `c' , `mean'
@@ -926,12 +926,12 @@ program define FindBestRule, rclass
 				* expect `countvar' to not vary within `basecat' + `c', and to be equal to the # of cases
 				cap assert r(min) == r(max) & r(min) == r(N)
 				if _rc {
-					di "{err}ERROR: FindBestRule found something odd in the data" 
+					di "{err}ERROR: FindBestRule found something odd in the data"
 					di "  while processing `longvar' == `longcat' and attempting `longvar' == `=`basecat' + `c''"
 					di "  (was expecting the countvar `countvar' to not vary within the cell, and == no. of obs)"
-					noi sum `countvar' if `longvar' == `basecat' + `c' 
-					list `x' `longvar' `countvar' if `longvar' == `basecat' + `c' 
-					return local bestrule 
+					noi sum `countvar' if `longvar' == `basecat' + `c'
+					list `x' `longvar' `countvar' if `longvar' == `basecat' + `c'
+					return local bestrule
 					exit
 				}
 				local thiscount = `thiscount' + r(min)
@@ -965,7 +965,7 @@ program define FindBestRule, rclass
 	}
 	
 	if "`best'" == "" {
-		return local bestrule 
+		return local bestrule
 		exit
 	}
 	
@@ -1033,7 +1033,7 @@ program define FindBestRule2, rclass
 		if _rc {
 			di "{err}ERROR: FindBestRule2 found inconsistencies in the data"
 			noi sum `countvar' if `longvar' == `longcat'
-			return local bestrule 
+			return local bestrule
 			exit
 		}
 	}
@@ -1060,7 +1060,7 @@ program define FindBestRule2, rclass
 		* convert to inlist-able format
 		local inlistcats = subinstr(trim("`thesecats'"), " ", ",", .)
 		
-		local thiscount 0 
+		local thiscount 0
 		foreach c of local thesecats {
 			if `loglevel' > 0 di "{txt}  Attempting {res}`longvar'{txt} == {res}" `basecat' + `c'*`factor'
 			`qui' sum `countvar' if `longvar' == `basecat' + `c'*`factor'
@@ -1069,7 +1069,7 @@ program define FindBestRule2, rclass
 				if _rc {
 					di "{err}ERROR: FindBestRule2 found something odd in the data"
 					noi sum `countvar' if `longvar' == `longcat'
-					return local bestrule 
+					return local bestrule
 					exit
 				}
 				local thiscount = `thiscount' + r(min)
@@ -1097,7 +1097,7 @@ program define FindBestRule2, rclass
 	}
 	
 	if "`best'" == "" {
-		return local bestrule 
+		return local bestrule
 		exit
 	}
 	
@@ -1139,4 +1139,5 @@ exit
 v.0.1	02/12/2016	converted from LIRR_Collapse_Cells
 v.0.2	08/22/2017	bugs found in Seq_Define (`fulist' was used where `from' was needed)
 					syntax of Collapse_Cells was changed to use -var()- option rather than input varlist
+v.0.3   10/26/2017  -strict- option of searching for label text was added in Report_Rules
 					

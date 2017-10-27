@@ -1,0 +1,55 @@
+{com}{sf}{ul off}
+. 
+. wgtcellcollapse candidate, var(x) cat(2)
+
+. 
+. sreturn list
+
+{txt}macros:
+           s(goodrule) : "{res}1 2 4 7 8{txt}"
+              s(rule8) : "{res}2:234=324{txt}"
+              s(rule7) : "{res}2:3:4=324{txt}"
+              s(rule4) : "{res}1:2:3=313{txt}"
+              s(rule2) : "{res}2:3=223{txt}"
+              s(rule1) : "{res}1:2=212{txt}"
+                s(cat) : "{res}2{txt}"
+                  s(x) : "{res}x{txt}"
+
+{com}. 
+. wgtcellcollapse candidate, var(x) cat(2) max(9)
+
+. 
+. sreturn list
+
+{txt}macros:
+           s(goodrule) : "{res}1 2 4 7{txt}"
+              s(rule7) : "{res}2:3:4=324{txt}"
+              s(rule4) : "{res}1:2:3=313{txt}"
+              s(rule2) : "{res}2:3=223{txt}"
+              s(rule1) : "{res}1:2=212{txt}"
+                s(cat) : "{res}2{txt}"
+                  s(x) : "{res}x{txt}"
+
+{com}. 
+. wgtcellcollapse candidate, var(x) cat(212)
+
+. 
+. sreturn list
+
+{txt}macros:
+           s(goodrule) : "{res}6{txt}"
+              s(rule6) : "{res}3:212=313{txt}"
+                s(cat) : "{res}212{txt}"
+                  s(x) : "{res}x{txt}"
+
+{com}. 
+. wgtcellcollapse candidate, var(x) cat(55)
+
+. 
+. sreturn list
+
+{txt}macros:
+                s(cat) : "{res}55{txt}"
+                  s(x) : "{res}x{txt}"
+
+{com}. 

@@ -1,0 +1,435 @@
+{com}. wgtcellcollapse collapse, variables(daypart board_id) mincellsize(20) ///
+>         generate(dpston) saving(dpston.do) replace run
+{txt}Pass {res}0{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     2000036
+{txt}  Invoking rule {res}36:39=23639
+  replace dpston = 2023639 if inlist(dpston, 2000036, 2000039)
+{txt}Pass {res}1{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     2000052
+{txt}  Invoking rule {res}52:56=25256
+  replace dpston = 2025256 if inlist(dpston, 2000052, 2000056)
+{txt}Pass {res}2{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     2000059
+{txt}  Invoking rule {res}59:25256=35259
+  replace dpston = 2035259 if inlist(dpston, 2000059, 2025256)
+{txt}Pass {res}3{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     3000036
+{txt}  Invoking rule {res}36:39=23639
+  replace dpston = 3023639 if inlist(dpston, 3000036, 3000039)
+{txt}Pass {res}4{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     4000032
+{txt}  Invoking rule {res}32:36:39:42=43242
+  replace dpston = 4043242 if inlist(dpston, 4000032, 4000036, 4000039, 4000042)
+{txt}Pass {res}5{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     4000052
+{txt}  Invoking rule {res}43242:24649:52=73252
+  replace dpston = 4073252 if inlist(dpston, 4043242, 4024649, 4000052)
+{txt}Pass {res}6{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     5000021
+{txt}  Invoking rule {res}17:21=21721
+  replace dpston = 5021721 if inlist(dpston, 5000017, 5000021)
+{txt}Pass {res}7{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     5000039
+{txt}  Invoking rule {res}39:42=23942
+  replace dpston = 5023942 if inlist(dpston, 5000039, 5000042)
+{txt}Pass {res}8{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     5000052
+{txt}  Invoking rule {res}23942:24649:52=53952
+  replace dpston = 5053952 if inlist(dpston, 5023942, 5024649, 5000052)
+{txt}Pass {res}9{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     2000032
+{txt}  Invoking rule {res}32:23639=33239
+  replace dpston = 2033239 if inlist(dpston, 2000032, 2023639)
+{txt}Pass {res}10{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     5000059
+{txt}  Invoking rule {res}56:59=25659
+  replace dpston = 5025659 if inlist(dpston, 5000056, 5000059)
+{txt}Pass {res}11{txt} through the data...
+{txt}  smallest count = {res}3{txt} in the cell {res}     2000021
+{txt}  Invoking rule {res}21:22528:33239=62139
+  replace dpston = 2062139 if inlist(dpston, 2000021, 2022528, 2033239)
+{txt}Pass {res}12{txt} through the data...
+{txt}  smallest count = {res}3{txt} in the cell {res}     3023639
+{txt}  Invoking rule {res}42:23639=33642
+  replace dpston = 3033642 if inlist(dpston, 3000042, 3023639)
+{txt}Pass {res}13{txt} through the data...
+{txt}  smallest count = {res}3{txt} in the cell {res}     4000021
+{txt}  Invoking rule {res}21:22528:73252=102152
+  replace dpston = 4102152 if inlist(dpston, 4000021, 4022528, 4073252)
+{txt}Pass {res}14{txt} through the data...
+{txt}  smallest count = {res}3{txt} in the cell {res}     5000003
+{txt}  Invoking rule {res}3:6=20306
+  replace dpston = 5020306 if inlist(dpston, 5000003, 5000006)
+{txt}Pass {res}15{txt} through the data...
+{txt}  smallest count = {res}3{txt} in the cell {res}     5000070
+{txt}  Invoking rule {res}25659:26366:70=55670
+  replace dpston = 5055670 if inlist(dpston, 5025659, 5026366, 5000070)
+{txt}Pass {res}16{txt} through the data...
+{txt}  smallest count = {res}4{txt} in the cell {res}     2000003
+{txt}  Invoking rule {res}3:6=20306
+  replace dpston = 2020306 if inlist(dpston, 2000003, 2000006)
+{txt}Pass {res}17{txt} through the data...
+{txt}  smallest count = {res}4{txt} in the cell {res}     2000010
+{txt}  Invoking rule {res}10:21317:62139=91039
+  replace dpston = 2091039 if inlist(dpston, 2000010, 2021317, 2062139)
+{txt}Pass {res}18{txt} through the data...
+{txt}  smallest count = {res}4{txt} in the cell {res}     3000052
+{txt}  Invoking rule {res}49:52=24952
+  replace dpston = 3024952 if inlist(dpston, 3000049, 3000052)
+{txt}Pass {res}19{txt} through the data...
+{txt}  smallest count = {res}4{txt} in the cell {res}     4000017
+{txt}  Invoking rule {res}17:21:25=31725
+  replace dpston = 4031725 if inlist(dpston, 4000017, 4000021, 4000025)
+{txt}Pass {res}20{txt} through the data...
+{txt}  smallest count = {res}5{txt} in the cell {res}     1000036
+{txt}  Invoking rule {res}36:39=23639
+  replace dpston = 1023639 if inlist(dpston, 1000036, 1000039)
+{txt}Pass {res}21{txt} through the data...
+{txt}  smallest count = {res}5{txt} in the cell {res}     2000017
+{txt}  Invoking rule {res}20306:21013:17=50317
+  replace dpston = 2050317 if inlist(dpston, 2020306, 2021013, 2000017)
+{txt}Pass {res}22{txt} through the data...
+{txt}  smallest count = {res}5{txt} in the cell {res}     3000063
+{txt}  Invoking rule {res}24952:25659:63=54963
+  replace dpston = 3054963 if inlist(dpston, 3024952, 3025659, 3000063)
+{txt}Pass {res}23{txt} through the data...
+{txt}  smallest count = {res}5{txt} in the cell {res}     5021721
+{txt}  Invoking rule {res}25:21721=31725
+  replace dpston = 5031725 if inlist(dpston, 5000025, 5021721)
+{txt}Pass {res}24{txt} through the data...
+{txt}  smallest count = {res}5{txt} in the cell {res}     5053952
+{txt}  Invoking rule {res}53952:55670=103970
+  replace dpston = 5103970 if inlist(dpston, 5053952, 5055670)
+{txt}Pass {res}25{txt} through the data...
+{txt}  smallest count = {res}6{txt} in the cell {res}     2000070
+{txt}  Invoking rule {res}35259:26366:70=65270
+  replace dpston = 2065270 if inlist(dpston, 2035259, 2026366, 2000070)
+{txt}Pass {res}26{txt} through the data...
+{txt}  smallest count = {res}6{txt} in the cell {res}     4000006
+{txt}  Invoking rule {res}3:6=20306
+  replace dpston = 4020306 if inlist(dpston, 4000003, 4000006)
+{txt}Pass {res}27{txt} through the data...
+{txt}  smallest count = {res}6{txt} in the cell {res}     4102152
+{txt}  Invoking rule {res}56:102152=112156
+  replace dpston = 4112156 if inlist(dpston, 4000056, 4102152)
+{txt}Pass {res}28{txt} through the data...
+{txt}  smallest count = {res}7{txt} in the cell {res}     4000046
+{txt}  Invoking rule {res}46:49:52:56:59:63:66=74666
+  replace dpston = 4074666 if inlist(dpston, 4000046, 4000049, 4000052, 4000056, 4000059, 4000063, 4000066)
+{txt}Pass {res}29{txt} through the data...
+{txt}  smallest count = {res}10{txt} in the cell {res}     1000059
+{txt}  Invoking rule {res}59:63=25963
+  replace dpston = 1025963 if inlist(dpston, 1000059, 1000063)
+{txt}Pass {res}30{txt} through the data...
+{txt}  smallest count = {res}10{txt} in the cell {res}     4031725
+{txt}  Invoking rule {res}28:31725=41728
+  replace dpston = 4041728 if inlist(dpston, 4000028, 4031725)
+{txt}Pass {res}31{txt} through the data...
+{txt}  smallest count = {res}10{txt} in the cell {res}     5020306
+{txt}  Invoking rule {res}10:20306=30310
+  replace dpston = 5030310 if inlist(dpston, 5000010, 5020306)
+{txt}Pass {res}32{txt} through the data...
+{txt}  smallest count = {res}11{txt} in the cell {res}     2091039
+{txt}  Invoking rule {res}91039:42:46=111046
+  replace dpston = 2111046 if inlist(dpston, 2091039, 2000042, 2000046)
+{txt}Pass {res}33{txt} through the data...
+{txt}  smallest count = {res}11{txt} in the cell {res}     3000003
+{txt}  Invoking rule {res}3:6=20306
+  replace dpston = 3020306 if inlist(dpston, 3000003, 3000006)
+{txt}Pass {res}34{txt} through the data...
+{txt}  smallest count = {res}11{txt} in the cell {res}     4000070
+{txt}  Invoking rule {res}70:74666=84670
+  replace dpston = 4084670 if inlist(dpston, 4000070, 4074666)
+{txt}Pass {res}35{txt} through the data...
+{txt}  smallest count = {res}11{txt} in the cell {res}     5031725
+{txt}  Invoking rule {res}28:31725=41728
+  replace dpston = 5041728 if inlist(dpston, 5000028, 5031725)
+{txt}Pass {res}36{txt} through the data...
+{txt}  smallest count = {res}12{txt} in the cell {res}     2065270
+{err}  WARNING: could not find any rules to collapse dpston == 2065270
+{txt}Pass {res}37{txt} through the data...
+{txt}  smallest count = {res}12{txt} in the cell {res}     3033642
+{txt}  Invoking rule {res}25:22832:33642=62542
+  replace dpston = 3062542 if inlist(dpston, 3000025, 3022832, 3033642)
+{txt}Pass {res}38{txt} through the data...
+{txt}  smallest count = {res}13{txt} in the cell {res}     1000052
+{txt}  Invoking rule {res}52:56=25256
+  replace dpston = 1025256 if inlist(dpston, 1000052, 1000056)
+{txt}Pass {res}39{txt} through the data...
+{txt}  smallest count = {res}13{txt} in the cell {res}     2000025
+{txt}  Invoking rule {res}50317:21:25=70325
+  replace dpston = 2070325 if inlist(dpston, 2050317, 2000021, 2000025)
+{txt}Pass {res}40{txt} through the data...
+{txt}  smallest count = {res}13{txt} in the cell {res}     4020306
+{txt}  Invoking rule {res}10:20306=30310
+  replace dpston = 4030310 if inlist(dpston, 4000010, 4020306)
+{txt}Pass {res}41{txt} through the data...
+{txt}  smallest count = {res}13{txt} in the cell {res}     4112156
+{txt}  Invoking rule {res}13:17:112156=131356
+  replace dpston = 4131356 if inlist(dpston, 4000013, 4000017, 4112156)
+{txt}Pass {res}42{txt} through the data...
+{txt}  smallest count = {res}13{txt} in the cell {res}     5000046
+{txt}  Invoking rule {res}32:36:39:42:46=53246
+  replace dpston = 5053246 if inlist(dpston, 5000032, 5000036, 5000039, 5000042, 5000046)
+{txt}Pass {res}43{txt} through the data...
+{txt}  smallest count = {res}14{txt} in the cell {res}     3000059
+{txt}  Invoking rule {res}56:59=25659
+  replace dpston = 3025659 if inlist(dpston, 3000056, 3000059)
+{txt}Pass {res}44{txt} through the data...
+{txt}  smallest count = {res}15{txt} in the cell {res}     5103970
+{err}  WARNING: could not find any rules to collapse dpston == 5103970
+{txt}Pass {res}45{txt} through the data...
+{txt}  smallest count = {res}17{txt} in the cell {res}     5000066
+{txt}  Invoking rule {res}13:17:21:25:28:32:36:39:42:46:49:52:56:59:63:66=161366
+  replace dpston = 5161366 if inlist(dpston, 5000013, 5000017, 5000021, 5000025, 5000028, 5000032, 5000036, 5000039, 5000042, 5000046, 5000049, 5000052, 5000056, 5000059, 5000063, 5000066)
+{txt}Pass {res}46{txt} through the data...
+{txt}  smallest count = {res}18{txt} in the cell {res}     2000066
+{txt}  Invoking rule {res}28:32:36:39:42:46:49:52:56:59:63:66=122866
+  replace dpston = 2122866 if inlist(dpston, 2000028, 2000032, 2000036, 2000039, 2000042, 2000046, 2000049, 2000052, 2000056, 2000059, 2000063, 2000066)
+{txt}Pass {res}47{txt} through the data...
+{txt}  smallest count = {res}18{txt} in the cell {res}     3054963
+{txt}  Invoking rule {res}66:54963=64966
+  replace dpston = 3064966 if inlist(dpston, 3000066, 3054963)
+{txt}Pass {res}48{txt} through the data...
+{txt}  smallest count = {res}22{txt} in the cell {res}     1023639
+{txt}  Done collapsing! Exiting...
+
+{com}. return list
+
+{txt}scalars:
+         r(arg_min_id) =  {res}1023639
+                {txt}r(min) =  {res}22
+
+{txt}macros:
+            r(cfailed) : "{res}2065270,5103970{txt}"
+             r(failed) : "{res}2065270 5103970{txt}"
+
+{com}. wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(20) ///
+>         generate(dpstoff) saving(dpstoff.do) replace run
+{txt}Pass {res}0{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     1000006
+{txt}  Invoking rule {res}6:10=20610
+  replace dpstoff = 1020610 if inlist(dpstoff, 1000006, 1000010)
+{txt}Pass {res}1{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     2000010
+{txt}  Invoking rule {res}10:13=21013
+  replace dpstoff = 2021013 if inlist(dpstoff, 2000010, 2000013)
+{txt}Pass {res}2{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     2000017
+{txt}  Invoking rule {res}17:21=21721
+  replace dpstoff = 2021721 if inlist(dpstoff, 2000017, 2000021)
+{txt}Pass {res}3{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     2000049
+{txt}  Invoking rule {res}49:52:56=34956
+  replace dpstoff = 2034956 if inlist(dpstoff, 2000049, 2000052, 2000056)
+{txt}Pass {res}4{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     3000010
+{txt}  Invoking rule {res}10:13=21013
+  replace dpstoff = 3021013 if inlist(dpstoff, 3000010, 3000013)
+{txt}Pass {res}5{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     3000036
+{txt}  Invoking rule {res}36:39=23639
+  replace dpstoff = 3023639 if inlist(dpstoff, 3000036, 3000039)
+{txt}Pass {res}6{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     3000049
+{txt}  Invoking rule {res}49:52=24952
+  replace dpstoff = 3024952 if inlist(dpstoff, 3000049, 3000052)
+{txt}Pass {res}7{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     4000017
+{txt}  Invoking rule {res}17:21=21721
+  replace dpstoff = 4021721 if inlist(dpstoff, 4000017, 4000021)
+{txt}Pass {res}8{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     4000025
+{txt}  Invoking rule {res}25:21721=31725
+  replace dpstoff = 4031725 if inlist(dpstoff, 4000025, 4021721)
+{txt}Pass {res}9{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     4000059
+{txt}  Invoking rule {res}56:59=25659
+  replace dpstoff = 4025659 if inlist(dpstoff, 4000056, 4000059)
+{txt}Pass {res}10{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     5000010
+{txt}  Invoking rule {res}10:13=21013
+  replace dpstoff = 5021013 if inlist(dpstoff, 5000010, 5000013)
+{txt}Pass {res}11{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     5000025
+{txt}  Invoking rule {res}21:25=22125
+  replace dpstoff = 5022125 if inlist(dpstoff, 5000021, 5000025)
+{txt}Pass {res}12{txt} through the data...
+{txt}  smallest count = {res}1{txt} in the cell {res}     5000052
+{txt}  Invoking rule {res}52:56=25256
+  replace dpstoff = 5025256 if inlist(dpstoff, 5000052, 5000056)
+{txt}Pass {res}13{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     1000052
+{txt}  Invoking rule {res}49:52=24952
+  replace dpstoff = 1024952 if inlist(dpstoff, 1000049, 1000052)
+{txt}Pass {res}14{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     2000025
+{txt}  Invoking rule {res}25:21721=31725
+  replace dpstoff = 2031725 if inlist(dpstoff, 2000025, 2021721)
+{txt}Pass {res}15{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     2021013
+{txt}  Invoking rule {res}21013:31725=51025
+  replace dpstoff = 2051025 if inlist(dpstoff, 2021013, 2031725)
+{txt}Pass {res}16{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     2034956
+{txt}  Invoking rule {res}46:34956=44656
+  replace dpstoff = 2044656 if inlist(dpstoff, 2000046, 2034956)
+{txt}Pass {res}17{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     3000021
+{txt}  Invoking rule {res}21:25=22125
+  replace dpstoff = 3022125 if inlist(dpstoff, 3000021, 3000025)
+{txt}Pass {res}18{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     3000042
+{txt}  Invoking rule {res}42:23639=33642
+  replace dpstoff = 3033642 if inlist(dpstoff, 3000042, 3023639)
+{txt}Pass {res}19{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     3024952
+{txt}  Invoking rule {res}56:24952=34956
+  replace dpstoff = 3034956 if inlist(dpstoff, 3000056, 3024952)
+{txt}Pass {res}20{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     4000032
+{txt}  Invoking rule {res}32:36:39:42:46=53246
+  replace dpstoff = 4053246 if inlist(dpstoff, 4000032, 4000036, 4000039, 4000042, 4000046)
+{txt}Pass {res}21{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     4000052
+{txt}  Invoking rule {res}52:56:59:63:66=55266
+  replace dpstoff = 4055266 if inlist(dpstoff, 4000052, 4000056, 4000059, 4000063, 4000066)
+{txt}Pass {res}22{txt} through the data...
+{txt}  smallest count = {res}2{txt} in the cell {res}     5000032
+{txt}  Invoking rule {res}32:36:39:42=43242
+  replace dpstoff = 5043242 if inlist(dpstoff, 5000032, 5000036, 5000039, 5000042)
+{txt}Pass {res}23{txt} through the data...
+{txt}  smallest count = {res}3{txt} in the cell {res}     1000036
+{txt}  Invoking rule {res}32:36=23236
+  replace dpstoff = 1023236 if inlist(dpstoff, 1000032, 1000036)
+{txt}Pass {res}24{txt} through the data...
+{txt}  smallest count = {res}3{txt} in the cell {res}     2000070
+{txt}  Invoking rule {res}28:32:36:39:42:46:49:52:56:59:63:66:70=132870
+  replace dpstoff = 2132870 if inlist(dpstoff, 2000028, 2000032, 2000036, 2000039, 2000042, 2000046, 2000049, 2000052, 2000056, 2000059, 2000063, 2000066, 2000070)
+{txt}Pass {res}25{txt} through the data...
+{txt}  smallest count = {res}3{txt} in the cell {res}     5022125
+{txt}  Invoking rule {res}17:22125=31725
+  replace dpstoff = 5031725 if inlist(dpstoff, 5000017, 5022125)
+{txt}Pass {res}26{txt} through the data...
+{txt}  smallest count = {res}3{txt} in the cell {res}     5025256
+{txt}  Invoking rule {res}46:49:25256=44656
+  replace dpstoff = 5044656 if inlist(dpstoff, 5000046, 5000049, 5025256)
+{txt}Pass {res}27{txt} through the data...
+{txt}  smallest count = {res}4{txt} in the cell {res}     3000032
+{txt}  Invoking rule {res}32:33642=43242
+  replace dpstoff = 3043242 if inlist(dpstoff, 3000032, 3033642)
+{txt}Pass {res}28{txt} through the data...
+{txt}  smallest count = {res}4{txt} in the cell {res}     4025659
+{txt}  Invoking rule {res}25659:63:66:70=55670
+  replace dpstoff = 4055670 if inlist(dpstoff, 4025659, 4000063, 4000066, 4000070)
+{txt}Pass {res}29{txt} through the data...
+{txt}  smallest count = {res}4{txt} in the cell {res}     4031725
+{txt}  Invoking rule {res}13:31725=41325
+  replace dpstoff = 4041325 if inlist(dpstoff, 4000013, 4031725)
+{txt}Pass {res}30{txt} through the data...
+{txt}  smallest count = {res}4{txt} in the cell {res}     5043242
+{txt}  Invoking rule {res}28:43242=52842
+  replace dpstoff = 5052842 if inlist(dpstoff, 5000028, 5043242)
+{txt}Pass {res}31{txt} through the data...
+{txt}  smallest count = {res}5{txt} in the cell {res}     1000063
+{txt}  Invoking rule {res}24952:25659:63=54963
+  replace dpstoff = 1054963 if inlist(dpstoff, 1024952, 1025659, 1000063)
+{txt}Pass {res}32{txt} through the data...
+{txt}  smallest count = {res}5{txt} in the cell {res}     3000059
+{txt}  Invoking rule {res}59:34956=44959
+  replace dpstoff = 3044959 if inlist(dpstoff, 3000059, 3034956)
+{txt}Pass {res}33{txt} through the data...
+{txt}  smallest count = {res}5{txt} in the cell {res}     4055266
+{txt}  Invoking rule {res}55266:70:73=75273
+  replace dpstoff = 4075273 if inlist(dpstoff, 4055266, 4000070, 4000073)
+{txt}Pass {res}34{txt} through the data...
+{txt}  smallest count = {res}6{txt} in the cell {res}     1000059
+{txt}  Invoking rule {res}56:59=25659
+  replace dpstoff = 1025659 if inlist(dpstoff, 1000056, 1000059)
+{txt}Pass {res}35{txt} through the data...
+{txt}  smallest count = {res}6{txt} in the cell {res}     2051025
+{txt}  Invoking rule {res}51025:132870=181070
+  replace dpstoff = 2181070 if inlist(dpstoff, 2051025, 2132870)
+{txt}Pass {res}36{txt} through the data...
+{txt}  smallest count = {res}6{txt} in the cell {res}     5021013
+{txt}  Invoking rule {res}21013:31725=51025
+  replace dpstoff = 5051025 if inlist(dpstoff, 5021013, 5031725)
+{txt}Pass {res}37{txt} through the data...
+{txt}  smallest count = {res}7{txt} in the cell {res}     5000070
+{txt}  Invoking rule {res}66:70=26670
+  replace dpstoff = 5026670 if inlist(dpstoff, 5000066, 5000070)
+{txt}Pass {res}38{txt} through the data...
+{txt}  smallest count = {res}8{txt} in the cell {res}     2044656
+{err}  WARNING: could not find any rules to collapse dpstoff == 2044656
+{txt}Pass {res}39{txt} through the data...
+{txt}  smallest count = {res}8{txt} in the cell {res}     4053246
+{txt}  Invoking rule {res}28:53246=62846
+  replace dpstoff = 4062846 if inlist(dpstoff, 4000028, 4053246)
+{txt}Pass {res}40{txt} through the data...
+{txt}  smallest count = {res}9{txt} in the cell {res}     5044656
+{txt}  Invoking rule {res}52842:44656=92856
+  replace dpstoff = 5092856 if inlist(dpstoff, 5052842, 5044656)
+{txt}Pass {res}41{txt} through the data...
+{txt}  smallest count = {res}10{txt} in the cell {res}     1054963
+{txt}  Invoking rule {res}66:54963=64966
+  replace dpstoff = 1064966 if inlist(dpstoff, 1000066, 1054963)
+{txt}Pass {res}42{txt} through the data...
+{txt}  smallest count = {res}10{txt} in the cell {res}     3022125
+{txt}  Invoking rule {res}17:22125=31725
+  replace dpstoff = 3031725 if inlist(dpstoff, 3000017, 3022125)
+{txt}Pass {res}43{txt} through the data...
+{txt}  smallest count = {res}10{txt} in the cell {res}     3043242
+{txt}  Invoking rule {res}28:43242=52842
+  replace dpstoff = 3052842 if inlist(dpstoff, 3000028, 3043242)
+{txt}Pass {res}44{txt} through the data...
+{txt}  smallest count = {res}10{txt} in the cell {res}     4041325
+{txt}  Invoking rule {res}41325:62846=101346
+  replace dpstoff = 4101346 if inlist(dpstoff, 4041325, 4062846)
+{txt}Pass {res}45{txt} through the data...
+{txt}  smallest count = {res}10{txt} in the cell {res}     4055670
+{err}  WARNING: could not find any rules to collapse dpstoff == 4055670
+{txt}Pass {res}46{txt} through the data...
+{txt}  smallest count = {res}12{txt} in the cell {res}     1020610
+{txt}  Invoking rule {res}20610:21317:21=50621
+  replace dpstoff = 1050621 if inlist(dpstoff, 1020610, 1021317, 1000021)
+{txt}Pass {res}47{txt} through the data...
+{txt}  smallest count = {res}12{txt} in the cell {res}     1023236
+{txt}  Invoking rule {res}23236:39:42=43242
+  replace dpstoff = 1043242 if inlist(dpstoff, 1023236, 1000039, 1000042)
+{txt}Pass {res}48{txt} through the data...
+{txt}  smallest count = {res}13{txt} in the cell {res}     2181070
+{txt}  Invoking rule {res}73:181070=191073
+  replace dpstoff = 2191073 if inlist(dpstoff, 2000073, 2181070)
+{txt}Pass {res}49{txt} through the data...
+{txt}  smallest count = {res}13{txt} in the cell {res}     5051025
+{txt}  Invoking rule {res}51025:92856=141056
+  replace dpstoff = 5141056 if inlist(dpstoff, 5051025, 5092856)
+{txt}Pass {res}50{txt} through the data...
+{txt}  smallest count = {res}14{txt} in the cell {res}     1000025
+{txt}  Invoking rule {res}25:50621=60625
+  replace dpstoff = 1060625 if inlist(dpstoff, 1000025, 1050621)
+{txt}Pass {res}51{txt} through the data...
+{txt}  smallest count = {res}15{txt} in the cell {res}     3021013
+{txt}  Invoking rule {res}21013:31725=51025
+  replace dpstoff = 3051025 if inlist(dpstoff, 3021013, 3031725)
+{txt}Pass {res}52{txt} through the data...
+{txt}  smallest count = {res}15{txt} in the cell {res}     3044959
+{txt}  Invoking rule {res}44959:63:66=64966
+  replace dpstoff = 3064966 if inlist(dpstoff, 3044959, 3000063, 3000066)
+{txt}Pass {res}53{txt} through the data...
+{txt}  smallest count = {res}16{txt} in the cell {res}     5026670
+{txt}  Invoking rule {res}73:26670=36673
+  replace dpstoff = 5036673 if inlist(dpstoff, 5000073, 5026670)
+{txt}Pass {res}54{txt} through the data...
+{txt}  smallest count = {res}22{txt} in the cell {res}     3000046
+{txt}  Done collapsing! Exiting...
+
+{com}. return list
+
+{txt}scalars:
+         r(arg_min_id) =  {res}3000046
+                {txt}r(min) =  {res}22
+
+{txt}macros:
+            r(cfailed) : "{res}2044656,4055670{txt}"
+             r(failed) : "{res}2044656 4055670{txt}"

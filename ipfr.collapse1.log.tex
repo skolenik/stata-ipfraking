@@ -1,0 +1,32 @@
+{\smallskip}
+. 
+. clear
+{\smallskip}
+. 
+. set obs 4 
+number of observations (_N) was 0, now 4
+{\smallskip}
+. 
+. gen byte x = _n
+{\smallskip}
+. 
+. label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
+{\smallskip}
+. 
+. label values x x_lbl
+{\smallskip}
+. 
+. wgtcellcollapse define, var(x) from(1 2 3) to(123)
+{\smallskip}
+. 
+. wgtcellcollapse report, var(x)
+{\smallskip}
+Rule (1): collapse together
+  x == 1 (One)
+  x == 2 (Two)
+  x == 3 (Three)
+  into x == 123 (123)
+  WARNING: unlabeled value x == 123
+{\smallskip}
+{\smallskip}
+. 

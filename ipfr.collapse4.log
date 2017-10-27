@@ -1,0 +1,55 @@
+
+. 
+. wgtcellcollapse candidate, var(x) cat(2)
+
+. 
+. sreturn list
+
+macros:
+           s(goodrule) : "1 2 4 7 8"
+              s(rule8) : "2:234=324"
+              s(rule7) : "2:3:4=324"
+              s(rule4) : "1:2:3=313"
+              s(rule2) : "2:3=223"
+              s(rule1) : "1:2=212"
+                s(cat) : "2"
+                  s(x) : "x"
+
+. 
+. wgtcellcollapse candidate, var(x) cat(2) max(9)
+
+. 
+. sreturn list
+
+macros:
+           s(goodrule) : "1 2 4 7"
+              s(rule7) : "2:3:4=324"
+              s(rule4) : "1:2:3=313"
+              s(rule2) : "2:3=223"
+              s(rule1) : "1:2=212"
+                s(cat) : "2"
+                  s(x) : "x"
+
+. 
+. wgtcellcollapse candidate, var(x) cat(212)
+
+. 
+. sreturn list
+
+macros:
+           s(goodrule) : "6"
+              s(rule6) : "3:212=313"
+                s(cat) : "212"
+                  s(x) : "x"
+
+. 
+. wgtcellcollapse candidate, var(x) cat(55)
+
+. 
+. sreturn list
+
+macros:
+                s(cat) : "55"
+                  s(x) : "x"
+
+. 
