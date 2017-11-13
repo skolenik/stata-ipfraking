@@ -1,0 +1,204 @@
+. use trip_population, clear
+{\smallskip}
+. run dpston5.do
+{\smallskip}
+. total num_pass , over(dpston5)
+{\smallskip}
+Total estimation                  Number of obs   =        719
+{\smallskip}
+      1000001: dpston5 = 1000001
+      1000002: dpston5 = 1000002
+      1000008: dpston5 = 1000008
+      1000011: dpston5 = 1000011
+      1000018: dpston5 = 1000018
+      1000024: dpston5 = 1000024
+      1000026: dpston5 = 1000026
+      1000030: dpston5 = 1000030
+      1000036: dpston5 = 1000036
+      1000044: dpston5 = 1000044
+      1000047: dpston5 = 1000047
+      1000062: dpston5 = 1000062
+      1000068: dpston5 = 1000068
+      1023940: dpston5 = 1023940
+      1025560: dpston5 = 1025560
+      1034953: dpston5 = 1034953
+      2000047: dpston5 = 2000047
+      2031826: dpston5 = 2031826
+      2040111: dpston5 = 2040111
+      2053044: dpston5 = 2053044
+      2074968: dpston5 = 2074968
+      3000008: dpston5 = 3000008
+      3000011: dpston5 = 3000011
+      3000018: dpston5 = 3000018
+      3000024: dpston5 = 3000024
+      3000026: dpston5 = 3000026
+      3000030: dpston5 = 3000030
+      3000047: dpston5 = 3000047
+      3000068: dpston5 = 3000068
+      3020102: dpston5 = 3020102
+      3034953: dpston5 = 3034953
+      3035562: dpston5 = 3035562
+      3043644: dpston5 = 3043644
+      4030108: dpston5 = 4030108
+      4041126: dpston5 = 4041126
+      4074968: dpston5 = 4074968
+      4083050: dpston5 = 4083050
+      5000011: dpston5 = 5000011
+      5026268: dpston5 = 5026268
+      5030108: dpston5 = 5030108
+      5051836: dpston5 = 5051836
+      5093960: dpston5 = 5093960
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{48}
+        Over {\VBAR}      Total   Std. Err.     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{48}
+num_pass     {\VBAR}
+     1000001 {\VBAR}       1423   967.7508     -476.9595    3322.959
+     1000002 {\VBAR}       7198    4895.91     -2414.011    16810.01
+     1000008 {\VBAR}      19254   13675.81     -7595.347    46103.35
+     1000011 {\VBAR}      12626   9682.022     -6382.456    31634.46
+     1000018 {\VBAR}       2470   1943.224     -1345.081    6285.081
+     1000024 {\VBAR}        634   509.3549     -366.0031    1634.003
+     1000026 {\VBAR}       2208   1774.996     -1276.802    5692.802
+     1000030 {\VBAR}       4319   3665.427     -2877.235    11515.24
+     1000036 {\VBAR}       1221   1046.817     -834.1873    3276.187
+     1000044 {\VBAR}       1021    881.426     -709.4802     2751.48
+     1000047 {\VBAR}       3300   2970.321     -2531.552    9131.552
+     1000062 {\VBAR}       3402       3176     -2833.357    9637.357
+     1000068 {\VBAR}       5085          .             .           .
+     1023940 {\VBAR}        491    348.709     -193.6112    1175.611
+     1025560 {\VBAR}        601     350.65     -87.42178    1289.422
+     1034953 {\VBAR}       1286   774.5361     -234.6262    2806.626
+     2000047 {\VBAR}        776   701.0001     -600.2549    2152.255
+     2031826 {\VBAR}        426   223.0489     -11.90601     863.906
+     2040111 {\VBAR}       1385   714.1628     -17.09692    2787.097
+     2053044 {\VBAR}        527   364.2392     -188.1011    1242.101
+     2074968 {\VBAR}        443   221.0935      8.933009     877.067
+     3000008 {\VBAR}       3739   2665.175     -1493.467    8971.467
+     3000011 {\VBAR}       3476   2669.777     -1765.503    8717.503
+     3000018 {\VBAR}       1263    997.019     -694.4209    3220.421
+     3000024 {\VBAR}       1296   1032.175     -730.4418    3322.442
+     3000026 {\VBAR}        439   357.3421     -262.5603     1140.56
+     3000030 {\VBAR}       3740   3175.677     -2494.723    9974.723
+     3000047 {\VBAR}        984   888.5095     -760.3871    2728.387
+     3000068 {\VBAR}        744          .             .           .
+     3020102 {\VBAR}        992   553.0017     -93.69354    2077.694
+     3034953 {\VBAR}        893   588.1798     -261.7577    2047.758
+     3035562 {\VBAR}       1187   894.6009     -569.3461    2943.346
+     3043644 {\VBAR}        713   398.6235     -69.60702    1495.607
+     4030108 {\VBAR}       1154   529.0201      115.3888    2192.611
+     4041126 {\VBAR}       1135   530.8674      92.76204    2177.238
+     4074968 {\VBAR}        659   307.4955      55.30219    1262.698
+     4083050 {\VBAR}        741   395.9312     -36.32126    1518.321
+     5000011 {\VBAR}       1270    834.301      -367.961    2907.961
+     5026268 {\VBAR}        557   364.4324     -158.4805    1272.481
+     5030108 {\VBAR}        610   263.2061      93.25444    1126.746
+     5051836 {\VBAR}        622   215.5712      198.7749    1045.225
+     5093960 {\VBAR}        473   261.8954     -41.17225    987.1723
+\HLI{13}{\BOTT}\HLI{48}
+{\smallskip}
+. matrix dpston5 = e(b)
+{\smallskip}
+. matrix coleq dpston5 = _one
+{\smallskip}
+. matrix rownames dpston5 = dpston5
+{\smallskip}
+. run dpstoff5.do
+{\smallskip}
+. total num_pass , over(dpstoff5)
+{\smallskip}
+Total estimation                  Number of obs   =        719
+{\smallskip}
+      1000018: dpstoff5 = 1000018
+      1000030: dpstoff5 = 1000030
+      1000047: dpstoff5 = 1000047
+      1000062: dpstoff5 = 1000062
+      1000068: dpstoff5 = 1000068
+      1000069: dpstoff5 = 1000069
+      1022426: dpstoff5 = 1022426
+      1030211: dpstoff5 = 1030211
+      1043644: dpstoff5 = 1043644
+      1054960: dpstoff5 = 1054960
+      2000069: dpstoff5 = 2000069
+      2200168: dpstoff5 = 2200168
+      3000047: dpstoff5 = 3000047
+      3000068: dpstoff5 = 3000068
+      3000069: dpstoff5 = 3000069
+      3053044: dpstoff5 = 3053044
+      3064962: dpstoff5 = 3064962
+      3070126: dpstoff5 = 3070126
+      4000069: dpstoff5 = 4000069
+      4080130: dpstoff5 = 4080130
+      4123668: dpstoff5 = 4123668
+      5084969: dpstoff5 = 5084969
+      5150150: dpstoff5 = 5150150
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{48}
+        Over {\VBAR}      Total   Std. Err.     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{48}
+num_pass     {\VBAR}
+     1000018 {\VBAR}        929   360.7303      220.7878    1637.212
+     1000030 {\VBAR}       2189   868.0319      484.8161    3893.184
+     1000047 {\VBAR}       1746   630.7528      507.6598     2984.34
+     1000062 {\VBAR}       1134   382.7765       382.505    1885.495
+     1000068 {\VBAR}       1372   426.3969      534.8662    2209.134
+     1000069 {\VBAR}      53193   15995.88      21788.72    84597.28
+     1022426 {\VBAR}        980    273.542      442.9623    1517.038
+     1030211 {\VBAR}       2986   1614.166     -183.0484    6155.048
+     1043644 {\VBAR}        737   159.5597      423.7407    1050.259
+     1054960 {\VBAR}       1273   259.8915      762.7619    1783.238
+     2000069 {\VBAR}       3038   938.8099      1194.859    4881.141
+     2200168 {\VBAR}        519   71.80393      378.0292    659.9708
+     3000047 {\VBAR}        556   187.4945      187.8971    924.1029
+     3000068 {\VBAR}        444   126.0503      196.5289    691.4711
+     3000069 {\VBAR}      16007   4295.998      7572.781    24441.22
+     3053044 {\VBAR}        787    249.935      296.3092    1277.691
+     3064962 {\VBAR}        759   141.1029      481.9765    1036.023
+     3070126 {\VBAR}        913   335.9457      253.4468    1572.553
+     4000069 {\VBAR}       2733   728.6906      1302.381    4163.619
+     4080130 {\VBAR}        480   132.6806      219.5117    740.4883
+     4123668 {\VBAR}        476   72.94794      332.7832    619.2168
+     5084969 {\VBAR}       2945   999.9897      981.7468    4908.253
+     5150150 {\VBAR}        587   137.3569      317.3308    856.6692
+\HLI{13}{\BOTT}\HLI{48}
+{\smallskip}
+. matrix dpstoff5 = e(b)
+{\smallskip}
+. matrix coleq dpstoff5 = _one
+{\smallskip}
+. matrix rownames dpstoff5 = dpstoff5
+{\smallskip}
+. use trip_sample, clear
+{\smallskip}
+. run dpston5
+{\smallskip}
+. run dpstoff5
+{\smallskip}
+. gen byte _one = 1       
+{\smallskip}
+. ipfraking [pw=_one], ctotal(dpston5 dpstoff5) gen(raked_weight5)
+{\smallskip}
+ Iteration 1, max rel difference of raked weights = 37.856256
+ Iteration 2, max rel difference of raked weights = .0250943
+ Iteration 3, max rel difference of raked weights = .00252004
+ Iteration 4, max rel difference of raked weights = .00030004
+ Iteration 5, max rel difference of raked weights = .00003571
+ Iteration 6, max rel difference of raked weights = 4.250e-06
+ Iteration 7, max rel difference of raked weights = 5.058e-07
+The worst relative discrepancy of  5.6e-08 is observed for dpstoff5 == 5150150     
+Target value =        587; achieved value =        587
+{\smallskip}
+   Summary of the weight changes
+{\smallskip}
+              {\VBAR}    Mean    Std. dev.    Min        Max       CV
+\HLI{14}{\PLUS}\HLI{50} 
+Orig weights  {\VBAR}        1          0         1           1       0
+Raked weights {\VBAR}   26.487       5.74    14.593      38.634   .2167
+Adjust factor {\VBAR}  26.4869              14.5933     38.6339
+{\smallskip}
+. whatsdeff raked_weight5
+{\smallskip}
+    Group     {\VBAR}   Min     {\VBAR}   Mean    {\VBAR}   Max     {\VBAR}    CV   {\VBAR}   DEFF  {\VBAR}   N   {\VBAR}  N eff
+\HLI{14}{\PLUS}\HLI{11}{\PLUS}\HLI{11}{\PLUS}\HLI{11}{\PLUS}\HLI{9}{\PLUS}\HLI{9}{\PLUS}\HLI{7}{\PLUS}\HLI{8}
+      Overall {\VBAR}     14.59 {\VBAR}     26.49 {\VBAR}     38.63 {\VBAR}  0.2167 {\VBAR}  1.0470 {\VBAR}  3654 {\VBAR} 3490.13
+{\smallskip}

@@ -1,0 +1,20 @@
+{com}. tab alight_id dpstoff3 if daypart == 2 & mod(dpstoff3,100*100)>100
+
+                      {txt}{c |}    Long ID of the interaction
+            alight_id {c |}   2023036    2042639    2200269 {c |}     Total
+{hline 22}{c +}{hline 33}{c +}{hline 10}
+         8. Carmenton {c |}{res}         0          0          1 {txt}{c |}{res}         1 
+{txt}         11. Dogville {c |}{res}         0          0          1 {txt}{c |}{res}         1 
+{txt}         18. East End {c |}{res}         0          0          1 {txt}{c |}{res}         1 
+{txt}       24. Framington {c |}{res}         0          0          1 {txt}{c |}{res}         1 
+{txt}   26. Grand Junction {c |}{res}         0          2          0 {txt}{c |}{res}         2 
+{txt}       30. High Point {c |}{res}         4          0          0 {txt}{c |}{res}         4 
+{txt}      47. Moscow City {c |}{res}         0          0          6 {txt}{c |}{res}         6 
+{txt}     49. Ninth Street {c |}{res}         0          0          1 {txt}{c |}{res}         1 
+{txt} 53. Picadilly Square {c |}{res}         0          0          1 {txt}{c |}{res}         1 
+{txt}      68. Toledo Town {c |}{res}         0          0          3 {txt}{c |}{res}         3 
+{txt}    69. Union Station {c |}{res}         0          0        138 {txt}{c |}{res}       138 
+{txt}{hline 22}{c +}{hline 33}{c +}{hline 10}
+                Total {c |}{res}         4          2        153 {txt}{c |}{res}       159 
+
+{txt}

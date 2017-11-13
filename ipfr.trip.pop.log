@@ -1,63 +1,57 @@
 . use trip_population, clear
 
-. table board_id daypart if alight_id == 73, c(mean geton) cellwidth(10)
-
-note: cellwidth too small, variable name truncated;
-      to increase cellwidth, specify cellwidth(#)
+. table board_id daypart , c(sum num_pass) cellwidth(10)
 
 ---------------------------------------------------------------------------------
                      |                          daypart                          
             board_id |    AM Peak      Midday  PM Reverse       Night     Weekend
 ---------------------+-----------------------------------------------------------
-          3. Alewife |       1423          34         219         113          44
-        6. Brookline |       7198         298         773         169         144
-       10. Carmenton |      19254         181        3739         872         422
-        13. Dogville |      12626         872        3476         769        1270
-        17. East End |       2470         143        1263         145         114
-      21. Framington |        634          50        1296         133          60
-  25. Grand Junction |       2208         233         439          88         166
-      28. High Point |       4319         424        3740         482         115
-      32. Irvingtown |       1221          34         444          30         167
-      36. Johnsville |         93           4          64           2           6
-     39. King Street |        398          46          76          11          13
-        42. Limerick |       1021          19         129          53          34
-     46. Moscow City |       3300         776         984         140         301
+          1. Alewife |       1423          34         219         113          44
+        2. Brookline |       7198         298         773         169         144
+        8. Carmenton |      19254         181        3739         872         422
+        11. Dogville |      12626         872        3476         769        1270
+        18. East End |       2470         143        1263         145         114
+      24. Framington |        634          50        1296         133          60
+  26. Grand Junction |       2208         233         439          88         166
+      30. High Point |       4319         424        3740         482         115
+      36. Irvingtown |       1221          34         444          30         167
+      39. Johnsville |         93           4          64           2           6
+     40. King Street |        398          46          76          11          13
+        44. Limerick |       1021          19         129          53          34
+     47. Moscow City |       3300         776         984         140         301
     49. Ninth Street |         38          22         191           5           5
-    52. Ontario Lake |        606          22          80          18          23
-56. Picadilly Square |        642          71         622         153          69
-      59. Queens Zoo |        331          23         174          15          19
-  63. Redline Circle |        270           4          63          13           3
-   66. Silver Spring |       3402         240         950         206         445
-     70. Toledo Town |       5085          61         744         272         112
+    50. Ontario Lake |        606          22          80          18          23
+53. Picadilly Square |        642          71         622         153          69
+      55. Queens Zoo |        331          23         174          15          19
+  60. Redline Circle |        270           4          63          13           3
+   62. Silver Spring |       3402         240         950         206         445
+     68. Toledo Town |       5085          61         744         272         112
 ---------------------------------------------------------------------------------
 
-. table alight_id daypart if board_id==3, c(mean getoff) cellwidth(10)
-
-note: cellwidth too small, variable name truncated;
-      to increase cellwidth, specify cellwidth(#)
+. table alight_id daypart , c(sum num_pass) cellwidth(10)
 
 ---------------------------------------------------------------------------------
                      |                          daypart                          
            alight_id |    AM Peak      Midday  PM Reverse       Night     Weekend
 ---------------------+-----------------------------------------------------------
-        6. Brookline |         19           0           3           2           0
-       10. Carmenton |        492          18          56          23          15
-        13. Dogville |       2475          42         423         153          80
-        17. East End |        929          31         193          67          68
-      21. Framington |        404          13          91          28          27
-  25. Grand Junction |        576          20         147          42          41
-      28. High Point |       2189          89         560         165         167
-      32. Irvingtown |        288          10          91          21          18
-      36. Johnsville |         41           0          11           2           1
-     39. King Street |        131           3          38           8           6
-        42. Limerick |        277           9          87          20          18
-     46. Moscow City |       1746          78         556         142         128
+        2. Brookline |         19                       3           2            
+        8. Carmenton |        492          18          56          23          15
+        11. Dogville |       2475          42         423         153          80
+        18. East End |        929          31         193          67          68
+      24. Framington |        404          13          91          28          27
+  26. Grand Junction |        576          20         147          42          41
+      30. High Point |       2189          89         560         165         167
+      36. Irvingtown |        288          10          91          21          18
+      39. Johnsville |         41                      11           2           1
+     40. King Street |        131           3          38           8           6
+        44. Limerick |        277           9          87          20          18
+     47. Moscow City |       1746          78         556         142         128
     49. Ninth Street |         88           2          25           3           4
-    52. Ontario Lake |        232          11          70          14          14
-56. Picadilly Square |        633          33         198          47          47
-      59. Queens Zoo |        230          10          71          13          14
-  63. Redline Circle |         90           2          26           3           4
-   66. Silver Spring |       1134          67         369          91          85
-     70. Toledo Town |       1372          81         444         112         118
-   73. Union Station |      53193        3038       16007        2733        2677
+    50. Ontario Lake |        232          11          70          14          14
+53. Picadilly Square |        633          33         198          47          47
+      55. Queens Zoo |        230          10          71          13          14
+  60. Redline Circle |         90           2          26           3           4
+   62. Silver Spring |       1134          67         369          91          85
+     68. Toledo Town |       1372          81         444         112         118
+   69. Union Station |      53193        3038       16007        2733        2677
 ---------------------------------------------------------------------------------

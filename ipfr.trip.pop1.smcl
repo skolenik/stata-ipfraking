@@ -1,0 +1,184 @@
+{com}. use trip_population, clear
+{txt}
+{com}. run dpston1.do
+{txt}
+{com}. total num_pass , over(dpston1)
+{res}
+{txt}Total estimation{col 35}Number of obs{col 51}= {res}       719
+
+      {txt}1000001: dpston1 = {res}1000001
+      {txt}1000002: dpston1 = {res}1000002
+      {txt}1000008: dpston1 = {res}1000008
+      {txt}1000011: dpston1 = {res}1000011
+      {txt}1000018: dpston1 = {res}1000018
+      {txt}1000024: dpston1 = {res}1000024
+      {txt}1000026: dpston1 = {res}1000026
+      {txt}1000030: dpston1 = {res}1000030
+      {txt}1000036: dpston1 = {res}1000036
+      {txt}1000044: dpston1 = {res}1000044
+      {txt}1000047: dpston1 = {res}1000047
+      {txt}1000049: dpston1 = {res}1000049
+      {txt}1000062: dpston1 = {res}1000062
+      {txt}1000068: dpston1 = {res}1000068
+      {txt}1023940: dpston1 = {res}1023940
+      {txt}1025053: dpston1 = {res}1025053
+      {txt}1025560: dpston1 = {res}1025560
+      {txt}2000011: dpston1 = {res}2000011
+      {txt}2065068: dpston1 = {res}2065068
+      {txt}2070126: dpston1 = {res}2070126
+      {txt}2110847: dpston1 = {res}2110847
+      {txt}2123062: dpston1 = {res}2123062
+      {txt}3000008: dpston1 = {res}3000008
+      {txt}3000011: dpston1 = {res}3000011
+      {txt}3000018: dpston1 = {res}3000018
+      {txt}3000024: dpston1 = {res}3000024
+      {txt}3000030: dpston1 = {res}3000030
+      {txt}3000036: dpston1 = {res}3000036
+      {txt}3000047: dpston1 = {res}3000047
+      {txt}3000068: dpston1 = {res}3000068
+      {txt}3020102: dpston1 = {res}3020102
+      {txt}3025355: dpston1 = {res}3025355
+      {txt}3062644: dpston1 = {res}3062644
+      {txt}3064962: dpston1 = {res}3064962
+      {txt}4030108: dpston1 = {res}4030108
+      {txt}4041830: dpston1 = {res}4041830
+      {txt}4084768: dpston1 = {res}4084768
+      {txt}4131153: dpston1 = {res}4131153
+      {txt}5030108: dpston1 = {res}5030108
+      {txt}5041830: dpston1 = {res}5041830
+      {txt}5053647: dpston1 = {res}5053647
+      {txt}5104068: dpston1 = {res}5104068
+      {txt}5161162: dpston1 = {res}5161162
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
+{col 1}        Over{col 14}{c |}      Total{col 26}   Std. Err.{col 38}     [95% Con{col 51}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
+{res}num_pass     {txt}{c |}
+{space 5}1000001 {c |}{col 14}{res}{space 2}     1423{col 26}{space 2} 967.7508{col 37}{space 5}-476.9595{col 51}{space 3} 3322.959
+{txt}{space 5}1000002 {c |}{col 14}{res}{space 2}     7198{col 26}{space 2}  4895.91{col 37}{space 5}-2414.011{col 51}{space 3} 16810.01
+{txt}{space 5}1000008 {c |}{col 14}{res}{space 2}    19254{col 26}{space 2} 13675.81{col 37}{space 5}-7595.347{col 51}{space 3} 46103.35
+{txt}{space 5}1000011 {c |}{col 14}{res}{space 2}    12626{col 26}{space 2} 9682.022{col 37}{space 5}-6382.456{col 51}{space 3} 31634.46
+{txt}{space 5}1000018 {c |}{col 14}{res}{space 2}     2470{col 26}{space 2} 1943.224{col 37}{space 5}-1345.081{col 51}{space 3} 6285.081
+{txt}{space 5}1000024 {c |}{col 14}{res}{space 2}      634{col 26}{space 2} 509.3549{col 37}{space 5}-366.0031{col 51}{space 3} 1634.003
+{txt}{space 5}1000026 {c |}{col 14}{res}{space 2}     2208{col 26}{space 2} 1774.996{col 37}{space 5}-1276.802{col 51}{space 3} 5692.802
+{txt}{space 5}1000030 {c |}{col 14}{res}{space 2}     4319{col 26}{space 2} 3665.427{col 37}{space 5}-2877.235{col 51}{space 3} 11515.24
+{txt}{space 5}1000036 {c |}{col 14}{res}{space 2}     1221{col 26}{space 2} 1046.817{col 37}{space 5}-834.1873{col 51}{space 3} 3276.187
+{txt}{space 5}1000044 {c |}{col 14}{res}{space 2}     1021{col 26}{space 2}  881.426{col 37}{space 5}-709.4802{col 51}{space 3}  2751.48
+{txt}{space 5}1000047 {c |}{col 14}{res}{space 2}     3300{col 26}{space 2} 2970.321{col 37}{space 5}-2531.552{col 51}{space 3} 9131.552
+{txt}{space 5}1000049 {c |}{col 14}{res}{space 2}       38{col 26}{space 2}       35{col 37}{space 5}-30.71457{col 51}{space 3} 106.7146
+{txt}{space 5}1000062 {c |}{col 14}{res}{space 2}     3402{col 26}{space 2}     3176{col 37}{space 5}-2833.357{col 51}{space 3} 9637.357
+{txt}{space 5}1000068 {c |}{col 14}{res}{space 2}     5085{col 26}{space 2}        .{col 37}{space 5}        .{col 51}{space 3}        .
+{txt}{space 5}1023940 {c |}{col 14}{res}{space 2}      491{col 26}{space 2}  348.709{col 37}{space 5}-193.6112{col 51}{space 3} 1175.611
+{txt}{space 5}1025053 {c |}{col 14}{res}{space 2}     1248{col 26}{space 2} 765.1955{col 37}{space 5}-254.2881{col 51}{space 3} 2750.288
+{txt}{space 5}1025560 {c |}{col 14}{res}{space 2}      601{col 26}{space 2}   350.65{col 37}{space 5}-87.42178{col 51}{space 3} 1289.422
+{txt}{space 5}2000011 {c |}{col 14}{res}{space 2}      872{col 26}{space 2}  675.393{col 37}{space 5}-453.9812{col 51}{space 3} 2197.981
+{txt}{space 5}2065068 {c |}{col 14}{res}{space 2}      177{col 26}{space 2} 69.36426{col 37}{space 5}   40.819{col 51}{space 3}  313.181
+{txt}{space 5}2070126 {c |}{col 14}{res}{space 2}      708{col 26}{space 2}  299.066{col 37}{space 5} 120.8517{col 51}{space 3} 1295.148
+{txt}{space 5}2110847 {c |}{col 14}{res}{space 2}     1110{col 26}{space 2} 711.7168{col 37}{space 5}-287.2948{col 51}{space 3} 2507.295
+{txt}{space 5}2123062 {c |}{col 14}{res}{space 2}      690{col 26}{space 2} 412.3311{col 37}{space 5}-119.5187{col 51}{space 3} 1499.519
+{txt}{space 5}3000008 {c |}{col 14}{res}{space 2}     3739{col 26}{space 2} 2665.175{col 37}{space 5}-1493.467{col 51}{space 3} 8971.467
+{txt}{space 5}3000011 {c |}{col 14}{res}{space 2}     3476{col 26}{space 2} 2669.777{col 37}{space 5}-1765.503{col 51}{space 3} 8717.503
+{txt}{space 5}3000018 {c |}{col 14}{res}{space 2}     1263{col 26}{space 2}  997.019{col 37}{space 5}-694.4209{col 51}{space 3} 3220.421
+{txt}{space 5}3000024 {c |}{col 14}{res}{space 2}     1296{col 26}{space 2} 1032.175{col 37}{space 5}-730.4418{col 51}{space 3} 3322.442
+{txt}{space 5}3000030 {c |}{col 14}{res}{space 2}     3740{col 26}{space 2} 3175.677{col 37}{space 5}-2494.723{col 51}{space 3} 9974.723
+{txt}{space 5}3000036 {c |}{col 14}{res}{space 2}      444{col 26}{space 2} 382.5382{col 37}{space 5}-307.0272{col 51}{space 3} 1195.027
+{txt}{space 5}3000047 {c |}{col 14}{res}{space 2}      984{col 26}{space 2} 888.5095{col 37}{space 5}-760.3871{col 51}{space 3} 2728.387
+{txt}{space 5}3000068 {c |}{col 14}{res}{space 2}      744{col 26}{space 2}        .{col 37}{space 5}        .{col 51}{space 3}        .
+{txt}{space 5}3020102 {c |}{col 14}{res}{space 2}      992{col 26}{space 2} 553.0017{col 37}{space 5}-93.69354{col 51}{space 3} 2077.694
+{txt}{space 5}3025355 {c |}{col 14}{res}{space 2}      796{col 26}{space 2} 573.1597{col 37}{space 5}-329.2692{col 51}{space 3} 1921.269
+{txt}{space 5}3062644 {c |}{col 14}{res}{space 2}      708{col 26}{space 2} 375.9286{col 37}{space 5} -30.0507{col 51}{space 3} 1446.051
+{txt}{space 5}3064962 {c |}{col 14}{res}{space 2}     1284{col 26}{space 2}  911.761{col 37}{space 5}-506.0362{col 51}{space 3} 3074.036
+{txt}{space 5}4030108 {c |}{col 14}{res}{space 2}     1154{col 26}{space 2} 529.0201{col 37}{space 5} 115.3888{col 51}{space 3} 2192.611
+{txt}{space 5}4041830 {c |}{col 14}{res}{space 2}      715{col 26}{space 2} 393.6075{col 37}{space 5}-57.75914{col 51}{space 3} 1487.759
+{txt}{space 5}4084768 {c |}{col 14}{res}{space 2}      651{col 26}{space 2} 318.6053{col 37}{space 5} 25.49059{col 51}{space 3} 1276.509
+{txt}{space 5}4131153 {c |}{col 14}{res}{space 2}     1169{col 26}{space 2} 534.4403{col 37}{space 5} 119.7475{col 51}{space 3} 2218.253
+{txt}{space 5}5030108 {c |}{col 14}{res}{space 2}      610{col 26}{space 2} 263.2061{col 37}{space 5} 93.25444{col 51}{space 3} 1126.746
+{txt}{space 5}5041830 {c |}{col 14}{res}{space 2}      455{col 26}{space 2} 172.8013{col 37}{space 5} 115.7439{col 51}{space 3} 794.2561
+{txt}{space 5}5053647 {c |}{col 14}{res}{space 2}      474{col 26}{space 2} 283.9144{col 37}{space 5}-83.40157{col 51}{space 3} 1031.402
+{txt}{space 5}5104068 {c |}{col 14}{res}{space 2}      270{col 26}{space 2} 116.7702{col 37}{space 5} 40.74822{col 51}{space 3} 499.2518
+{txt}{space 5}5161162 {c |}{col 14}{res}{space 2}     1723{col 26}{space 2} 909.6551{col 37}{space 5}-62.90172{col 51}{space 3} 3508.902
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
+
+{com}. matrix dpston1 = e(b)
+{txt}
+{com}. matrix coleq dpston1 = _one
+{txt}
+{com}. matrix rownames dpston1 = dpston1
+{txt}
+{com}. run dpstoff1.do
+{txt}
+{com}. total num_pass , over(dpstoff1)
+{res}
+{txt}Total estimation{col 35}Number of obs{col 51}= {res}       719
+
+      {txt}1000011: dpstoff1 = {res}1000011
+      {txt}1000018: dpstoff1 = {res}1000018
+      {txt}1000030: dpstoff1 = {res}1000030
+      {txt}1000047: dpstoff1 = {res}1000047
+      {txt}1000068: dpstoff1 = {res}1000068
+      {txt}1000069: dpstoff1 = {res}1000069
+      {txt}1025355: dpstoff1 = {res}1025355
+      {txt}1043644: dpstoff1 = {res}1043644
+      {txt}1060226: dpstoff1 = {res}1060226
+      {txt}1064962: dpstoff1 = {res}1064962
+      {txt}2044753: dpstoff1 = {res}2044753
+      {txt}2190869: dpstoff1 = {res}2190869
+      {txt}3000002: dpstoff1 = {res}3000002
+      {txt}3000047: dpstoff1 = {res}3000047
+      {txt}3000068: dpstoff1 = {res}3000068
+      {txt}3000069: dpstoff1 = {res}3000069
+      {txt}3050826: dpstoff1 = {res}3050826
+      {txt}3053044: dpstoff1 = {res}3053044
+      {txt}3064962: dpstoff1 = {res}3064962
+      {txt}4000002: dpstoff1 = {res}4000002
+      {txt}4000008: dpstoff1 = {res}4000008
+      {txt}4000049: dpstoff1 = {res}4000049
+      {txt}4055368: dpstoff1 = {res}4055368
+      {txt}4075069: dpstoff1 = {res}4075069
+      {txt}4101147: dpstoff1 = {res}4101147
+      {txt}5000055: dpstoff1 = {res}5000055
+      {txt}5000060: dpstoff1 = {res}5000060
+      {txt}5036269: dpstoff1 = {res}5036269
+      {txt}5140853: dpstoff1 = {res}5140853
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
+{col 1}        Over{col 14}{c |}      Total{col 26}   Std. Err.{col 38}     [95% Con{col 51}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
+{res}num_pass     {txt}{c |}
+{space 5}1000011 {c |}{col 14}{res}{space 2}     2475{col 26}{space 2} 1468.807{col 37}{space 5}-408.6691{col 51}{space 3} 5358.669
+{txt}{space 5}1000018 {c |}{col 14}{res}{space 2}      929{col 26}{space 2} 360.7303{col 37}{space 5} 220.7878{col 51}{space 3} 1637.212
+{txt}{space 5}1000030 {c |}{col 14}{res}{space 2}     2189{col 26}{space 2} 868.0319{col 37}{space 5} 484.8161{col 51}{space 3} 3893.184
+{txt}{space 5}1000047 {c |}{col 14}{res}{space 2}     1746{col 26}{space 2} 630.7528{col 37}{space 5} 507.6598{col 51}{space 3}  2984.34
+{txt}{space 5}1000068 {c |}{col 14}{res}{space 2}     1372{col 26}{space 2} 426.3969{col 37}{space 5} 534.8662{col 51}{space 3} 2209.134
+{txt}{space 5}1000069 {c |}{col 14}{res}{space 2}    53193{col 26}{space 2} 15995.88{col 37}{space 5} 21788.72{col 51}{space 3} 84597.28
+{txt}{space 5}1025355 {c |}{col 14}{res}{space 2}      863{col 26}{space 2} 233.1424{col 37}{space 5} 405.2777{col 51}{space 3} 1320.722
+{txt}{space 5}1043644 {c |}{col 14}{res}{space 2}      737{col 26}{space 2} 159.5597{col 37}{space 5} 423.7407{col 51}{space 3} 1050.259
+{txt}{space 5}1060226 {c |}{col 14}{res}{space 2}     1491{col 26}{space 2} 432.5204{col 37}{space 5} 641.8441{col 51}{space 3} 2340.156
+{txt}{space 5}1064962 {c |}{col 14}{res}{space 2}     1544{col 26}{space 2} 426.4228{col 37}{space 5} 706.8155{col 51}{space 3} 2381.185
+{txt}{space 5}2044753 {c |}{col 14}{res}{space 2}      124{col 26}{space 2} 33.15528{col 37}{space 5} 58.90711{col 51}{space 3} 189.0929
+{txt}{space 5}2190869 {c |}{col 14}{res}{space 2}     3433{col 26}{space 2} 1082.925{col 37}{space 5} 1306.921{col 51}{space 3} 5559.079
+{txt}{space 5}3000002 {c |}{col 14}{res}{space 2}        3{col 26}{space 2}        .{col 37}{space 5}        .{col 51}{space 3}        .
+{txt}{space 5}3000047 {c |}{col 14}{res}{space 2}      556{col 26}{space 2} 187.4945{col 37}{space 5} 187.8971{col 51}{space 3} 924.1029
+{txt}{space 5}3000068 {c |}{col 14}{res}{space 2}      444{col 26}{space 2} 126.0503{col 37}{space 5} 196.5289{col 51}{space 3} 691.4711
+{txt}{space 5}3000069 {c |}{col 14}{res}{space 2}    16007{col 26}{space 2} 4295.998{col 37}{space 5} 7572.781{col 51}{space 3} 24441.22
+{txt}{space 5}3050826 {c |}{col 14}{res}{space 2}      910{col 26}{space 2} 333.6639{col 37}{space 5} 254.9266{col 51}{space 3} 1565.073
+{txt}{space 5}3053044 {c |}{col 14}{res}{space 2}      787{col 26}{space 2}  249.935{col 37}{space 5} 296.3092{col 51}{space 3} 1277.691
+{txt}{space 5}3064962 {c |}{col 14}{res}{space 2}      759{col 26}{space 2} 141.1029{col 37}{space 5} 481.9765{col 51}{space 3} 1036.023
+{txt}{space 5}4000002 {c |}{col 14}{res}{space 2}        2{col 26}{space 2}        .{col 37}{space 5}        .{col 51}{space 3}        .
+{txt}{space 5}4000008 {c |}{col 14}{res}{space 2}       23{col 26}{space 2}        5{col 37}{space 5} 13.18363{col 51}{space 3} 32.81637
+{txt}{space 5}4000049 {c |}{col 14}{res}{space 2}        3{col 26}{space 2}        0{col 37}{space 5}        .{col 51}{space 3}        .
+{txt}{space 5}4055368 {c |}{col 14}{res}{space 2}      172{col 26}{space 2} 35.93822{col 37}{space 5} 101.4434{col 51}{space 3} 242.5566
+{txt}{space 5}4075069 {c |}{col 14}{res}{space 2}     2841{col 26}{space 2} 833.6481{col 37}{space 5} 1204.321{col 51}{space 3} 4477.679
+{txt}{space 5}4101147 {c |}{col 14}{res}{space 2}      648{col 26}{space 2}  147.123{col 37}{space 5} 359.1573{col 51}{space 3} 936.8427
+{txt}{space 5}5000055 {c |}{col 14}{res}{space 2}       14{col 26}{space 2} 6.595453{col 37}{space 5} 1.051322{col 51}{space 3} 26.94868
+{txt}{space 5}5000060 {c |}{col 14}{res}{space 2}        4{col 26}{space 2}        2{col 37}{space 5} .0734531{col 51}{space 3} 7.926547
+{txt}{space 5}5036269 {c |}{col 14}{res}{space 2}     2880{col 26}{space 2} 980.8909{col 37}{space 5} 954.2428{col 51}{space 3} 4805.757
+{txt}{space 5}5140853 {c |}{col 14}{res}{space 2}      634{col 26}{space 2} 139.2172{col 37}{space 5} 360.6787{col 51}{space 3} 907.3213
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
+
+{com}. matrix dpstoff1 = e(b)
+{txt}
+{com}. matrix coleq dpstoff1 = _one
+{txt}
+{com}. matrix rownames dpstoff1 = dpstoff1
+{txt}

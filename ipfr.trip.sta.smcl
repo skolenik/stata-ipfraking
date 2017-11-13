@@ -5,25 +5,25 @@
      {c TLC}{hline 22}{c TRC}
      {c |} {res}          station_id {txt}{c |}
      {c LT}{hline 22}{c RT}
-  1. {c |} {res}          3. Alewife {txt}{c |}
-  2. {c |} {res}        6. Brookline {txt}{c |}
-  3. {c |} {res}       10. Carmenton {txt}{c |}
-  4. {c |} {res}        13. Dogville {txt}{c |}
-  5. {c |} {res}        17. East End {txt}{c |}
-  6. {c |} {res}      21. Framington {txt}{c |}
-  7. {c |} {res}  25. Grand Junction {txt}{c |}
-  8. {c |} {res}      28. High Point {txt}{c |}
-  9. {c |} {res}      32. Irvingtown {txt}{c |}
- 10. {c |} {res}      36. Johnsville {txt}{c |}
- 11. {c |} {res}     39. King Street {txt}{c |}
- 12. {c |} {res}        42. Limerick {txt}{c |}
- 13. {c |} {res}     46. Moscow City {txt}{c |}
+  1. {c |} {res}          1. Alewife {txt}{c |}
+  2. {c |} {res}        2. Brookline {txt}{c |}
+  3. {c |} {res}        8. Carmenton {txt}{c |}
+  4. {c |} {res}        11. Dogville {txt}{c |}
+  5. {c |} {res}        18. East End {txt}{c |}
+  6. {c |} {res}      24. Framington {txt}{c |}
+  7. {c |} {res}  26. Grand Junction {txt}{c |}
+  8. {c |} {res}      30. High Point {txt}{c |}
+  9. {c |} {res}      36. Irvingtown {txt}{c |}
+ 10. {c |} {res}      39. Johnsville {txt}{c |}
+ 11. {c |} {res}     40. King Street {txt}{c |}
+ 12. {c |} {res}        44. Limerick {txt}{c |}
+ 13. {c |} {res}     47. Moscow City {txt}{c |}
  14. {c |} {res}    49. Ninth Street {txt}{c |}
- 15. {c |} {res}    52. Ontario Lake {txt}{c |}
- 16. {c |} {res}56. Picadilly Square {txt}{c |}
- 17. {c |} {res}      59. Queens Zoo {txt}{c |}
- 18. {c |} {res}  63. Redline Circle {txt}{c |}
- 19. {c |} {res}   66. Silver Spring {txt}{c |}
- 20. {c |} {res}     70. Toledo Town {txt}{c |}
- 21. {c |} {res}   73. Union Station {txt}{c |}
+ 15. {c |} {res}    50. Ontario Lake {txt}{c |}
+ 16. {c |} {res}53. Picadilly Square {txt}{c |}
+ 17. {c |} {res}      55. Queens Zoo {txt}{c |}
+ 18. {c |} {res}  60. Redline Circle {txt}{c |}
+ 19. {c |} {res}   62. Silver Spring {txt}{c |}
+ 20. {c |} {res}     68. Toledo Town {txt}{c |}
+ 21. {c |} {res}   69. Union Station {txt}{c |}
      {c BLC}{hline 22}{c BRC}

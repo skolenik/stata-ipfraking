@@ -1,0 +1,57 @@
+{com}. cap drop raked_weight5*
+{txt}
+{com}. set rmsg on
+{txt}r; t=0.00 12:12:08
+
+{com}. ipfraking [pw=_one], ctotal(dpston5 dpstoff5) nograph gen(raked_weight5)
+
+{res}{txt} Iteration 1, max rel difference of raked weights = {res}37.856256
+{txt} Iteration 2, max rel difference of raked weights = {res}.0250943
+{txt} Iteration 3, max rel difference of raked weights = {res}.00252004
+{txt} Iteration 4, max rel difference of raked weights = {res}.00030004
+{txt} Iteration 5, max rel difference of raked weights = {res}.00003571
+{txt} Iteration 6, max rel difference of raked weights = {res}4.250e-06
+{txt} Iteration 7, max rel difference of raked weights = {res}5.058e-07
+{txt}The worst relative discrepancy of {res} 5.6e-08{txt} is observed for {res}dpstoff5{txt} == {res}5150150     
+{txt}Target value = {res}{res}       587{txt}; achieved value = {res}{res}       587
+
+{txt}   Summary of the weight changes
+
+{col 15}{txt}{c |}    Mean    Std. dev.    Min        Max       CV
+{txt}{dup 14:{c -}}{c +}{dup 50:{c -}} 
+{txt}Orig weights  {c |} {col 15}{res}       1{col 28}       0{col 38}       1{col 49}        1{col 60}     0
+{txt}Raked weights {c |} {col 15}{res}  26.487{col 28}    5.74{col 38}  14.593{col 49}   38.634{col 60} .2167
+{txt}Adjust factor {c |} {col 17}{res} 26.4869{col 38} 14.5933{col 49}  38.6339
+{txt}r; t=1.100 12:12:10
+
+{com}. ipfraking [pw=_one], ctotal(dpston5 dpstoff5) nograph gen(raked_weight5l) linear
+
+{res}{txt}Linear calibration
+{res}{txt}The worst relative discrepancy of {res} 2.0e-14{txt} is observed for {res}dpstoff5{txt} == {res}5150150     
+{txt}Target value = {res}{res}       587{txt}; achieved value = {res}{res}       587
+
+{txt}   Summary of the weight changes
+
+{col 15}{txt}{c |}    Mean    Std. dev.    Min        Max       CV
+{txt}{dup 14:{c -}}{c +}{dup 50:{c -}} 
+{txt}Orig weights  {c |} {col 15}{res}       1{col 28}       0{col 38}       1{col 49}        1{col 60}     0
+{txt}Raked weights {c |} {col 15}{res}  26.487{col 28}  5.7387{col 38}  12.875{col 49}   38.204{col 60} .2167
+{txt}Adjust factor {c |} {col 17}{res} 26.4869{col 38} 12.8752{col 49}  38.2040
+{txt}r; t=0.78 12:12:11
+
+{com}. set rmsg off
+{txt}
+{com}. label variable raked_weight5l "Linear calibrated weights"
+{txt}
+{com}. compare raked_weight5 raked_weight5l
+
+{txt}{col 41}{hline 10} difference {hline 10}
+{col 29}count{col 41}minimum{col 54}average{col 66}maximum
+{hline 72}
+raked_w~5<raked_~5l     {res}     1871     -1.813144    -.0408154   -5.84e-10
+{txt}raked_w~5>raked_~5l     {res}     1783      2.75e-08     .0428298    2.405758
+{txt}{col 24}{hline 10}
+jointly defined         {res}     3654     -1.813144     1.20e-10    2.405758
+{txt}{col 24}{hline 10}
+total                   {res}     3654
+{txt}

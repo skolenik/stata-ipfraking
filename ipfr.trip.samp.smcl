@@ -5,28 +5,28 @@
                      {txt}{c |}                        daypart
             board_id {c |}   AM Peak     Midday  PM Revers      Night    Weekend {c |}     Total
 {hline 21}{c +}{hline 55}{c +}{hline 10}
-          3. Alewife {c |}{res}        46          4         11          7          3 {txt}{c |}{res}        71 
-{txt}        6. Brookline {c |}{res}       235          4         35          6          7 {txt}{c |}{res}       287 
-{txt}       10. Carmenton {c |}{res}       652          4        185         46         24 {txt}{c |}{res}       911 
-{txt}        13. Dogville {c |}{res}       411         41        166         35         56 {txt}{c |}{res}       709 
-{txt}        17. East End {c |}{res}        86          5         64          4          4 {txt}{c |}{res}       163 
-{txt}      21. Framington {c |}{res}        30          3         74          3          1 {txt}{c |}{res}       111 
-{txt}  25. Grand Junction {c |}{res}        73         13         23          6          6 {txt}{c |}{res}       121 
-{txt}      28. High Point {c |}{res}       160         20        188         25         12 {txt}{c |}{res}       405 
-{txt}      32. Irvingtown {c |}{res}        35          2         25          1         15 {txt}{c |}{res}        78 
-{txt}      36. Johnsville {c |}{res}         5          1          1          0          0 {txt}{c |}{res}         7 
-{txt}     39. King Street {c |}{res}        17          1          2          0          1 {txt}{c |}{res}        21 
-{txt}        42. Limerick {c |}{res}        28          0          9          1          3 {txt}{c |}{res}        41 
-{txt}     46. Moscow City {c |}{res}        95         31         50          7         13 {txt}{c |}{res}       196 
+          1. Alewife {c |}{res}        46          4         11          7          3 {txt}{c |}{res}        71 
+{txt}        2. Brookline {c |}{res}       236          4         35          6          7 {txt}{c |}{res}       288 
+{txt}        8. Carmenton {c |}{res}       653          4        184         47         24 {txt}{c |}{res}       912 
+{txt}        11. Dogville {c |}{res}       410         41        166         35         56 {txt}{c |}{res}       708 
+{txt}        18. East End {c |}{res}        85          5         64          4          4 {txt}{c |}{res}       162 
+{txt}      24. Framington {c |}{res}        30          3         74          3          1 {txt}{c |}{res}       111 
+{txt}  26. Grand Junction {c |}{res}        72         13         23          5          6 {txt}{c |}{res}       119 
+{txt}      30. High Point {c |}{res}       158         20        187         25         12 {txt}{c |}{res}       402 
+{txt}      36. Irvingtown {c |}{res}        34          2         25          1         15 {txt}{c |}{res}        77 
+{txt}      39. Johnsville {c |}{res}         5          1          1          0          0 {txt}{c |}{res}         7 
+{txt}     40. King Street {c |}{res}        17          1          2          0          1 {txt}{c |}{res}        21 
+{txt}        44. Limerick {c |}{res}        28          0          9          1          3 {txt}{c |}{res}        41 
+{txt}     47. Moscow City {c |}{res}        94         31         49          7         13 {txt}{c |}{res}       194 
 {txt}    49. Ninth Street {c |}{res}         0          0          9          0          0 {txt}{c |}{res}         9 
-{txt}    52. Ontario Lake {c |}{res}        13          1          4          1          1 {txt}{c |}{res}        20 
-{txt}56. Picadilly Square {c |}{res}        23          4         35          7          5 {txt}{c |}{res}        74 
-{txt}      59. Queens Zoo {c |}{res}        10          1         14          0          2 {txt}{c |}{res}        27 
-{txt}  63. Redline Circle {c |}{res}        13          0          5          0          0 {txt}{c |}{res}        18 
-{txt}   66. Silver Spring {c |}{res}       106         18         38         12         17 {txt}{c |}{res}       191 
-{txt}     70. Toledo Town {c |}{res}       154          6         33         11          3 {txt}{c |}{res}       207 
+{txt}    50. Ontario Lake {c |}{res}        13          1          4          1          1 {txt}{c |}{res}        20 
+{txt}53. Picadilly Square {c |}{res}        23          4         35          7          5 {txt}{c |}{res}        74 
+{txt}      55. Queens Zoo {c |}{res}        10          1         14          0          2 {txt}{c |}{res}        27 
+{txt}  60. Redline Circle {c |}{res}        13          0          5          0          0 {txt}{c |}{res}        18 
+{txt}   62. Silver Spring {c |}{res}       106         18         38         12         17 {txt}{c |}{res}       191 
+{txt}     68. Toledo Town {c |}{res}       149          6         33         11          3 {txt}{c |}{res}       202 
 {txt}{hline 21}{c +}{hline 55}{c +}{hline 10}
-               Total {c |}{res}     2,192        159        971        172        173 {txt}{c |}{res}     3,667 
+               Total {c |}{res}     2,182        159        968        172        173 {txt}{c |}{res}     3,654 
 
 {txt}
 {com}. tab alight_id daypart
@@ -34,27 +34,27 @@
                      {txt}{c |}                        daypart
            alight_id {c |}   AM Peak     Midday  PM Revers      Night    Weekend {c |}     Total
 {hline 21}{c +}{hline 55}{c +}{hline 10}
-        6. Brookline {c |}{res}         1          0          0          0          0 {txt}{c |}{res}         1 
-{txt}       10. Carmenton {c |}{res}        11          1          1          0          1 {txt}{c |}{res}        14 
-{txt}        13. Dogville {c |}{res}        85          1         14          6          5 {txt}{c |}{res}       111 
-{txt}        17. East End {c |}{res}        35          1         18          1          4 {txt}{c |}{res}        59 
-{txt}      21. Framington {c |}{res}        14          1          2          2          2 {txt}{c |}{res}        21 
-{txt}  25. Grand Junction {c |}{res}        14          2          8          1          1 {txt}{c |}{res}        26 
-{txt}      28. High Point {c |}{res}        72          4         22         10          8 {txt}{c |}{res}       116 
-{txt}      32. Irvingtown {c |}{res}         9          0          4          2          2 {txt}{c |}{res}        17 
-{txt}      36. Johnsville {c |}{res}         3          0          1          0          0 {txt}{c |}{res}         4 
-{txt}     39. King Street {c |}{res}         0          0          3          0          0 {txt}{c |}{res}         3 
-{txt}        42. Limerick {c |}{res}        13          0          2          0          2 {txt}{c |}{res}        17 
-{txt}     46. Moscow City {c |}{res}        80          6         22          6          6 {txt}{c |}{res}       120 
+        2. Brookline {c |}{res}         1          0          0          0          0 {txt}{c |}{res}         1 
+{txt}        8. Carmenton {c |}{res}        11          1          1          0          1 {txt}{c |}{res}        14 
+{txt}        11. Dogville {c |}{res}        85          1         14          6          5 {txt}{c |}{res}       111 
+{txt}        18. East End {c |}{res}        36          1         18          1          4 {txt}{c |}{res}        60 
+{txt}      24. Framington {c |}{res}        15          1          2          2          2 {txt}{c |}{res}        22 
+{txt}  26. Grand Junction {c |}{res}        15          2          8          1          1 {txt}{c |}{res}        27 
+{txt}      30. High Point {c |}{res}        73          4         22         11          8 {txt}{c |}{res}       118 
+{txt}      36. Irvingtown {c |}{res}         9          0          4          2          2 {txt}{c |}{res}        17 
+{txt}      39. Johnsville {c |}{res}         3          0          1          0          0 {txt}{c |}{res}         4 
+{txt}     40. King Street {c |}{res}         0          0          3          0          0 {txt}{c |}{res}         3 
+{txt}        44. Limerick {c |}{res}        13          0          2          0          2 {txt}{c |}{res}        17 
+{txt}     47. Moscow City {c |}{res}        81          6         22          6          6 {txt}{c |}{res}       121 
 {txt}    49. Ninth Street {c |}{res}         3          1          1          0          0 {txt}{c |}{res}         5 
-{txt}    52. Ontario Lake {c |}{res}         2          0          1          2          1 {txt}{c |}{res}         6 
-{txt}56. Picadilly Square {c |}{res}        23          1          8          3          2 {txt}{c |}{res}        37 
-{txt}      59. Queens Zoo {c |}{res}         6          0          5          1          0 {txt}{c |}{res}        12 
-{txt}  63. Redline Circle {c |}{res}         5          0          0          0          0 {txt}{c |}{res}         5 
-{txt}   66. Silver Spring {c |}{res}        49          0         19          3          9 {txt}{c |}{res}        80 
-{txt}     70. Toledo Town {c |}{res}        43          3         24          6          7 {txt}{c |}{res}        83 
-{txt}   73. Union Station {c |}{res}     1,724        138        816        129        123 {txt}{c |}{res}     2,930 
+{txt}    50. Ontario Lake {c |}{res}         2          0          1          2          1 {txt}{c |}{res}         6 
+{txt}53. Picadilly Square {c |}{res}        23          1          8          3          2 {txt}{c |}{res}        37 
+{txt}      55. Queens Zoo {c |}{res}         6          0          5          1          0 {txt}{c |}{res}        12 
+{txt}  60. Redline Circle {c |}{res}         5          0          0          0          0 {txt}{c |}{res}         5 
+{txt}   62. Silver Spring {c |}{res}        49          0         19          3          9 {txt}{c |}{res}        80 
+{txt}     68. Toledo Town {c |}{res}        43          3         24          6          7 {txt}{c |}{res}        83 
+{txt}   69. Union Station {c |}{res}     1,709        138        813        128        123 {txt}{c |}{res}     2,911 
 {txt}{hline 21}{c +}{hline 55}{c +}{hline 10}
-               Total {c |}{res}     2,192        159        971        172        173 {txt}{c |}{res}     3,667 
+               Total {c |}{res}     2,182        159        968        172        173 {txt}{c |}{res}     3,654 
 
 {txt}

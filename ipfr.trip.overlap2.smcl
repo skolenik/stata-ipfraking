@@ -1,0 +1,22 @@
+{com}. tab alight_id dpstoff2 if daypart == 1 & mod(dpstoff2,100*100)>100
+
+                     {txt}{c |}         Long ID of the interaction
+           alight_id {c |}   1025355    1043644    1060226    1064962 {c |}     Total
+{hline 21}{c +}{hline 44}{c +}{hline 10}
+        2. Brookline {c |}{res}         0          0          1          0 {txt}{c |}{res}         1 
+{txt}        8. Carmenton {c |}{res}         0          0         11          0 {txt}{c |}{res}        11 
+{txt}      24. Framington {c |}{res}         0          0         15          0 {txt}{c |}{res}        15 
+{txt}  26. Grand Junction {c |}{res}         0          0         15          0 {txt}{c |}{res}        15 
+{txt}      36. Irvingtown {c |}{res}         0          9          0          0 {txt}{c |}{res}         9 
+{txt}      39. Johnsville {c |}{res}         0          3          0          0 {txt}{c |}{res}         3 
+{txt}        44. Limerick {c |}{res}         0         13          0          0 {txt}{c |}{res}        13 
+{txt}    49. Ninth Street {c |}{res}         0          0          0          3 {txt}{c |}{res}         3 
+{txt}    50. Ontario Lake {c |}{res}         0          0          0          2 {txt}{c |}{res}         2 
+{txt}53. Picadilly Square {c |}{res}        23          0          0          0 {txt}{c |}{res}        23 
+{txt}      55. Queens Zoo {c |}{res}         6          0          0          0 {txt}{c |}{res}         6 
+{txt}  60. Redline Circle {c |}{res}         0          0          0          5 {txt}{c |}{res}         5 
+{txt}   62. Silver Spring {c |}{res}         0          0          0         49 {txt}{c |}{res}        49 
+{txt}{hline 21}{c +}{hline 44}{c +}{hline 10}
+               Total {c |}{res}        29         25         42         59 {txt}{c |}{res}       155 
+
+{txt}

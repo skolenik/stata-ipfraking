@@ -1,63 +1,57 @@
 {com}. use trip_population, clear
 {txt}
-{com}. table board_id daypart if alight_id == 73, c(mean geton) cellwidth(10)
+{com}. table board_id daypart , c(sum num_pass) cellwidth(10)
 
-{txt}note: cellwidth too small, variable name truncated;
-      to increase cellwidth, specify cellwidth(#)
-
-{hline 21}{c TT}{hline 59}
+{txt}{hline 21}{c TT}{hline 59}
                      {c |}                          daypart                          
             board_id {c |}    AM Peak      Midday  PM Reverse       Night     Weekend
 {hline 21}{c +}{hline 59}
-          3. Alewife {c |}       {res}1423          34         219         113          44
-        {txt}6. Brookline {c |}       {res}7198         298         773         169         144
-       {txt}10. Carmenton {c |}      {res}19254         181        3739         872         422
-        {txt}13. Dogville {c |}      {res}12626         872        3476         769        1270
-        {txt}17. East End {c |}       {res}2470         143        1263         145         114
-      {txt}21. Framington {c |}        {res}634          50        1296         133          60
-  {txt}25. Grand Junction {c |}       {res}2208         233         439          88         166
-      {txt}28. High Point {c |}       {res}4319         424        3740         482         115
-      {txt}32. Irvingtown {c |}       {res}1221          34         444          30         167
-      {txt}36. Johnsville {c |}         {res}93           4          64           2           6
-     {txt}39. King Street {c |}        {res}398          46          76          11          13
-        {txt}42. Limerick {c |}       {res}1021          19         129          53          34
-     {txt}46. Moscow City {c |}       {res}3300         776         984         140         301
+          1. Alewife {c |}       {res}1423          34         219         113          44
+        {txt}2. Brookline {c |}       {res}7198         298         773         169         144
+        {txt}8. Carmenton {c |}      {res}19254         181        3739         872         422
+        {txt}11. Dogville {c |}      {res}12626         872        3476         769        1270
+        {txt}18. East End {c |}       {res}2470         143        1263         145         114
+      {txt}24. Framington {c |}        {res}634          50        1296         133          60
+  {txt}26. Grand Junction {c |}       {res}2208         233         439          88         166
+      {txt}30. High Point {c |}       {res}4319         424        3740         482         115
+      {txt}36. Irvingtown {c |}       {res}1221          34         444          30         167
+      {txt}39. Johnsville {c |}         {res}93           4          64           2           6
+     {txt}40. King Street {c |}        {res}398          46          76          11          13
+        {txt}44. Limerick {c |}       {res}1021          19         129          53          34
+     {txt}47. Moscow City {c |}       {res}3300         776         984         140         301
     {txt}49. Ninth Street {c |}         {res}38          22         191           5           5
-    {txt}52. Ontario Lake {c |}        {res}606          22          80          18          23
-{txt}56. Picadilly Square {c |}        {res}642          71         622         153          69
-      {txt}59. Queens Zoo {c |}        {res}331          23         174          15          19
-  {txt}63. Redline Circle {c |}        {res}270           4          63          13           3
-   {txt}66. Silver Spring {c |}       {res}3402         240         950         206         445
-     {txt}70. Toledo Town {c |}       {res}5085          61         744         272         112
+    {txt}50. Ontario Lake {c |}        {res}606          22          80          18          23
+{txt}53. Picadilly Square {c |}        {res}642          71         622         153          69
+      {txt}55. Queens Zoo {c |}        {res}331          23         174          15          19
+  {txt}60. Redline Circle {c |}        {res}270           4          63          13           3
+   {txt}62. Silver Spring {c |}       {res}3402         240         950         206         445
+     {txt}68. Toledo Town {c |}       {res}5085          61         744         272         112
 {txt}{hline 21}{c BT}{hline 59}
 
-{com}. table alight_id daypart if board_id==3, c(mean getoff) cellwidth(10)
+{com}. table alight_id daypart , c(sum num_pass) cellwidth(10)
 
-{txt}note: cellwidth too small, variable name truncated;
-      to increase cellwidth, specify cellwidth(#)
-
-{hline 21}{c TT}{hline 59}
+{txt}{hline 21}{c TT}{hline 59}
                      {c |}                          daypart                          
            alight_id {c |}    AM Peak      Midday  PM Reverse       Night     Weekend
 {hline 21}{c +}{hline 59}
-        6. Brookline {c |}         {res}19           0           3           2           0
-       {txt}10. Carmenton {c |}        {res}492          18          56          23          15
-        {txt}13. Dogville {c |}       {res}2475          42         423         153          80
-        {txt}17. East End {c |}        {res}929          31         193          67          68
-      {txt}21. Framington {c |}        {res}404          13          91          28          27
-  {txt}25. Grand Junction {c |}        {res}576          20         147          42          41
-      {txt}28. High Point {c |}       {res}2189          89         560         165         167
-      {txt}32. Irvingtown {c |}        {res}288          10          91          21          18
-      {txt}36. Johnsville {c |}         {res}41           0          11           2           1
-     {txt}39. King Street {c |}        {res}131           3          38           8           6
-        {txt}42. Limerick {c |}        {res}277           9          87          20          18
-     {txt}46. Moscow City {c |}       {res}1746          78         556         142         128
+        2. Brookline {c |}         {res}19                       3           2            
+        {txt}8. Carmenton {c |}        {res}492          18          56          23          15
+        {txt}11. Dogville {c |}       {res}2475          42         423         153          80
+        {txt}18. East End {c |}        {res}929          31         193          67          68
+      {txt}24. Framington {c |}        {res}404          13          91          28          27
+  {txt}26. Grand Junction {c |}        {res}576          20         147          42          41
+      {txt}30. High Point {c |}       {res}2189          89         560         165         167
+      {txt}36. Irvingtown {c |}        {res}288          10          91          21          18
+      {txt}39. Johnsville {c |}         {res}41                      11           2           1
+     {txt}40. King Street {c |}        {res}131           3          38           8           6
+        {txt}44. Limerick {c |}        {res}277           9          87          20          18
+     {txt}47. Moscow City {c |}       {res}1746          78         556         142         128
     {txt}49. Ninth Street {c |}         {res}88           2          25           3           4
-    {txt}52. Ontario Lake {c |}        {res}232          11          70          14          14
-{txt}56. Picadilly Square {c |}        {res}633          33         198          47          47
-      {txt}59. Queens Zoo {c |}        {res}230          10          71          13          14
-  {txt}63. Redline Circle {c |}         {res}90           2          26           3           4
-   {txt}66. Silver Spring {c |}       {res}1134          67         369          91          85
-     {txt}70. Toledo Town {c |}       {res}1372          81         444         112         118
-   {txt}73. Union Station {c |}      {res}53193        3038       16007        2733        2677
+    {txt}50. Ontario Lake {c |}        {res}232          11          70          14          14
+{txt}53. Picadilly Square {c |}        {res}633          33         198          47          47
+      {txt}55. Queens Zoo {c |}        {res}230          10          71          13          14
+  {txt}60. Redline Circle {c |}         {res}90           2          26           3           4
+   {txt}62. Silver Spring {c |}       {res}1134          67         369          91          85
+     {txt}68. Toledo Town {c |}       {res}1372          81         444         112         118
+   {txt}69. Union Station {c |}      {res}53193        3038       16007        2733        2677
 {txt}{hline 21}{c BT}{hline 59}

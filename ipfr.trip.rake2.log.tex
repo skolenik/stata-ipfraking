@@ -1,0 +1,34 @@
+. use trip_sample, clear
+{\smallskip}
+. run dpston2
+{\smallskip}
+. run dpstoff2
+{\smallskip}
+. gen byte _one = 1       
+{\smallskip}
+. ipfraking [pw=_one], ctotal(dpston2 dpstoff2) gen(raked_weight2)
+{\smallskip}
+ Iteration 1, max rel difference of raked weights = 36.208881
+ Iteration 2, max rel difference of raked weights = .05484732
+ Iteration 3, max rel difference of raked weights = .0055794
+ Iteration 4, max rel difference of raked weights = .00053851
+ Iteration 5, max rel difference of raked weights = .00005171
+ Iteration 6, max rel difference of raked weights = 4.962e-06
+ Iteration 7, max rel difference of raked weights = 4.762e-07
+The worst relative discrepancy of  3.9e-08 is observed for dpstoff2 == 5180262     
+Target value =        483; achieved value =        483
+{\smallskip}
+   Summary of the weight changes
+{\smallskip}
+              {\VBAR}    Mean    Std. dev.    Min        Max       CV
+\HLI{14}{\PLUS}\HLI{50} 
+Orig weights  {\VBAR}        1          0         1           1       0
+Raked weights {\VBAR}   26.487     5.9013    8.1096      37.001   .2228
+Adjust factor {\VBAR}  26.4869               8.1096     37.0014
+{\smallskip}
+. whatsdeff raked_weight2
+{\smallskip}
+    Group     {\VBAR}   Min     {\VBAR}   Mean    {\VBAR}   Max     {\VBAR}    CV   {\VBAR}   DEFF  {\VBAR}   N   {\VBAR}  N eff
+\HLI{14}{\PLUS}\HLI{11}{\PLUS}\HLI{11}{\PLUS}\HLI{11}{\PLUS}\HLI{9}{\PLUS}\HLI{9}{\PLUS}\HLI{7}{\PLUS}\HLI{8}
+      Overall {\VBAR}      8.11 {\VBAR}     26.49 {\VBAR}     37.00 {\VBAR}  0.2228 {\VBAR}  1.0496 {\VBAR}  3654 {\VBAR} 3481.24
+{\smallskip}

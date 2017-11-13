@@ -1,0 +1,585 @@
+. use trip_sample_rules, clear
+
+. wgtcellcollapse collapse, variables(daypart board_id) mincellsize(20) ///
+>         zeroes(39 40 44 49 55 60) ///
+>         generate(dpston2) saving(dpston2.do) replace run
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+
+Processing zero cells...
+
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpston2 = 1024950 if inlist(dpston2, 1000049, 1000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 40:44=24044 to collapse zero cells
+  replace dpston2 = 2024044 if inlist(dpston2, 2000040, 2000044)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpston2 = 2024950 if inlist(dpston2, 2000049, 2000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 55:60=25560 to collapse zero cells
+  replace dpston2 = 2025560 if inlist(dpston2, 2000055, 2000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 36:39=23639 to collapse zero cells
+  replace dpston2 = 4023639 if inlist(dpston2, 4000036, 4000039)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 40:44=24044 to collapse zero cells
+  replace dpston2 = 4024044 if inlist(dpston2, 4000040, 4000044)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpston2 = 4024950 if inlist(dpston2, 4000049, 4000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 53:55=25355 to collapse zero cells
+  replace dpston2 = 4025355 if inlist(dpston2, 4000053, 4000055)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 24950:53:55:60=54960 to collapse zero cells
+  replace dpston2 = 4054960 if inlist(dpston2, 4024950, 4000053, 4000055, 4000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 39:40=23940 to collapse zero cells
+  replace dpston2 = 5023940 if inlist(dpston2, 5000039, 5000040)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpston2 = 5024950 if inlist(dpston2, 5000049, 5000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 24950:25355:60=54960 to collapse zero cells
+  replace dpston2 = 5054960 if inlist(dpston2, 5024950, 5025355, 5000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+Pass 12 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 39:24044=33944
+  replace dpston2 = 2033944 if inlist(dpston2, 2000039, 2024044)
+Pass 13 through the data...
+  smallest count = 1 in the cell      2024950
+  Invoking rule 53:24950=34953
+  replace dpston2 = 2034953 if inlist(dpston2, 2000053, 2024950)
+Pass 14 through the data...
+  smallest count = 1 in the cell      2025560
+  Invoking rule 34953:25560=54960
+  replace dpston2 = 2054960 if inlist(dpston2, 2034953, 2025560)
+Pass 15 through the data...
+  smallest count = 1 in the cell      3000039
+  Invoking rule 39:40=23940
+  replace dpston2 = 3023940 if inlist(dpston2, 3000039, 3000040)
+Pass 16 through the data...
+  smallest count = 1 in the cell      4023639
+  Invoking rule 23639:24044=43644
+  replace dpston2 = 4043644 if inlist(dpston2, 4023639, 4024044)
+Pass 17 through the data...
+  smallest count = 1 in the cell      4054960
+  Invoking rule 47:54960=64760
+  replace dpston2 = 4064760 if inlist(dpston2, 4000047, 4054960)
+Pass 18 through the data...
+  smallest count = 1 in the cell      5000024
+  Invoking rule 18:24=21824
+  replace dpston2 = 5021824 if inlist(dpston2, 5000018, 5000024)
+Pass 19 through the data...
+  smallest count = 1 in the cell      5023940
+  Invoking rule 44:23940=33944
+  replace dpston2 = 5033944 if inlist(dpston2, 5000044, 5023940)
+Pass 20 through the data...
+  smallest count = 1 in the cell      5054960
+  Invoking rule 47:54960=64760
+  replace dpston2 = 5064760 if inlist(dpston2, 5000047, 5054960)
+Pass 21 through the data...
+  smallest count = 2 in the cell      2000036
+  Invoking rule 36:33944=43644
+  replace dpston2 = 2043644 if inlist(dpston2, 2000036, 2033944)
+Pass 22 through the data...
+  smallest count = 2 in the cell      4043644
+  Invoking rule 24:22630:43644=72444
+  replace dpston2 = 4072444 if inlist(dpston2, 4000024, 4022630, 4043644)
+Pass 23 through the data...
+  smallest count = 2 in the cell      5000055
+  Invoking rule 53:55=25355
+  replace dpston2 = 5025355 if inlist(dpston2, 5000053, 5000055)
+Pass 24 through the data...
+  smallest count = 3 in the cell      2000024
+  Invoking rule 24:22630:43644=72444
+  replace dpston2 = 2072444 if inlist(dpston2, 2000024, 2022630, 2043644)
+Pass 25 through the data...
+  smallest count = 3 in the cell      3023940
+  Invoking rule 44:23940=33944
+  replace dpston2 = 3033944 if inlist(dpston2, 3000044, 3023940)
+Pass 26 through the data...
+  smallest count = 3 in the cell      5000001
+  Invoking rule 1:2=20102
+  replace dpston2 = 5020102 if inlist(dpston2, 5000001, 5000002)
+Pass 27 through the data...
+  smallest count = 3 in the cell      5000068
+  Invoking rule 25355:26062:68=55368
+  replace dpston2 = 5055368 if inlist(dpston2, 5025355, 5026062, 5000068)
+Pass 28 through the data...
+  smallest count = 4 in the cell      2000001
+  Invoking rule 1:2=20102
+  replace dpston2 = 2020102 if inlist(dpston2, 2000001, 2000002)
+Pass 29 through the data...
+  smallest count = 4 in the cell      2000008
+  Invoking rule 8:21118:72444=100844
+  replace dpston2 = 2100844 if inlist(dpston2, 2000008, 2021118, 2072444)
+Pass 30 through the data...
+  smallest count = 4 in the cell      3000050
+  Invoking rule 49:50=24950
+  replace dpston2 = 3024950 if inlist(dpston2, 3000049, 3000050)
+Pass 31 through the data...
+  smallest count = 4 in the cell      4000018
+  Invoking rule 18:24:26=31826
+  replace dpston2 = 4031826 if inlist(dpston2, 4000018, 4000024, 4000026)
+Pass 32 through the data...
+  smallest count = 4 in the cell      5033944
+  Invoking rule 26:23036:33944=62644
+  replace dpston2 = 5062644 if inlist(dpston2, 5000026, 5023036, 5033944)
+Pass 33 through the data...
+  smallest count = 5 in the cell      1000039
+  Invoking rule 39:40=23940
+  replace dpston2 = 1023940 if inlist(dpston2, 1000039, 1000040)
+Pass 34 through the data...
+  smallest count = 5 in the cell      2000018
+  Invoking rule 20102:20811:18=50118
+  replace dpston2 = 2050118 if inlist(dpston2, 2020102, 2020811, 2000018)
+Pass 35 through the data...
+  smallest count = 5 in the cell      3000060
+  Invoking rule 24950:25355:60=54960
+  replace dpston2 = 3054960 if inlist(dpston2, 3024950, 3025355, 3000060)
+Pass 36 through the data...
+  smallest count = 5 in the cell      4072444
+  Invoking rule 72444:64760=132460
+  replace dpston2 = 4132460 if inlist(dpston2, 4072444, 4064760)
+Pass 37 through the data...
+  smallest count = 5 in the cell      5021824
+  Invoking rule 21824:62644=81844
+  replace dpston2 = 5081844 if inlist(dpston2, 5021824, 5062644)
+Pass 38 through the data...
+  smallest count = 6 in the cell      2000068
+  Invoking rule 62:68=26268
+  replace dpston2 = 2026268 if inlist(dpston2, 2000062, 2000068)
+Pass 39 through the data...
+  smallest count = 6 in the cell      2054960
+  Invoking rule 54960:26268=74968
+  replace dpston2 = 2074968 if inlist(dpston2, 2054960, 2026268)
+Pass 40 through the data...
+  smallest count = 6 in the cell      4000002
+  Invoking rule 1:2=20102
+  replace dpston2 = 4020102 if inlist(dpston2, 4000001, 4000002)
+Pass 41 through the data...
+  smallest count = 7 in the cell      4025355
+  Invoking rule 25355:26062:68=55368
+  replace dpston2 = 4055368 if inlist(dpston2, 4025355, 4026062, 4000068)
+Pass 42 through the data...
+  smallest count = 9 in the cell      4031826
+  Invoking rule 30:31826=41830
+  replace dpston2 = 4041830 if inlist(dpston2, 4000030, 4031826)
+Pass 43 through the data...
+  smallest count = 10 in the cell      1000055
+  Invoking rule 55:60=25560
+  replace dpston2 = 1025560 if inlist(dpston2, 1000055, 1000060)
+Pass 44 through the data...
+  smallest count = 10 in the cell      5020102
+  Invoking rule 8:20102=30108
+  replace dpston2 = 5030108 if inlist(dpston2, 5000008, 5020102)
+Pass 45 through the data...
+  smallest count = 10 in the cell      5055368
+  WARNING: could not find any rules to collapse dpston2 == 5055368
+Pass 46 through the data...
+  smallest count = 11 in the cell      2100844
+  Invoking rule 47:100844=110847
+  replace dpston2 = 2110847 if inlist(dpston2, 2000047, 2100844)
+Pass 47 through the data...
+  smallest count = 11 in the cell      3000001
+  Invoking rule 1:2=20102
+  replace dpston2 = 3020102 if inlist(dpston2, 3000001, 3000002)
+Pass 48 through the data...
+  smallest count = 12 in the cell      3033944
+  Invoking rule 26:23036:33944=62644
+  replace dpston2 = 3062644 if inlist(dpston2, 3000026, 3023036, 3033944)
+Pass 49 through the data...
+  smallest count = 12 in the cell      4000062
+  Invoking rule 62:132460=142462
+  replace dpston2 = 4142462 if inlist(dpston2, 4000062, 4132460)
+Pass 50 through the data...
+  smallest count = 12 in the cell      5000030
+  Invoking rule 30:36=23036
+  replace dpston2 = 5023036 if inlist(dpston2, 5000030, 5000036)
+Pass 51 through the data...
+  smallest count = 13 in the cell      1024950
+  Invoking rule 53:24950=34953
+  replace dpston2 = 1034953 if inlist(dpston2, 1000053, 1024950)
+Pass 52 through the data...
+  smallest count = 13 in the cell      2000026
+  Invoking rule 50118:24:26=70126
+  replace dpston2 = 2070126 if inlist(dpston2, 2050118, 2000024, 2000026)
+Pass 53 through the data...
+  smallest count = 13 in the cell      4020102
+  Invoking rule 8:20102=30108
+  replace dpston2 = 4030108 if inlist(dpston2, 4000008, 4020102)
+Pass 54 through the data...
+  smallest count = 14 in the cell      3000055
+  Invoking rule 53:55=25355
+  replace dpston2 = 3025355 if inlist(dpston2, 3000053, 3000055)
+Pass 55 through the data...
+  smallest count = 14 in the cell      5064760
+  Invoking rule 81844:64760=141860
+  replace dpston2 = 5141860 if inlist(dpston2, 5081844, 5064760)
+Pass 56 through the data...
+  smallest count = 17 in the cell      5000062
+  Invoking rule 62:141860=151862
+  replace dpston2 = 5151862 if inlist(dpston2, 5000062, 5141860)
+Pass 57 through the data...
+  smallest count = 18 in the cell      3054960
+  Invoking rule 62:54960=64962
+  replace dpston2 = 3064962 if inlist(dpston2, 3000062, 3054960)
+Pass 58 through the data...
+  smallest count = 18 in the cell      4055368
+  WARNING: could not find any rules to collapse dpston2 == 4055368
+Pass 59 through the data...
+  smallest count = 20 in the cell      2000030
+  Done collapsing! Exiting...
+
+. return list
+
+scalars:
+         r(arg_min_id) =  2000030
+                r(min) =  20
+
+macros:
+            r(cfailed) : "5055368,4055368"
+             r(failed) : "5055368 4055368"
+
+. wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(20) ///
+>         zeroes(2 8 36 39 40 44 47 49 50 55 60 62) ///
+>         generate(dpstoff2) saving(dpstoff2.do) replace run
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+
+Processing zero cells...
+
+  Invoking rule 39:40=23940 to collapse zero cells
+  replace dpstoff2 = 1023940 if inlist(dpstoff2, 1000039, 1000040)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 2:8=20208 to collapse zero cells
+  replace dpstoff2 = 2020208 if inlist(dpstoff2, 2000002, 2000008)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 30:36=23036 to collapse zero cells
+  replace dpstoff2 = 2023036 if inlist(dpstoff2, 2000030, 2000036)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 26:30:36:39=42639 to collapse zero cells
+  replace dpstoff2 = 2042639 if inlist(dpstoff2, 2000026, 2000030, 2000036, 2000039)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 24:26:30:36:39:40=62440 to collapse zero cells
+  replace dpstoff2 = 2062440 if inlist(dpstoff2, 2000024, 2000026, 2000030, 2000036, 2000039, 2000040)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 44:62440=72444 to collapse zero cells
+  replace dpstoff2 = 2072444 if inlist(dpstoff2, 2000044, 2062440)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpstoff2 = 2024950 if inlist(dpstoff2, 2000049, 2000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 53:55=25355 to collapse zero cells
+  replace dpstoff2 = 2025355 if inlist(dpstoff2, 2000053, 2000055)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 60:25355=35360 to collapse zero cells
+  replace dpstoff2 = 2035360 if inlist(dpstoff2, 2000060, 2025355)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 62:35360=45362 to collapse zero cells
+  replace dpstoff2 = 2045362 if inlist(dpstoff2, 2000062, 2035360)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 2:8=20208 to collapse zero cells
+  replace dpstoff2 = 3020208 if inlist(dpstoff2, 3000002, 3000008)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 55:60=25560 to collapse zero cells
+  replace dpstoff2 = 3025560 if inlist(dpstoff2, 3000055, 3000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 2:8:11=30211 to collapse zero cells
+  replace dpstoff2 = 4030211 if inlist(dpstoff2, 4000002, 4000008, 4000011)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 36:39=23639 to collapse zero cells
+  replace dpstoff2 = 4023639 if inlist(dpstoff2, 4000036, 4000039)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 40:23639=33640 to collapse zero cells
+  replace dpstoff2 = 4033640 if inlist(dpstoff2, 4000040, 4023639)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 44:33640=43644 to collapse zero cells
+  replace dpstoff2 = 4043644 if inlist(dpstoff2, 4000044, 4033640)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpstoff2 = 4024950 if inlist(dpstoff2, 4000049, 4000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 55:60=25560 to collapse zero cells
+  replace dpstoff2 = 4025560 if inlist(dpstoff2, 4000055, 4000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 2:8=20208 to collapse zero cells
+  replace dpstoff2 = 5020208 if inlist(dpstoff2, 5000002, 5000008)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 36:39=23639 to collapse zero cells
+  replace dpstoff2 = 5023639 if inlist(dpstoff2, 5000036, 5000039)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 40:44=24044 to collapse zero cells
+  replace dpstoff2 = 5024044 if inlist(dpstoff2, 5000040, 5000044)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpstoff2 = 5024950 if inlist(dpstoff2, 5000049, 5000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 53:55=25355 to collapse zero cells
+  replace dpstoff2 = 5025355 if inlist(dpstoff2, 5000053, 5000055)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 24950:53:55:60=54960 to collapse zero cells
+  replace dpstoff2 = 5054960 if inlist(dpstoff2, 5024950, 5000053, 5000055, 5000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+Pass 24 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 2:8=20208
+  replace dpstoff2 = 1020208 if inlist(dpstoff2, 1000002, 1000008)
+Pass 25 through the data...
+  smallest count = 1 in the cell      2000011
+  Invoking rule 11:18=21118
+  replace dpstoff2 = 2021118 if inlist(dpstoff2, 2000011, 2000018)
+Pass 26 through the data...
+  smallest count = 1 in the cell      2020208
+  Invoking rule 20208:21118=40218
+  replace dpstoff2 = 2040218 if inlist(dpstoff2, 2020208, 2021118)
+Pass 27 through the data...
+  smallest count = 1 in the cell      2024950
+  Invoking rule 24950:45362=64962
+  replace dpstoff2 = 2064962 if inlist(dpstoff2, 2024950, 2045362)
+Pass 28 through the data...
+  smallest count = 1 in the cell      2072444
+  Invoking rule 40218:72444=110244
+  replace dpstoff2 = 2110244 if inlist(dpstoff2, 2040218, 2072444)
+Pass 29 through the data...
+  smallest count = 1 in the cell      3000039
+  Invoking rule 39:40=23940
+  replace dpstoff2 = 3023940 if inlist(dpstoff2, 3000039, 3000040)
+Pass 30 through the data...
+  smallest count = 1 in the cell      3000049
+  Invoking rule 49:50=24950
+  replace dpstoff2 = 3024950 if inlist(dpstoff2, 3000049, 3000050)
+Pass 31 through the data...
+  smallest count = 1 in the cell      3020208
+  Invoking rule 20208:21118:24=50224
+  replace dpstoff2 = 3050224 if inlist(dpstoff2, 3020208, 3021118, 3000024)
+Pass 32 through the data...
+  smallest count = 1 in the cell      4000018
+  Invoking rule 18:24=21824
+  replace dpstoff2 = 4021824 if inlist(dpstoff2, 4000018, 4000024)
+Pass 33 through the data...
+  smallest count = 1 in the cell      4000026
+  Invoking rule 26:21824=31826
+  replace dpstoff2 = 4031826 if inlist(dpstoff2, 4000026, 4021824)
+Pass 34 through the data...
+  smallest count = 1 in the cell      4025560
+  Invoking rule 53:25560=35360
+  replace dpstoff2 = 4035360 if inlist(dpstoff2, 4000053, 4025560)
+Pass 35 through the data...
+  smallest count = 1 in the cell      5000026
+  Invoking rule 24:26=22426
+  replace dpstoff2 = 5022426 if inlist(dpstoff2, 5000024, 5000026)
+Pass 36 through the data...
+  smallest count = 1 in the cell      5020208
+  Invoking rule 11:20208=30211
+  replace dpstoff2 = 5030211 if inlist(dpstoff2, 5000011, 5020208)
+Pass 37 through the data...
+  smallest count = 1 in the cell      5054960
+  Invoking rule 47:54960=64760
+  replace dpstoff2 = 5064760 if inlist(dpstoff2, 5000047, 5054960)
+Pass 38 through the data...
+  smallest count = 2 in the cell      1000050
+  Invoking rule 49:50=24950
+  replace dpstoff2 = 1024950 if inlist(dpstoff2, 1000049, 1000050)
+Pass 39 through the data...
+  smallest count = 2 in the cell      2042639
+  Invoking rule 42639:40:44:47=72647
+  replace dpstoff2 = 2072647 if inlist(dpstoff2, 2042639, 2000040, 2000044, 2000047)
+Pass 40 through the data...
+  smallest count = 2 in the cell      2064962
+  Invoking rule 68:64962=74968
+  replace dpstoff2 = 2074968 if inlist(dpstoff2, 2000068, 2064962)
+Pass 41 through the data...
+  smallest count = 2 in the cell      3000044
+  Invoking rule 44:23940=33944
+  replace dpstoff2 = 3033944 if inlist(dpstoff2, 3000044, 3023940)
+Pass 42 through the data...
+  smallest count = 2 in the cell      3024950
+  Invoking rule 53:24950=34953
+  replace dpstoff2 = 3034953 if inlist(dpstoff2, 3000053, 3024950)
+Pass 43 through the data...
+  smallest count = 2 in the cell      4024950
+  Invoking rule 24950:35360=54960
+  replace dpstoff2 = 4054960 if inlist(dpstoff2, 4024950, 4035360)
+Pass 44 through the data...
+  smallest count = 2 in the cell      4043644
+  Invoking rule 47:43644=53647
+  replace dpstoff2 = 4053647 if inlist(dpstoff2, 4000047, 4043644)
+Pass 45 through the data...
+  smallest count = 2 in the cell      5023639
+  Invoking rule 23639:24044=43644
+  replace dpstoff2 = 5043644 if inlist(dpstoff2, 5023639, 5024044)
+Pass 46 through the data...
+  smallest count = 2 in the cell      5025355
+  Invoking rule 25355:26062:68=55368
+  replace dpstoff2 = 5055368 if inlist(dpstoff2, 5025355, 5026062, 5000068)
+Pass 47 through the data...
+  smallest count = 3 in the cell      1023940
+  Invoking rule 36:23940=33640
+  replace dpstoff2 = 1033640 if inlist(dpstoff2, 1000036, 1023940)
+Pass 48 through the data...
+  smallest count = 3 in the cell      3050224
+  Invoking rule 50224:22630:36=80236
+  replace dpstoff2 = 3080236 if inlist(dpstoff2, 3050224, 3022630, 3000036)
+Pass 49 through the data...
+  smallest count = 3 in the cell      4000062
+  Invoking rule 62:68=26268
+  replace dpstoff2 = 4026268 if inlist(dpstoff2, 4000062, 4000068)
+Pass 50 through the data...
+  smallest count = 3 in the cell      5022426
+  Invoking rule 18:22426=31826
+  replace dpstoff2 = 5031826 if inlist(dpstoff2, 5000018, 5022426)
+Pass 51 through the data...
+  smallest count = 4 in the cell      2023036
+  WARNING: could not find any rules to collapse dpstoff2 == 2023036
+Pass 52 through the data...
+  smallest count = 4 in the cell      2110244
+  WARNING: could not find any rules to collapse dpstoff2 == 2110244
+Pass 53 through the data...
+  smallest count = 4 in the cell      4031826
+  Invoking rule 30211:31826=60226
+  replace dpstoff2 = 4060226 if inlist(dpstoff2, 4030211, 4031826)
+Pass 54 through the data...
+  smallest count = 4 in the cell      5043644
+  Invoking rule 43644:64760=103660
+  replace dpstoff2 = 5103660 if inlist(dpstoff2, 5043644, 5064760)
+Pass 55 through the data...
+  smallest count = 5 in the cell      1000060
+  Invoking rule 24950:25355:60=54960
+  replace dpstoff2 = 1054960 if inlist(dpstoff2, 1024950, 1025355, 1000060)
+Pass 56 through the data...
+  smallest count = 5 in the cell      2074968
+  Invoking rule 72647:74968=142668
+  replace dpstoff2 = 2142668 if inlist(dpstoff2, 2072647, 2074968)
+Pass 57 through the data...
+  smallest count = 5 in the cell      3025560
+  Invoking rule 34953:25560=54960
+  replace dpstoff2 = 3054960 if inlist(dpstoff2, 3034953, 3025560)
+Pass 58 through the data...
+  smallest count = 6 in the cell      1000055
+  Invoking rule 53:55=25355
+  replace dpstoff2 = 1025355 if inlist(dpstoff2, 1000053, 1000055)
+Pass 59 through the data...
+  smallest count = 6 in the cell      3033944
+  Invoking rule 80236:33944=110244
+  replace dpstoff2 = 3110244 if inlist(dpstoff2, 3080236, 3033944)
+Pass 60 through the data...
+  smallest count = 6 in the cell      4054960
+  Invoking rule 53647:54960=103660
+  replace dpstoff2 = 4103660 if inlist(dpstoff2, 4053647, 4054960)
+Pass 61 through the data...
+  smallest count = 6 in the cell      5030211
+  Invoking rule 30211:31826=60226
+  replace dpstoff2 = 5060226 if inlist(dpstoff2, 5030211, 5031826)
+Pass 62 through the data...
+  smallest count = 8 in the cell      3000026
+  Invoking rule 18:24:26=31826
+  replace dpstoff2 = 3031826 if inlist(dpstoff2, 3000018, 3000024, 3000026)
+Pass 63 through the data...
+  smallest count = 8 in the cell      5000030
+  Invoking rule 30:36:39:40:44:47:49:50:53:55:60:62=123062
+  replace dpstoff2 = 5123062 if inlist(dpstoff2, 5000030, 5000036, 5000039, 5000040, 5000044, 5000047, 5000
+> 049, 5000050, 5000053, 5000055, 5000060, 5000062)
+Pass 64 through the data...
+  smallest count = 9 in the cell      4026268
+  Invoking rule 103660:26268=123668
+  replace dpstoff2 = 4123668 if inlist(dpstoff2, 4103660, 4026268)
+Pass 65 through the data...
+  smallest count = 9 in the cell      5055368
+  Invoking rule 69:55368=65369
+  replace dpstoff2 = 5065369 if inlist(dpstoff2, 5000069, 5055368)
+Pass 66 through the data...
+  smallest count = 10 in the cell      1054960
+  Invoking rule 62:54960=64962
+  replace dpstoff2 = 1064962 if inlist(dpstoff2, 1000062, 1054960)
+Pass 67 through the data...
+  smallest count = 10 in the cell      4060226
+  Invoking rule 30:60226=70230
+  replace dpstoff2 = 4070230 if inlist(dpstoff2, 4000030, 4060226)
+Pass 68 through the data...
+  smallest count = 11 in the cell      5103660
+  WARNING: could not find any rules to collapse dpstoff2 == 5103660
+Pass 69 through the data...
+  smallest count = 12 in the cell      1020208
+  Invoking rule 20208:21118:24=50224
+  replace dpstoff2 = 1050224 if inlist(dpstoff2, 1020208, 1021118, 1000024)
+Pass 70 through the data...
+  smallest count = 12 in the cell      1033640
+  Invoking rule 44:33640=43644
+  replace dpstoff2 = 1043644 if inlist(dpstoff2, 1000044, 1033640)
+Pass 71 through the data...
+  smallest count = 13 in the cell      2142668
+  Invoking rule 69:142668=152669
+  replace dpstoff2 = 2152669 if inlist(dpstoff2, 2000069, 2142668)
+Pass 72 through the data...
+  smallest count = 13 in the cell      3110244
+  Invoking rule 47:110244=120247
+  replace dpstoff2 = 3120247 if inlist(dpstoff2, 3000047, 3110244)
+Pass 73 through the data...
+  smallest count = 13 in the cell      5060226
+  Invoking rule 60226:123062=180262
+  replace dpstoff2 = 5180262 if inlist(dpstoff2, 5060226, 5123062)
+Pass 74 through the data...
+  smallest count = 14 in the cell      3000011
+  Invoking rule 11:18:24:26:30=51130
+  replace dpstoff2 = 3051130 if inlist(dpstoff2, 3000011, 3000018, 3000024, 3000026, 3000030)
+Pass 75 through the data...
+  smallest count = 15 in the cell      1000026
+  Invoking rule 26:50224=60226
+  replace dpstoff2 = 1060226 if inlist(dpstoff2, 1000026, 1050224)
+Pass 76 through the data...
+  smallest count = 15 in the cell      3054960
+  Invoking rule 62:54960=64962
+  replace dpstoff2 = 3064962 if inlist(dpstoff2, 3000062, 3054960)
+Pass 77 through the data...
+  smallest count = 21 in the cell      4070230
+  Done collapsing! Exiting...
+
+. return list
+
+scalars:
+         r(arg_min_id) =  4070230
+                r(min) =  21
+
+macros:
+            r(cfailed) : "2023036,2110244,5103660"
+             r(failed) : "2023036 2110244 5103660"

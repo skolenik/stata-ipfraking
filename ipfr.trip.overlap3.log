@@ -1,0 +1,20 @@
+. tab alight_id dpstoff3 if daypart == 2 & mod(dpstoff3,100*100)>100
+
+                      |    Long ID of the interaction
+            alight_id |   2023036    2042639    2200269 |     Total
+----------------------+---------------------------------+----------
+         8. Carmenton |         0          0          1 |         1 
+         11. Dogville |         0          0          1 |         1 
+         18. East End |         0          0          1 |         1 
+       24. Framington |         0          0          1 |         1 
+   26. Grand Junction |         0          2          0 |         2 
+       30. High Point |         4          0          0 |         4 
+      47. Moscow City |         0          0          6 |         6 
+     49. Ninth Street |         0          0          1 |         1 
+ 53. Picadilly Square |         0          0          1 |         1 
+      68. Toledo Town |         0          0          3 |         3 
+    69. Union Station |         0          0        138 |       138 
+----------------------+---------------------------------+----------
+                Total |         4          2        153 |       159 
+
+
