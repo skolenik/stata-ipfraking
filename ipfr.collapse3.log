@@ -1,24 +1,16 @@
-
-. 
 . clear
 
-. 
 . set obs 4
 number of observations (_N) was 0, now 4
 
-. 
 . gen byte x = _n
 
-. 
 . label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
 
-. 
 . label values x x_lbl
 
-. 
 . wgtcellcollapse sequence, var(x) from(1 2 3 4) depth(3)
 
-. 
 . wgtcellcollapse report, var(x)
 
 Rule (1): collapse together
@@ -68,5 +60,3 @@ Rule (9): collapse together
   x == 223 (Two to Three)
   into x == 324 (Two to Four)
 
-
-. 

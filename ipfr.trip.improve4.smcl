@@ -1,4 +1,4 @@
-{com}. tab alight_id dpstoff4 if daypart == 5 & mod(dpstoff4,100*100)>100
+{com}. tab alight_id dpstoff4 if daypart == 5 & mod(dpstoff4,100*100)>99
 
                       {txt}{c |}    Long ID of the
                       {c |}      interaction

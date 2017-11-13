@@ -1,28 +1,20 @@
-{com}{sf}{ul off}
-. 
-. clear
-
-. 
-. set obs 4
+{com}. clear
+{txt}
+{com}. set obs 4
 {txt}{p}
 number of observations (_N)  was 0,
 now 4
 {p_end}
 
-{com}. 
-. gen byte x = _n
-
-. 
-. label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
-
-. 
-. label values x x_lbl
-
-. 
-. wgtcellcollapse sequence, var(x) from(1 2 3 4) depth(3)
-
-. 
-. wgtcellcollapse report, var(x)
+{com}. gen byte x = _n
+{txt}
+{com}. label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
+{txt}
+{com}. label values x x_lbl
+{txt}
+{com}. wgtcellcollapse sequence, var(x) from(1 2 3 4) depth(3)
+{txt}
+{com}. wgtcellcollapse report, var(x)
 
 {txt}Rule ({res}1{txt}): collapse together
   {res}x{txt} == {res}1 {txt}({res}One{txt})
@@ -71,5 +63,3 @@ now 4
   {res}x{txt} == {res}223 {txt}({res}Two to Three{txt})
 {txt}  into {res}x{txt} == {res}324 {txt}({res}Two to Four{txt})
 
-
-{com}. 

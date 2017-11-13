@@ -1,4 +1,4 @@
-*** Automatically created on 13 Nov 2017 at 10:49:04
+*** Automatically created on 13 Nov 2017 at 14:18:57
 * Source syntax: wgtcellcollapse collapse , variables(daypart board_id) mincellsize(1)         zeroes(39 40 44 49 55 60)         generate(dpston3) saving(dpston3.do) replace run
 
 generate long dpston3 = (daypart)*1000000 + board_id
@@ -34,7 +34,7 @@ char dpston3[rule12] 5024950:5025355:5000060=5054960
 
 char dpston3[nrules] 12
 
-*** Automatically created on 13 Nov 2017 at 10:49:16
+*** Automatically created on 13 Nov 2017 at 14:19:08
 * Source syntax: wgtcellcollapse collapse , variables(daypart board_id) mincellsize(20)         strict feed(dpston3) saving(dpston3.do) append run
 
 confirm variable dpston3

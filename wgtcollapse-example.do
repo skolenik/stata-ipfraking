@@ -1,7 +1,110 @@
+*** Examples for the 2017 update of ipfraking
+
+sjlog using ipfr.whatsdeff, replace
+webuse nhanes2, clear
+whatsdeff finalwgt
+return list
+whatsdeff finalwgt, by(sex)
+return list
+sjlog close, replace
+
+matrix ACS2011_sex_age = ( ///
+    153267860*0.274, 153267860*0.275, 153267860*0.173, /// males
+    158324057*0.260, 158324057*0.276, 158324057*0.207  /// females
+)
+matrix colnames ACS2011_sex_age = 11 12 13 21 22 23
+matrix coleq    ACS2011_sex_age = _one
+matrix rownames ACS2011_sex_age = sex_age
+
+scalar ACS2011_total_pop = 311591917
+matrix ACS2011_adult_pop = ACS2011_sex_age * J(colsof(ACS2011_sex_age),1,1)
+
+matrix Census2011_region = ///
+    (55521598, 67158835, 116046736, 72864748 )
+matrix Census2011_region = Census2011_region * ACS2011_adult_pop / ACS2011_total_pop
+matrix colnames Census2011_region = 1 2 3 4
+matrix coleq    Census2011_region = _one
+matrix rownames Census2011_region = region
+
+matrix Census2011_race = ///
+    (243470497, 40750746, 27370674 )
+matrix Census2011_race = Census2011_race * ACS2011_adult_pop / ACS2011_total_pop
+matrix colnames Census2011_race = 1 2 3
+matrix coleq    Census2011_race = _one
+matrix rownames Census2011_race = race
+
+webuse nhanes2, clear
+gen byte _one = 1
+generate byte age_grp = 1 + (age>=40) + (age>=60) if !mi(age)
+generate sex_age = sex*10 + age_grp
+
+ipfraking [pw=finalwgt], gen( rakedwgt3 ) ///
+    ctotal( ACS2011_sex_age Census2011_region Census2011_race ) ///
+    trimhiabs( 200000 ) trimloabs( 2000 ) meta
+
+
+sjlog using ipfr.report1, replace
+ipfraking_report using rakedwgt3-report, raked_weight(rakedwgt3) replace by(_one)
+sjlog close, replace
+
+sjlog using ipfr.report2, replace
+use rakedwgt3-report, clear
+list C_Total_Margin_Variable_Name C_Total_Margin_Category_Label ///
+	Category_Total_Target Category_Total_RKDWGT DEFF_SRCWGT DEFF_RKDWGT , ///
+	sepby( C_Total_Margin_Variable_Name )
+sjlog close, replace
+
+sjlog using ipfr.collapse1, replace
+clear
+set obs 4
+gen byte x = _n
+label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
+label values x x_lbl
+wgtcellcollapse define, var(x) from(1 2 3) to(123)
+wgtcellcollapse report, var(x)
+sjlog close, replace
+
+sjlog using ipfr.collapse2, replace
+wgtcellcollapse report, var(x) break
+wgtcellcollapse define, var(x) clear
+wgtcellcollapse define, var(x) from(1 2 3) to(123) label("One through three")
+wgtcellcollapse report, var(x) break
+sjlog close, replace
+
+sjlog using ipfr.collapse3, replace
+clear
+set obs 4
+gen byte x = _n
+label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
+label values x x_lbl
+wgtcellcollapse sequence, var(x) from(1 2 3 4) depth(3)
+wgtcellcollapse report, var(x)
+sjlog close, replace
+
+sjlog using ipfr.collapse4, replace
+wgtcellcollapse candidate, var(x) cat(2)
+sreturn list
+wgtcellcollapse candidate, var(x) cat(2) max(9)
+sreturn list
+wgtcellcollapse candidate, var(x) cat(212)
+sreturn list
+wgtcellcollapse candidate, var(x) cat(55)
+sreturn list
+sjlog close, replace
+
+sjlog using ipfr.collapse5, replace
+wgtcellcollapse define, var(x) clear
+wgtcellcollapse sequence, var(x) from(2 4 1 3) depth(2)
+wgtcellcollapse report, var(x)
+sjlog close, replace
+
+
+
 *** wgtcellcollapse example
 
 clear
 set scheme s1color
+set linesize 84
 
 * stations
 input str16 station_name
@@ -134,8 +237,8 @@ save trip_population, replace
 
 sjlog using ipfr.trip.pop, replace
 use trip_population, clear
-table board_id daypart , c(sum num_pass) cellwidth(10)
-table alight_id daypart , c(sum num_pass) cellwidth(10)
+table board_id daypart , c(sum num_pass) cellwidth(10) mi
+table alight_id daypart , c(sum num_pass) cellwidth(10) mi
 sjlog close, replace
 
 * sample
@@ -168,8 +271,8 @@ file close towr
 
 sjlog using ipfr.trip.samp, replace
 use trip_sample, clear
-tab board_id daypart
-tab alight_id daypart
+table board_id daypart , c(freq) cellwidth(10) mi
+table alight_id daypart , c(freq) cellwidth(10) mi
 sjlog close, replace
 
 * this raking won't work
@@ -273,7 +376,7 @@ sjlog close, replace
 
 * overlap
 sjlog using ipfr.trip.overlap2, replace
-tab alight_id dpstoff2 if daypart == 1 & mod(dpstoff2,100*100)>100
+tab alight_id dpstoff2 if daypart == 1 & mod(dpstoff2,100*100)>99
 sjlog close, replace
 
 * collapse: attempt 3
@@ -292,11 +395,11 @@ wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(20) ///
 sjlog close, replace
 
 forvalues d=1/5 {
-	tab alight_id dpstoff3 if daypart == `d' & mod(dpstoff3,1e4)>100
+	tab alight_id dpstoff3 if daypart == `d' & mod(dpstoff3,1e4)>99
 }
 
 sjlog using ipfr.trip.overlap3, replace
-tab alight_id dpstoff3 if daypart == 2 & mod(dpstoff3,100*100)>100
+tab alight_id dpstoff3 if daypart == 2 & mod(dpstoff3,100*100)>99
 sjlog close, replace
 
 * collapse: attempt 4
@@ -324,7 +427,7 @@ forvalues d=1/5 {
 }
 
 sjlog using ipfr.trip.improve4, replace
-tab alight_id dpstoff4 if daypart == 5 & mod(dpstoff4,100*100)>100
+tab alight_id dpstoff4 if daypart == 5 & mod(dpstoff4,100*100)>99
 sjlog close, replace
 
 * collapse: attempt 5
@@ -337,19 +440,26 @@ wgtcellcollapse collapse, variables(daypart board_id) mincellsize(20) ///
 	strict feed(dpston5) saving(dpston5.do) append run
 assert "`r(failed)'" == ""	
 wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(1) ///
-	zeroes(2 40 49 50 60) greedy maxcategory(99) ///
+	zeroes(2 40 60) greedy maxcategory(99) ///
 	generate(dpstoff5) saving(dpstoff5.do) replace run
+wgtcellcollapse collapse if inlist(daypart,4,5) & inrange(alight_id,49,50), ///
+	variables(daypart alight_id) mincellsize(1) ///
+	feed(dpstoff5) zeroes(49) maxcategory(99) saving(dpstoff5.do) append run
 * special cells for weekend
-wgtcellcollapse collapse if daypart==5 & inrange(alight_id,1,30), ///
-	variables(daypart alight_id) mincellsize(20) ///
+wgtcellcollapse collapse if daypart==5 & inrange(alight_id,1,36), ///
+	variables(daypart alight_id) mincellsize(50) ///
 	strict feed(dpstoff5) saving(dpstoff5.do) append run
-wgtcellcollapse collapse if daypart==5 & inrange(alight_id,36,68), ///
-	variables(daypart alight_id) mincellsize(20) ///
+wgtcellcollapse collapse if daypart==5 & inrange(alight_id,44,68), ///
+	variables(daypart alight_id) mincellsize(50) ///
 	strict feed(dpstoff5) saving(dpstoff5.do) append run
 * all other cells
 wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(20) ///
 	strict feed(dpstoff5) saving(dpstoff5.do) append run
 assert "`r(failed)'" == ""	
+sjlog close, replace
+
+sjlog using ipfr.trip.improve5, replace
+tab alight_id dpstoff5 if daypart == 5
 sjlog close, replace
 
 * control totals and raking
@@ -365,12 +475,23 @@ total num_pass , over(dpstoff5)
 matrix dpstoff5 = e(b)
 matrix coleq dpstoff5 = _one
 matrix rownames dpstoff5 = dpstoff5
-use trip_sample, clear
+use trip_sample_rules, clear
 run dpston5
 run dpstoff5
 gen byte _one = 1	
 ipfraking [pw=_one], ctotal(dpston5 dpstoff5) gen(raked_weight5)
 whatsdeff raked_weight5
+sjlog close, replace
+
+sjlog using ipfr.trip.label5, replace
+wgtcellcollapse label, var(dpston5) 
+wgtcellcollapse label, var(dpstoff5) 
+label language numbered_ccells
+tab dpstoff5 if daypart==5
+label language texted_ccells
+tab dpstoff5 if daypart==5
+label language unlabeled_ccells
+tab dpstoff5 if daypart==5
 sjlog close, replace
 
 *  compare the speed

@@ -1,4 +1,4 @@
-*** Automatically created on 13 Nov 2017 at 10:17:48
+*** Automatically created on 13 Nov 2017 at 14:15:19
 * Source syntax: wgtcellcollapse collapse , variables(daypart board_id) mincellsize(20)         generate(dpston1) saving(dpston1.do) replace run
 
 generate long dpston1 = (daypart)*1000000 + board_id

@@ -220,5 +220,15 @@ wgtcellcollapse candidate, var(x) cat(55)
 sreturn list
 sjlog close, replace
 
+clear
+set obs 4
+gen byte x = _n
+label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
+label values x x_lbl
+sjlog using ipfr.collapse5, replace
+wgtcellcollapse define, var(x) clear
+wgtcellcollapse sequence, var(x) from(2 4 1 3) depth(2)
+wgtcellcollapse report, var(x)
+sjlog close, replace
 
 exit

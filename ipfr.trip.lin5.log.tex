@@ -1,43 +1,44 @@
 . cap drop raked_weight5*
 {\smallskip}
 . set rmsg on
-r; t=0.00 12:12:08
+r; t=0.00 14:59:22
 {\smallskip}
 . ipfraking [pw=_one], ctotal(dpston5 dpstoff5) nograph gen(raked_weight5)
 {\smallskip}
  Iteration 1, max rel difference of raked weights = 37.856256
- Iteration 2, max rel difference of raked weights = .0250943
- Iteration 3, max rel difference of raked weights = .00252004
- Iteration 4, max rel difference of raked weights = .00030004
- Iteration 5, max rel difference of raked weights = .00003571
- Iteration 6, max rel difference of raked weights = 4.250e-06
- Iteration 7, max rel difference of raked weights = 5.058e-07
-The worst relative discrepancy of  5.6e-08 is observed for dpstoff5 == 5150150     
-Target value =        587; achieved value =        587
+ Iteration 2, max rel difference of raked weights = .06404821
+ Iteration 3, max rel difference of raked weights = .00891802
+ Iteration 4, max rel difference of raked weights = .00128619
+ Iteration 5, max rel difference of raked weights = .00018966
+ Iteration 6, max rel difference of raked weights = .00002818
+ Iteration 7, max rel difference of raked weights = 4.198e-06
+ Iteration 8, max rel difference of raked weights = 6.257e-07
+The worst relative discrepancy of  7.8e-08 is observed for dpstoff5 == 5110140     
+Target value =        423; achieved value =        423
 {\smallskip}
    Summary of the weight changes
 {\smallskip}
               {\VBAR}    Mean    Std. dev.    Min        Max       CV
 \HLI{14}{\PLUS}\HLI{50} 
 Orig weights  {\VBAR}        1          0         1           1       0
-Raked weights {\VBAR}   26.487       5.74    14.593      38.634   .2167
-Adjust factor {\VBAR}  26.4869              14.5933     38.6339
-r; t=1.100 12:12:10
+Raked weights {\VBAR}   26.487      5.754    13.174      38.634   .2172
+Adjust factor {\VBAR}  26.4869              13.1743     38.6339
+r; t=2.16 14:59:24
 {\smallskip}
 . ipfraking [pw=_one], ctotal(dpston5 dpstoff5) nograph gen(raked_weight5l) linear
 {\smallskip}
 Linear calibration
-The worst relative discrepancy of  2.0e-14 is observed for dpstoff5 == 5150150     
-Target value =        587; achieved value =        587
+The worst relative discrepancy of  1.8e-14 is observed for dpstoff5 == 5110140     
+Target value =        423; achieved value =        423
 {\smallskip}
    Summary of the weight changes
 {\smallskip}
               {\VBAR}    Mean    Std. dev.    Min        Max       CV
 \HLI{14}{\PLUS}\HLI{50} 
 Orig weights  {\VBAR}        1          0         1           1       0
-Raked weights {\VBAR}   26.487     5.7387    12.875      38.204   .2167
-Adjust factor {\VBAR}  26.4869              12.8752     38.2040
-r; t=0.78 12:12:11
+Raked weights {\VBAR}   26.487     5.7523    12.518      38.204   .2172
+Adjust factor {\VBAR}  26.4869              12.5178     38.2040
+r; t=0.63 14:59:25
 {\smallskip}
 . set rmsg off
 {\smallskip}
@@ -48,10 +49,10 @@ r; t=0.78 12:12:11
                                         \HLI{10} difference \HLI{10}
                             count       minimum      average     maximum
 \HLI{72}
-raked_w{\tytilde}5<raked_{\tytilde}5l          1871     -1.813144    -.0408154   -5.84e-10
-raked_w{\tytilde}5>raked_{\tytilde}5l          1783      2.75e-08     .0428298    2.405758
+raked_w{\tytilde}5<raked_{\tytilde}5l          1896     -1.813144    -.0476911   -3.11e-11
+raked_w{\tytilde}5>raked_{\tytilde}5l          1758      2.18e-09     .0514348    2.405758
                        \HLI{10}
-jointly defined              3654     -1.813144     1.20e-10    2.405758
+jointly defined              3654     -1.813144     3.21e-10    2.405758
                        \HLI{10}
 total                        3654
 {\smallskip}

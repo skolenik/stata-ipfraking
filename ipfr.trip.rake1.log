@@ -8,21 +8,24 @@
 
 . ipfraking [pw=_one], ctotal(dpston1 dpstoff1) gen(raked_weight1)
 
-categories of dpston1 do not match in the control dpston1 and in the data (nolab option)
+categories of dpston1 do not match in the control dpston1 and in the data (nolab opt
+> ion)
 This is what dpston1 gives: 
-  _one:1000001 _one:1000002 _one:1000008 _one:1000011 _one:1000018 _one:1000024 _one:1000026 _one:1000030 _
-> one:1000036 _one:1000044 _one:1000047 _one:1000049 _one:1000062 _one:1000068 _one:1023940 _one:1025053 _o
-> ne:1025560 _one:2000011 _one:2065068 _one:2070126 _one:2110847 _one:2123062 _one:3000008 _one:3000011 _on
-> e:3000018 _one:3000024 _one:3000030 _one:3000036 _one:3000047 _one:3000068 _one:3020102 _one:3025355 _one
-> :3062644 _one:3064962 _one:4030108 _one:4041830 _one:4084768 _one:4131153 _one:5030108 _one:5041830 _one:
-> 5053647 _one:5104068 _one:5161162
+  _one:1000001 _one:1000002 _one:1000008 _one:1000011 _one:1000018 _one:1000024 _one
+> :1000026 _one:1000030 _one:1000036 _one:1000044 _one:1000047 _one:1000049 _one:100
+> 0062 _one:1000068 _one:1023940 _one:1025053 _one:1025560 _one:2000011 _one:2065068
+>  _one:2070126 _one:2110847 _one:2123062 _one:3000008 _one:3000011 _one:3000018 _on
+> e:3000024 _one:3000030 _one:3000036 _one:3000047 _one:3000068 _one:3020102 _one:30
+> 25355 _one:3062644 _one:3064962 _one:4030108 _one:4041830 _one:4084768 _one:413115
+> 3 _one:5030108 _one:5041830 _one:5053647 _one:5104068 _one:5161162
 This is what I found in data: 
-  _one:1000001 _one:1000002 _one:1000008 _one:1000011 _one:1000018 _one:1000024 _one:1000026 _one:1000030 _
-> one:1000036 _one:1000044 _one:1000047 _one:1000062 _one:1000068 _one:1023940 _one:1025053 _one:1025560 _o
-> ne:2000011 _one:2065068 _one:2070126 _one:2110847 _one:2123062 _one:3000008 _one:3000011 _one:3000018 _on
-> e:3000024 _one:3000030 _one:3000036 _one:3000047 _one:3000068 _one:3020102 _one:3025355 _one:3062644 _one
-> :3064962 _one:4030108 _one:4041830 _one:4084768 _one:4131153 _one:5030108 _one:5041830 _one:5053647 _one:
-> 5104068 _one:5161162
+  _one:1000001 _one:1000002 _one:1000008 _one:1000011 _one:1000018 _one:1000024 _one
+> :1000026 _one:1000030 _one:1000036 _one:1000044 _one:1000047 _one:1000062 _one:100
+> 0068 _one:1023940 _one:1025053 _one:1025560 _one:2000011 _one:2065068 _one:2070126
+>  _one:2110847 _one:2123062 _one:3000008 _one:3000011 _one:3000018 _one:3000024 _on
+> e:3000030 _one:3000036 _one:3000047 _one:3000068 _one:3020102 _one:3025355 _one:30
+> 62644 _one:3064962 _one:4030108 _one:4041830 _one:4084768 _one:4131153 _one:503010
+> 8 _one:5041830 _one:5053647 _one:5104068 _one:5161162
 This is what dpston1 has that data don't: 
   _one:1000049
 This is what data have that dpston1 doesn't: 
@@ -35,16 +38,19 @@ r(111);
 
 . ipfraking [pw=_one], ctotal(dpstoff1 dpston1) gen(raked_weight1)
 
-categories of dpstoff1 do not match in the control dpstoff1 and in the data (nolab option)
+categories of dpstoff1 do not match in the control dpstoff1 and in the data (nolab o
+> ption)
 This is what dpstoff1 gives: 
-  _one:1000011 _one:1000018 _one:1000030 _one:1000047 _one:1000068 _one:1000069 _one:1025355 _one:1043644 _
-> one:1060226 _one:1064962 _one:2044753 _one:2190869 _one:3000002 _one:3000047 _one:3000068 _one:3000069 _o
-> ne:3050826 _one:3053044 _one:3064962 _one:4000002 _one:4000008 _one:4000049 _one:4055368 _one:4075069 _on
-> e:4101147 _one:5000055 _one:5000060 _one:5036269 _one:5140853
+  _one:1000011 _one:1000018 _one:1000030 _one:1000047 _one:1000068 _one:1000069 _one
+> :1025355 _one:1043644 _one:1060226 _one:1064962 _one:2044753 _one:2190869 _one:300
+> 0002 _one:3000047 _one:3000068 _one:3000069 _one:3050826 _one:3053044 _one:3064962
+>  _one:4000002 _one:4000008 _one:4000049 _one:4055368 _one:4075069 _one:4101147 _on
+> e:5000055 _one:5000060 _one:5036269 _one:5140853
 This is what I found in data: 
-  _one:1000011 _one:1000018 _one:1000030 _one:1000047 _one:1000068 _one:1000069 _one:1025355 _one:1043644 _
-> one:1060226 _one:1064962 _one:2044753 _one:2190869 _one:3000047 _one:3000068 _one:3000069 _one:3050826 _o
-> ne:3053044 _one:3064962 _one:4055368 _one:4075069 _one:4101147 _one:5036269 _one:5140853
+  _one:1000011 _one:1000018 _one:1000030 _one:1000047 _one:1000068 _one:1000069 _one
+> :1025355 _one:1043644 _one:1060226 _one:1064962 _one:2044753 _one:2190869 _one:300
+> 0047 _one:3000068 _one:3000069 _one:3050826 _one:3053044 _one:3064962 _one:4055368
+>  _one:4075069 _one:4101147 _one:5036269 _one:5140853
 This is what dpstoff1 has that data don't: 
   _one:3000002 _one:4000002 _one:4000008 _one:4000049 _one:5000055 _one:5000060
 This is what data have that dpstoff1 doesn't: 

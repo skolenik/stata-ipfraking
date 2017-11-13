@@ -1,0 +1,21 @@
+. wgtcellcollapse define, var(x) clear
+{\smallskip}
+. wgtcellcollapse sequence, var(x) from(2 4 1 3) depth(2)
+{\smallskip}
+. wgtcellcollapse report, var(x)
+{\smallskip}
+Rule (1): collapse together
+  x == 2 (Two)
+  x == 4 (Four)
+  into x == 224 (Two to Four)
+{\smallskip}
+Rule (2): collapse together
+  x == 4 (Four)
+  x == 1 (One)
+  into x == 241 (Four to One)
+{\smallskip}
+Rule (3): collapse together
+  x == 1 (One)
+  x == 3 (Three)
+  into x == 213 (One to Three)
+{\smallskip}

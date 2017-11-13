@@ -1,0 +1,64 @@
+. wgtcellcollapse label, var(dpston5) 
+(language default renamed unlabeled_ccells)
+(language numbered_ccells now current language)
+(language texted_ccells now current language)
+{\smallskip}
+To attach the numeric labels (of the kind "dpston5==1000001"), type:
+   label language numbered_ccells
+To attach the text labels (of the kind "dpston5==AM Peak; 1. Alewife"), type:
+   label language texted_ccells
+The original state, which is also the current state, is:
+   label language unlabeled_ccells
+{\smallskip}
+{\smallskip}
+. wgtcellcollapse label, var(dpstoff5) 
+{\smallskip}
+To attach the numeric labels (of the kind "dpstoff5==1000018"), type:
+   label language numbered_ccells
+To attach the text labels (of the kind "dpstoff5==AM Peak; 18. East End"), type:
+   label language texted_ccells
+The original state, which is also the current state, is:
+   label language unlabeled_ccells
+{\smallskip}
+{\smallskip}
+. label language numbered_ccells
+{\smallskip}
+. tab dpstoff5 if daypart==5
+{\smallskip}
+   Long ID of the interaction {\VBAR}      Freq.     Percent        Cum.
+\HLI{30}{\PLUS}\HLI{35}
+    daypart==5, alight_id==69 {\VBAR}        123       71.10       71.10
+ daypart==5, alight_id==94468 {\VBAR}         27       15.61       86.71
+daypart==5, alight_id==110140 {\VBAR}         23       13.29      100.00
+\HLI{30}{\PLUS}\HLI{35}
+                        Total {\VBAR}        173      100.00
+{\smallskip}
+. label language texted_ccells
+{\smallskip}
+. tab dpstoff5 if daypart==5
+{\smallskip}
+             Long ID of the interaction {\VBAR}      Freq.     Percent        Cum.
+\HLI{40}{\PLUS}\HLI{35}
+             Weekend; 69. Union Station {\VBAR}        123       71.10       71.10
+Weekend; 44. Limerick to 68. Toledo Tow {\VBAR}         27       15.61       86.71
+ Weekend; 1. Alewife to 40. King Street {\VBAR}         23       13.29      100.00
+\HLI{40}{\PLUS}\HLI{35}
+                                  Total {\VBAR}        173      100.00
+{\smallskip}
+. label language unlabeled_ccells
+{\smallskip}
+. tab dpstoff5 if daypart==5
+{\smallskip}
+Interaction {\VBAR}
+       s of {\VBAR}
+    daypart {\VBAR}
+ alight_id, {\VBAR}
+  with some {\VBAR}
+ collapsing {\VBAR}      Freq.     Percent        Cum.
+\HLI{12}{\PLUS}\HLI{35}
+    5000069 {\VBAR}        123       71.10       71.10
+    5094468 {\VBAR}         27       15.61       86.71
+    5110140 {\VBAR}         23       13.29      100.00
+\HLI{12}{\PLUS}\HLI{35}
+      Total {\VBAR}        173      100.00
+{\smallskip}

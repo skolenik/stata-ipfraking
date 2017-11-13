@@ -1,43 +1,44 @@
 {com}. cap drop raked_weight5*
 {txt}
 {com}. set rmsg on
-{txt}r; t=0.00 12:12:08
+{txt}r; t=0.00 14:59:22
 
 {com}. ipfraking [pw=_one], ctotal(dpston5 dpstoff5) nograph gen(raked_weight5)
 
 {res}{txt} Iteration 1, max rel difference of raked weights = {res}37.856256
-{txt} Iteration 2, max rel difference of raked weights = {res}.0250943
-{txt} Iteration 3, max rel difference of raked weights = {res}.00252004
-{txt} Iteration 4, max rel difference of raked weights = {res}.00030004
-{txt} Iteration 5, max rel difference of raked weights = {res}.00003571
-{txt} Iteration 6, max rel difference of raked weights = {res}4.250e-06
-{txt} Iteration 7, max rel difference of raked weights = {res}5.058e-07
-{txt}The worst relative discrepancy of {res} 5.6e-08{txt} is observed for {res}dpstoff5{txt} == {res}5150150     
-{txt}Target value = {res}{res}       587{txt}; achieved value = {res}{res}       587
+{txt} Iteration 2, max rel difference of raked weights = {res}.06404821
+{txt} Iteration 3, max rel difference of raked weights = {res}.00891802
+{txt} Iteration 4, max rel difference of raked weights = {res}.00128619
+{txt} Iteration 5, max rel difference of raked weights = {res}.00018966
+{txt} Iteration 6, max rel difference of raked weights = {res}.00002818
+{txt} Iteration 7, max rel difference of raked weights = {res}4.198e-06
+{txt} Iteration 8, max rel difference of raked weights = {res}6.257e-07
+{txt}The worst relative discrepancy of {res} 7.8e-08{txt} is observed for {res}dpstoff5{txt} == {res}5110140     
+{txt}Target value = {res}{res}       423{txt}; achieved value = {res}{res}       423
 
 {txt}   Summary of the weight changes
 
 {col 15}{txt}{c |}    Mean    Std. dev.    Min        Max       CV
 {txt}{dup 14:{c -}}{c +}{dup 50:{c -}} 
 {txt}Orig weights  {c |} {col 15}{res}       1{col 28}       0{col 38}       1{col 49}        1{col 60}     0
-{txt}Raked weights {c |} {col 15}{res}  26.487{col 28}    5.74{col 38}  14.593{col 49}   38.634{col 60} .2167
-{txt}Adjust factor {c |} {col 17}{res} 26.4869{col 38} 14.5933{col 49}  38.6339
-{txt}r; t=1.100 12:12:10
+{txt}Raked weights {c |} {col 15}{res}  26.487{col 28}   5.754{col 38}  13.174{col 49}   38.634{col 60} .2172
+{txt}Adjust factor {c |} {col 17}{res} 26.4869{col 38} 13.1743{col 49}  38.6339
+{txt}r; t=2.16 14:59:24
 
 {com}. ipfraking [pw=_one], ctotal(dpston5 dpstoff5) nograph gen(raked_weight5l) linear
 
 {res}{txt}Linear calibration
-{res}{txt}The worst relative discrepancy of {res} 2.0e-14{txt} is observed for {res}dpstoff5{txt} == {res}5150150     
-{txt}Target value = {res}{res}       587{txt}; achieved value = {res}{res}       587
+{res}{txt}The worst relative discrepancy of {res} 1.8e-14{txt} is observed for {res}dpstoff5{txt} == {res}5110140     
+{txt}Target value = {res}{res}       423{txt}; achieved value = {res}{res}       423
 
 {txt}   Summary of the weight changes
 
 {col 15}{txt}{c |}    Mean    Std. dev.    Min        Max       CV
 {txt}{dup 14:{c -}}{c +}{dup 50:{c -}} 
 {txt}Orig weights  {c |} {col 15}{res}       1{col 28}       0{col 38}       1{col 49}        1{col 60}     0
-{txt}Raked weights {c |} {col 15}{res}  26.487{col 28}  5.7387{col 38}  12.875{col 49}   38.204{col 60} .2167
-{txt}Adjust factor {c |} {col 17}{res} 26.4869{col 38} 12.8752{col 49}  38.2040
-{txt}r; t=0.78 12:12:11
+{txt}Raked weights {c |} {col 15}{res}  26.487{col 28}  5.7523{col 38}  12.518{col 49}   38.204{col 60} .2172
+{txt}Adjust factor {c |} {col 17}{res} 26.4869{col 38} 12.5178{col 49}  38.2040
+{txt}r; t=0.63 14:59:25
 
 {com}. set rmsg off
 {txt}
@@ -48,10 +49,10 @@
 {txt}{col 41}{hline 10} difference {hline 10}
 {col 29}count{col 41}minimum{col 54}average{col 66}maximum
 {hline 72}
-raked_w~5<raked_~5l     {res}     1871     -1.813144    -.0408154   -5.84e-10
-{txt}raked_w~5>raked_~5l     {res}     1783      2.75e-08     .0428298    2.405758
+raked_w~5<raked_~5l     {res}     1896     -1.813144    -.0476911   -3.11e-11
+{txt}raked_w~5>raked_~5l     {res}     1758      2.18e-09     .0514348    2.405758
 {txt}{col 24}{hline 10}
-jointly defined         {res}     3654     -1.813144     1.20e-10    2.405758
+jointly defined         {res}     3654     -1.813144     3.21e-10    2.405758
 {txt}{col 24}{hline 10}
 total                   {res}     3654
 {txt}

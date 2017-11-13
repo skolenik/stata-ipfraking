@@ -1,6 +1,6 @@
-\ifnum 20=1 \def\bibname{Reference}
+\ifnum 18=1 \def\bibname{Reference}
 \else \def\bibname{References} \fi
-\begin{thebibliography}{20}
+\begin{thebibliography}{18}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -11,7 +11,7 @@
 \newblock \emph{{AAPOR} Terms and Conditions for Transparency Certification}.
 \newblock The American Association for Public Opinion Research.
 \newblock Available at
-  http://www.aapor.org/AAPOR_Main/media/MainSiteFiles/TI-Terms-and-Conditions-10-4-17.pdf.
+  http://www.aapor.org/AAPOR{\_}Main/media/MainSiteFiles/TI-Terms-and-Conditions-10-4-17.pdf.
 
 \bibitem[{Binder and Roberts(2003)}]{binder:roberts:2003}
 Binder, D.~A., and G.~R. Roberts. 2003.
@@ -56,13 +56,8 @@ Horvitz, D.~G., and D.~J. Thompson. 1952.
 \newblock \emph{Journal of the American Statistical Association} 47(260):
   663--685.
 
-\bibitem[{Kolenikov(2010)}]{kolenikov:2010}
-Kolenikov, S. 2010.
-\newblock Resampling inference with complex survey data.
-\newblock \emph{The Stata Journal} 10: 165--199.
-
 \bibitem[{Kolenikov(2014)}]{kolenikov:2014}
----------. 2014.
+Kolenikov, S. 2014.
 \newblock Calibrating survey data using iterative proportional fitting.
 \newblock \emph{The Stata Journal} 14(1): 22--59.
 
@@ -86,7 +81,7 @@ Korn, E.~L., and B.~I. Graubard. 1995.
 
 \bibitem[{Kott(2006)}]{kott:2006}
 Kott, P.~S. 2006.
-\newblock Using Calibration Weighting to Adjust for Nonresponse and Coverage
+\newblock Using Calibration Weighting to Adjust for Nonresponse and Coverage
   Errors.
 \newblock \emph{Survey Methodology} 32(2): 133--142.
 
@@ -97,11 +92,6 @@ Kott, P.~S. 2006.
 \newblock In \emph{Sample Surveys: Inference and Analysis}, ed. D.~Pfeffermann
   and C.~R. Rao, vol. 29B of \emph{Handbook of Statistics}, chap.~25. Oxford,
   UK: Elsevier.
-
-\bibitem[{McConnell(2004)}]{mcconnell:2004}
-McConnell, S. 2004.
-\newblock \emph{Code Complete: A Practical Handbook of Software Construction}.
-\newblock 2nd ed. Microsoft Press.
 
 \bibitem[{{Pew Research Center}(2012)}]{pew:2012}
 {Pew Research Center}. 2012.

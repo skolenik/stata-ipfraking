@@ -2,7 +2,6 @@
 {\smallskip}
 . wgtcellcollapse collapse, variables(daypart board_id) mincellsize(20) ///
 >         generate(dpston1) saving(dpston1.do) replace run
-(note: file dpston1.do not found)
 Pass 0 through the data...
   smallest count = 1 in the cell      2000039
   Invoking rule 39:40=23940
@@ -118,8 +117,8 @@ Pass 27 through the data...
 Pass 28 through the data...
   smallest count = 7 in the cell      4000047
   Invoking rule 47:49:50:53:55:60:62=74762
-  replace dpston1 = 4074762 if inlist(dpston1, 4000047, 4000049, 4000050, 4000053, 4000055, 4000060, 400006
-> 2)
+  replace dpston1 = 4074762 if inlist(dpston1, 4000047, 4000049, 4000050, 4000053, 4
+> 000055, 4000060, 4000062)
 Pass 29 through the data...
   smallest count = 9 in the cell      4031826
   Invoking rule 30:31826=41830
@@ -174,7 +173,8 @@ Pass 41 through the data...
 Pass 42 through the data...
   smallest count = 13 in the cell      5000047
   Invoking rule 36:39:40:44:47=53647
-  replace dpston1 = 5053647 if inlist(dpston1, 5000036, 5000039, 5000040, 5000044, 5000047)
+  replace dpston1 = 5053647 if inlist(dpston1, 5000036, 5000039, 5000040, 5000044, 5
+> 000047)
 Pass 43 through the data...
   smallest count = 14 in the cell      3000055
   Invoking rule 53:55=25355
@@ -185,13 +185,14 @@ Pass 44 through the data...
 Pass 45 through the data...
   smallest count = 17 in the cell      5000062
   Invoking rule 11:18:24:26:30:36:39:40:44:47:49:50:53:55:60:62=161162
-  replace dpston1 = 5161162 if inlist(dpston1, 5000011, 5000018, 5000024, 5000026, 5000030, 5000036, 500003
-> 9, 5000040, 5000044, 5000047, 5000049, 5000050, 5000053, 5000055, 5000060, 5000062)
+  replace dpston1 = 5161162 if inlist(dpston1, 5000011, 5000018, 5000024, 5000026, 5
+> 000030, 5000036, 5000039, 5000040, 5000044, 5000047, 5000049, 5000050, 5000053, 50
+> 00055, 5000060, 5000062)
 Pass 46 through the data...
   smallest count = 18 in the cell      2000062
   Invoking rule 30:36:39:40:44:47:49:50:53:55:60:62=123062
-  replace dpston1 = 2123062 if inlist(dpston1, 2000030, 2000036, 2000039, 2000040, 2000044, 2000047, 200004
-> 9, 2000050, 2000053, 2000055, 2000060, 2000062)
+  replace dpston1 = 2123062 if inlist(dpston1, 2000030, 2000036, 2000039, 2000040, 2
+> 000044, 2000047, 2000049, 2000050, 2000053, 2000055, 2000060, 2000062)
 Pass 47 through the data...
   smallest count = 18 in the cell      3054960
   Invoking rule 62:54960=64962
@@ -212,7 +213,6 @@ macros:
 {\smallskip}
 . wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(20) ///
 >         generate(dpstoff1) saving(dpstoff1.do) replace run
-(note: file dpstoff1.do not found)
 Pass 0 through the data...
   smallest count = 1 in the cell      1000002
   Invoking rule 2:8=20208
@@ -296,11 +296,13 @@ Pass 19 through the data...
 Pass 20 through the data...
   smallest count = 2 in the cell      4000036
   Invoking rule 36:39:40:44:47=53647
-  replace dpstoff1 = 4053647 if inlist(dpstoff1, 4000036, 4000039, 4000040, 4000044, 4000047)
+  replace dpstoff1 = 4053647 if inlist(dpstoff1, 4000036, 4000039, 4000040, 4000044,
+>  4000047)
 Pass 21 through the data...
   smallest count = 2 in the cell      4000050
   Invoking rule 50:53:55:60:62=55062
-  replace dpstoff1 = 4055062 if inlist(dpstoff1, 4000050, 4000053, 4000055, 4000060, 4000062)
+  replace dpstoff1 = 4055062 if inlist(dpstoff1, 4000050, 4000053, 4000055, 4000060,
+>  4000062)
 Pass 22 through the data...
   smallest count = 2 in the cell      5000036
   Invoking rule 36:39:40:44=43644
@@ -312,8 +314,8 @@ Pass 23 through the data...
 Pass 24 through the data...
   smallest count = 3 in the cell      2000068
   Invoking rule 30:36:39:40:44:47:49:50:53:55:60:62:68=133068
-  replace dpstoff1 = 2133068 if inlist(dpstoff1, 2000030, 2000036, 2000039, 2000040, 2000044, 2000047, 2000
-> 049, 2000050, 2000053, 2000055, 2000060, 2000062, 2000068)
+  replace dpstoff1 = 2133068 if inlist(dpstoff1, 2000030, 2000036, 2000039, 2000040,
+>  2000044, 2000047, 2000049, 2000050, 2000053, 2000055, 2000060, 2000062, 2000068)
 Pass 25 through the data...
   smallest count = 3 in the cell      5022426
   Invoking rule 18:22426=31826

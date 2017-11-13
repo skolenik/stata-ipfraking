@@ -1,4 +1,4 @@
-*** Automatically created on 13 Nov 2017 at 10:20:11
+*** Automatically created on 13 Nov 2017 at 14:17:52
 * Source syntax: wgtcellcollapse collapse , variables(daypart alight_id) mincellsize(20)         zeroes(2 8 36 39 40 44 47 49 50 55 60 62)         generate(dpstoff2) saving(dpstoff2.do) replace run
 
 generate long dpstoff2 = (daypart)*1000000 + alight_id

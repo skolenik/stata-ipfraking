@@ -1,4 +1,3 @@
-
 . webuse nhanes2, clear
 
 . whatsdeff finalwgt
@@ -38,3 +37,4 @@ scalars:
         r(DEFF_Female) =  1.40102836266093
           r(Neff_Male) =  3430.938195872213
           r(DEFF_Male) =  1.432552765279559
+

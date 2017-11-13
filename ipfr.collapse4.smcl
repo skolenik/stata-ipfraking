@@ -1,9 +1,6 @@
-{com}{sf}{ul off}
-. 
-. wgtcellcollapse candidate, var(x) cat(2)
-
-. 
-. sreturn list
+{com}. wgtcellcollapse candidate, var(x) cat(2)
+{txt}
+{com}. sreturn list
 
 {txt}macros:
            s(goodrule) : "{res}1 2 4 7 8{txt}"
@@ -15,11 +12,9 @@
                 s(cat) : "{res}2{txt}"
                   s(x) : "{res}x{txt}"
 
-{com}. 
-. wgtcellcollapse candidate, var(x) cat(2) max(9)
-
-. 
-. sreturn list
+{com}. wgtcellcollapse candidate, var(x) cat(2) max(9)
+{txt}
+{com}. sreturn list
 
 {txt}macros:
            s(goodrule) : "{res}1 2 4 7{txt}"
@@ -30,11 +25,9 @@
                 s(cat) : "{res}2{txt}"
                   s(x) : "{res}x{txt}"
 
-{com}. 
-. wgtcellcollapse candidate, var(x) cat(212)
-
-. 
-. sreturn list
+{com}. wgtcellcollapse candidate, var(x) cat(212)
+{txt}
+{com}. sreturn list
 
 {txt}macros:
            s(goodrule) : "{res}6{txt}"
@@ -42,14 +35,10 @@
                 s(cat) : "{res}212{txt}"
                   s(x) : "{res}x{txt}"
 
-{com}. 
-. wgtcellcollapse candidate, var(x) cat(55)
-
-. 
-. sreturn list
+{com}. wgtcellcollapse candidate, var(x) cat(55)
+{txt}
+{com}. sreturn list
 
 {txt}macros:
                 s(cat) : "{res}55{txt}"
                   s(x) : "{res}x{txt}"
-
-{com}. 

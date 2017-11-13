@@ -1,4 +1,4 @@
-*** Automatically created on 13 Nov 2017 at 11:51:13
+*** Automatically created on 13 Nov 2017 at 14:21:49
 * Source syntax: wgtcellcollapse collapse , variables(daypart board_id) mincellsize(1)         zeroes(39 44 49 60) greedy maxcategory(99)         generate(dpston5) saving(dpston5.do) replace run
 
 generate long dpston5 = (daypart)*1000000 + board_id
@@ -30,7 +30,7 @@ char dpston5[rule10] 5000055:5000060=5025560
 
 char dpston5[nrules] 10
 
-*** Automatically created on 13 Nov 2017 at 11:51:23
+*** Automatically created on 13 Nov 2017 at 14:21:58
 * Source syntax: wgtcellcollapse collapse , variables(daypart board_id) mincellsize(20)         strict feed(dpston5) saving(dpston5.do) append run
 
 confirm variable dpston5

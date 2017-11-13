@@ -130,8 +130,9 @@
       {txt}4000069: dpstoff5 = {res}4000069
       {txt}4080130: dpstoff5 = {res}4080130
       {txt}4123668: dpstoff5 = {res}4123668
-      {txt}5084969: dpstoff5 = {res}5084969
-      {txt}5150150: dpstoff5 = {res}5150150
+      {txt}5000069: dpstoff5 = {res}5000069
+      {txt}5094468: dpstoff5 = {res}5094468
+      {txt}5110140: dpstoff5 = {res}5110140
 
 {txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 1}        Over{col 14}{c |}      Total{col 26}   Std. Err.{col 38}     [95% Con{col 51}f. Interval]
@@ -158,8 +159,9 @@
 {txt}{space 5}4000069 {c |}{col 14}{res}{space 2}     2733{col 26}{space 2} 728.6906{col 37}{space 5} 1302.381{col 51}{space 3} 4163.619
 {txt}{space 5}4080130 {c |}{col 14}{res}{space 2}      480{col 26}{space 2} 132.6806{col 37}{space 5} 219.5117{col 51}{space 3} 740.4883
 {txt}{space 5}4123668 {c |}{col 14}{res}{space 2}      476{col 26}{space 2} 72.94794{col 37}{space 5} 332.7832{col 51}{space 3} 619.2168
-{txt}{space 5}5084969 {c |}{col 14}{res}{space 2}     2945{col 26}{space 2} 999.9897{col 37}{space 5} 981.7468{col 51}{space 3} 4908.253
-{txt}{space 5}5150150 {c |}{col 14}{res}{space 2}      587{col 26}{space 2} 137.3569{col 37}{space 5} 317.3308{col 51}{space 3} 856.6692
+{txt}{space 5}5000069 {c |}{col 14}{res}{space 2}     2677{col 26}{space 2} 895.7917{col 37}{space 5}  918.316{col 51}{space 3} 4435.684
+{txt}{space 5}5094468 {c |}{col 14}{res}{space 2}      432{col 26}{space 2} 87.57763{col 37}{space 5} 260.0612{col 51}{space 3} 603.9388
+{txt}{space 5}5110140 {c |}{col 14}{res}{space 2}      423{col 26}{space 2} 120.0254{col 37}{space 5} 187.3574{col 51}{space 3} 658.6426
 {txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
 
 {com}. matrix dpstoff5 = e(b)
@@ -168,7 +170,7 @@
 {txt}
 {com}. matrix rownames dpstoff5 = dpstoff5
 {txt}
-{com}. use trip_sample, clear
+{com}. use trip_sample_rules, clear
 {txt}
 {com}. run dpston5
 {txt}
@@ -179,26 +181,27 @@
 {com}. ipfraking [pw=_one], ctotal(dpston5 dpstoff5) gen(raked_weight5)
 
 {res}{txt} Iteration 1, max rel difference of raked weights = {res}37.856256
-{txt} Iteration 2, max rel difference of raked weights = {res}.0250943
-{txt} Iteration 3, max rel difference of raked weights = {res}.00252004
-{txt} Iteration 4, max rel difference of raked weights = {res}.00030004
-{txt} Iteration 5, max rel difference of raked weights = {res}.00003571
-{txt} Iteration 6, max rel difference of raked weights = {res}4.250e-06
-{txt} Iteration 7, max rel difference of raked weights = {res}5.058e-07
-{txt}The worst relative discrepancy of {res} 5.6e-08{txt} is observed for {res}dpstoff5{txt} == {res}5150150     
-{txt}Target value = {res}{res}       587{txt}; achieved value = {res}{res}       587
+{txt} Iteration 2, max rel difference of raked weights = {res}.06404821
+{txt} Iteration 3, max rel difference of raked weights = {res}.00891802
+{txt} Iteration 4, max rel difference of raked weights = {res}.00128619
+{txt} Iteration 5, max rel difference of raked weights = {res}.00018966
+{txt} Iteration 6, max rel difference of raked weights = {res}.00002818
+{txt} Iteration 7, max rel difference of raked weights = {res}4.198e-06
+{txt} Iteration 8, max rel difference of raked weights = {res}6.257e-07
+{txt}The worst relative discrepancy of {res} 7.8e-08{txt} is observed for {res}dpstoff5{txt} == {res}5110140     
+{txt}Target value = {res}{res}       423{txt}; achieved value = {res}{res}       423
 
 {txt}   Summary of the weight changes
 
 {col 15}{txt}{c |}    Mean    Std. dev.    Min        Max       CV
 {txt}{dup 14:{c -}}{c +}{dup 50:{c -}} 
 {txt}Orig weights  {c |} {col 15}{res}       1{col 28}       0{col 38}       1{col 49}        1{col 60}     0
-{txt}Raked weights {c |} {col 15}{res}  26.487{col 28}    5.74{col 38}  14.593{col 49}   38.634{col 60} .2167
-{txt}Adjust factor {c |} {col 17}{res} 26.4869{col 38} 14.5933{col 49}  38.6339
+{txt}Raked weights {c |} {col 15}{res}  26.487{col 28}   5.754{col 38}  13.174{col 49}   38.634{col 60} .2172
+{txt}Adjust factor {c |} {col 17}{res} 26.4869{col 38} 13.1743{col 49}  38.6339
 {txt}
 {com}. whatsdeff raked_weight5
 
 {txt}    Group{col 15}{c |}   Min{col 27}{c |}   Mean{col 39}{c |}   Max{col 51}{c |}    CV{col 61}{c |}   DEFF{col 71}{c |}   N{col 79}{c |}  N eff
 {txt}{dup 14:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 9:{c -}}{c +}{dup 9:{c -}}{c +}{dup 7:{c -}}{c +}{dup 8:{c -}}
-{txt}      Overall{col 15}{txt}{c |}{res}     14.59{col 27}{txt}{c |}{res}     26.49{col 39}{txt}{c |}{res}     38.63{col 51}{txt}{c |}{res}  0.2167{col 61}{txt}{c |}{res}  1.0470{col 71}{txt}{c |}{res}  3654{col 79}{txt}{c |}{res} 3490.13
+{txt}      Overall{col 15}{txt}{c |}{res}     13.17{col 27}{txt}{c |}{res}     26.49{col 39}{txt}{c |}{res}     38.63{col 51}{txt}{c |}{res}  0.2172{col 61}{txt}{c |}{res}  1.0472{col 71}{txt}{c |}{res}  3654{col 79}{txt}{c |}{res} 3489.37
 {txt}

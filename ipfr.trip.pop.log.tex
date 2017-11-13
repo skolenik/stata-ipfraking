@@ -1,6 +1,6 @@
 . use trip_population, clear
 {\smallskip}
-. table board_id daypart , c(sum num_pass) cellwidth(10)
+. table board_id daypart , c(sum num_pass) cellwidth(10) mi
 {\smallskip}
 \HLI{21}{\TOPT}\HLI{59}
                      {\VBAR}                          daypart                          
@@ -28,13 +28,13 @@
      68. Toledo Town {\VBAR}       5085          61         744         272         112
 \HLI{21}{\BOTT}\HLI{59}
 {\smallskip}
-. table alight_id daypart , c(sum num_pass) cellwidth(10)
+. table alight_id daypart , c(sum num_pass) cellwidth(10) mi
 {\smallskip}
 \HLI{21}{\TOPT}\HLI{59}
                      {\VBAR}                          daypart                          
            alight_id {\VBAR}    AM Peak      Midday  PM Reverse       Night     Weekend
 \HLI{21}{\PLUS}\HLI{59}
-        2. Brookline {\VBAR}         19                       3           2            
+        2. Brookline {\VBAR}         19           .           3           2           .
         8. Carmenton {\VBAR}        492          18          56          23          15
         11. Dogville {\VBAR}       2475          42         423         153          80
         18. East End {\VBAR}        929          31         193          67          68
@@ -42,7 +42,7 @@
   26. Grand Junction {\VBAR}        576          20         147          42          41
       30. High Point {\VBAR}       2189          89         560         165         167
       36. Irvingtown {\VBAR}        288          10          91          21          18
-      39. Johnsville {\VBAR}         41                      11           2           1
+      39. Johnsville {\VBAR}         41           .          11           2           1
      40. King Street {\VBAR}        131           3          38           8           6
         44. Limerick {\VBAR}        277           9          87          20          18
      47. Moscow City {\VBAR}       1746          78         556         142         128

@@ -1,6 +1,6 @@
 . use trip_population, clear
 
-. table board_id daypart , c(sum num_pass) cellwidth(10)
+. table board_id daypart , c(sum num_pass) cellwidth(10) mi
 
 ---------------------------------------------------------------------------------
                      |                          daypart                          
@@ -28,13 +28,13 @@
      68. Toledo Town |       5085          61         744         272         112
 ---------------------------------------------------------------------------------
 
-. table alight_id daypart , c(sum num_pass) cellwidth(10)
+. table alight_id daypart , c(sum num_pass) cellwidth(10) mi
 
 ---------------------------------------------------------------------------------
                      |                          daypart                          
            alight_id |    AM Peak      Midday  PM Reverse       Night     Weekend
 ---------------------+-----------------------------------------------------------
-        2. Brookline |         19                       3           2            
+        2. Brookline |         19           .           3           2           .
         8. Carmenton |        492          18          56          23          15
         11. Dogville |       2475          42         423         153          80
         18. East End |        929          31         193          67          68
@@ -42,7 +42,7 @@
   26. Grand Junction |        576          20         147          42          41
       30. High Point |       2189          89         560         165         167
       36. Irvingtown |        288          10          91          21          18
-      39. Johnsville |         41                      11           2           1
+      39. Johnsville |         41           .          11           2           1
      40. King Street |        131           3          38           8           6
         44. Limerick |        277           9          87          20          18
      47. Moscow City |       1746          78         556         142         128

@@ -1,8 +1,5 @@
-
-. 
 . wgtcellcollapse candidate, var(x) cat(2)
 
-. 
 . sreturn list
 
 macros:
@@ -15,10 +12,8 @@ macros:
                 s(cat) : "2"
                   s(x) : "x"
 
-. 
 . wgtcellcollapse candidate, var(x) cat(2) max(9)
 
-. 
 . sreturn list
 
 macros:
@@ -30,10 +25,8 @@ macros:
                 s(cat) : "2"
                   s(x) : "x"
 
-. 
 . wgtcellcollapse candidate, var(x) cat(212)
 
-. 
 . sreturn list
 
 macros:
@@ -42,14 +35,10 @@ macros:
                 s(cat) : "212"
                   s(x) : "x"
 
-. 
 . wgtcellcollapse candidate, var(x) cat(55)
 
-. 
 . sreturn list
 
 macros:
                 s(cat) : "55"
                   s(x) : "x"
-
-. 

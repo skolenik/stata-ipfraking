@@ -1,0 +1,64 @@
+. wgtcellcollapse label, var(dpston5) 
+(language default renamed unlabeled_ccells)
+(language numbered_ccells now current language)
+(language texted_ccells now current language)
+
+To attach the numeric labels (of the kind "dpston5==1000001"), type:
+   label language numbered_ccells
+To attach the text labels (of the kind "dpston5==AM Peak; 1. Alewife"), type:
+   label language texted_ccells
+The original state, which is also the current state, is:
+   label language unlabeled_ccells
+
+
+. wgtcellcollapse label, var(dpstoff5) 
+
+To attach the numeric labels (of the kind "dpstoff5==1000018"), type:
+   label language numbered_ccells
+To attach the text labels (of the kind "dpstoff5==AM Peak; 18. East End"), type:
+   label language texted_ccells
+The original state, which is also the current state, is:
+   label language unlabeled_ccells
+
+
+. label language numbered_ccells
+
+. tab dpstoff5 if daypart==5
+
+   Long ID of the interaction |      Freq.     Percent        Cum.
+------------------------------+-----------------------------------
+    daypart==5, alight_id==69 |        123       71.10       71.10
+ daypart==5, alight_id==94468 |         27       15.61       86.71
+daypart==5, alight_id==110140 |         23       13.29      100.00
+------------------------------+-----------------------------------
+                        Total |        173      100.00
+
+. label language texted_ccells
+
+. tab dpstoff5 if daypart==5
+
+             Long ID of the interaction |      Freq.     Percent        Cum.
+----------------------------------------+-----------------------------------
+             Weekend; 69. Union Station |        123       71.10       71.10
+Weekend; 44. Limerick to 68. Toledo Tow |         27       15.61       86.71
+ Weekend; 1. Alewife to 40. King Street |         23       13.29      100.00
+----------------------------------------+-----------------------------------
+                                  Total |        173      100.00
+
+. label language unlabeled_ccells
+
+. tab dpstoff5 if daypart==5
+
+Interaction |
+       s of |
+    daypart |
+ alight_id, |
+  with some |
+ collapsing |      Freq.     Percent        Cum.
+------------+-----------------------------------
+    5000069 |        123       71.10       71.10
+    5094468 |         27       15.61       86.71
+    5110140 |         23       13.29      100.00
+------------+-----------------------------------
+      Total |        173      100.00
+

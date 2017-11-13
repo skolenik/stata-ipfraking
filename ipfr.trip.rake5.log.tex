@@ -130,8 +130,9 @@ Total estimation                  Number of obs   =        719
       4000069: dpstoff5 = 4000069
       4080130: dpstoff5 = 4080130
       4123668: dpstoff5 = 4123668
-      5084969: dpstoff5 = 5084969
-      5150150: dpstoff5 = 5150150
+      5000069: dpstoff5 = 5000069
+      5094468: dpstoff5 = 5094468
+      5110140: dpstoff5 = 5110140
 {\smallskip}
 \HLI{13}{\TOPT}\HLI{48}
         Over {\VBAR}      Total   Std. Err.     [95\% Conf. Interval]
@@ -158,8 +159,9 @@ num_pass     {\VBAR}
      4000069 {\VBAR}       2733   728.6906      1302.381    4163.619
      4080130 {\VBAR}        480   132.6806      219.5117    740.4883
      4123668 {\VBAR}        476   72.94794      332.7832    619.2168
-     5084969 {\VBAR}       2945   999.9897      981.7468    4908.253
-     5150150 {\VBAR}        587   137.3569      317.3308    856.6692
+     5000069 {\VBAR}       2677   895.7917       918.316    4435.684
+     5094468 {\VBAR}        432   87.57763      260.0612    603.9388
+     5110140 {\VBAR}        423   120.0254      187.3574    658.6426
 \HLI{13}{\BOTT}\HLI{48}
 {\smallskip}
 . matrix dpstoff5 = e(b)
@@ -168,7 +170,7 @@ num_pass     {\VBAR}
 {\smallskip}
 . matrix rownames dpstoff5 = dpstoff5
 {\smallskip}
-. use trip_sample, clear
+. use trip_sample_rules, clear
 {\smallskip}
 . run dpston5
 {\smallskip}
@@ -179,26 +181,30 @@ num_pass     {\VBAR}
 . ipfraking [pw=_one], ctotal(dpston5 dpstoff5) gen(raked_weight5)
 {\smallskip}
  Iteration 1, max rel difference of raked weights = 37.856256
- Iteration 2, max rel difference of raked weights = .0250943
- Iteration 3, max rel difference of raked weights = .00252004
- Iteration 4, max rel difference of raked weights = .00030004
- Iteration 5, max rel difference of raked weights = .00003571
- Iteration 6, max rel difference of raked weights = 4.250e-06
- Iteration 7, max rel difference of raked weights = 5.058e-07
-The worst relative discrepancy of  5.6e-08 is observed for dpstoff5 == 5150150     
-Target value =        587; achieved value =        587
+ Iteration 2, max rel difference of raked weights = .06404821
+ Iteration 3, max rel difference of raked weights = .00891802
+ Iteration 4, max rel difference of raked weights = .00128619
+ Iteration 5, max rel difference of raked weights = .00018966
+ Iteration 6, max rel difference of raked weights = .00002818
+ Iteration 7, max rel difference of raked weights = 4.198e-06
+ Iteration 8, max rel difference of raked weights = 6.257e-07
+The worst relative discrepancy of  7.8e-08 is observed for dpstoff5 == 5110140     
+Target value =        423; achieved value =        423
 {\smallskip}
    Summary of the weight changes
 {\smallskip}
               {\VBAR}    Mean    Std. dev.    Min        Max       CV
 \HLI{14}{\PLUS}\HLI{50} 
 Orig weights  {\VBAR}        1          0         1           1       0
-Raked weights {\VBAR}   26.487       5.74    14.593      38.634   .2167
-Adjust factor {\VBAR}  26.4869              14.5933     38.6339
+Raked weights {\VBAR}   26.487      5.754    13.174      38.634   .2172
+Adjust factor {\VBAR}  26.4869              13.1743     38.6339
 {\smallskip}
 . whatsdeff raked_weight5
 {\smallskip}
-    Group     {\VBAR}   Min     {\VBAR}   Mean    {\VBAR}   Max     {\VBAR}    CV   {\VBAR}   DEFF  {\VBAR}   N   {\VBAR}  N eff
-\HLI{14}{\PLUS}\HLI{11}{\PLUS}\HLI{11}{\PLUS}\HLI{11}{\PLUS}\HLI{9}{\PLUS}\HLI{9}{\PLUS}\HLI{7}{\PLUS}\HLI{8}
-      Overall {\VBAR}     14.59 {\VBAR}     26.49 {\VBAR}     38.63 {\VBAR}  0.2167 {\VBAR}  1.0470 {\VBAR}  3654 {\VBAR} 3490.13
+    Group     {\VBAR}   Min     {\VBAR}   Mean    {\VBAR}   Max     {\VBAR}    CV   {\VBAR}   DEFF  {\VBAR}   N   {\VBAR}  N e
+> ff
+\HLI{14}{\PLUS}\HLI{11}{\PLUS}\HLI{11}{\PLUS}\HLI{11}{\PLUS}\HLI{9}{\PLUS}\HLI{9}{\PLUS}\HLI{7}{\PLUS}\HLI{5}
+\HLI{3}
+      Overall {\VBAR}     13.17 {\VBAR}     26.49 {\VBAR}     38.63 {\VBAR}  0.2172 {\VBAR}  1.0472 {\VBAR}  3654 {\VBAR} 3489
+> .37
 {\smallskip}

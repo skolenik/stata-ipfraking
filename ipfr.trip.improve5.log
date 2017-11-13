@@ -1,0 +1,24 @@
+. tab alight_id dpstoff5 if daypart == 5
+
+                      |     Interactions of daypart
+                      | alight_id, with some collapsing
+            alight_id |   5000069    5094468    5110140 |     Total
+----------------------+---------------------------------+----------
+         8. Carmenton |         0          0          1 |         1 
+         11. Dogville |         0          0          5 |         5 
+         18. East End |         0          0          4 |         4 
+       24. Framington |         0          0          2 |         2 
+   26. Grand Junction |         0          0          1 |         1 
+       30. High Point |         0          0          8 |         8 
+       36. Irvingtown |         0          0          2 |         2 
+         44. Limerick |         0          2          0 |         2 
+      47. Moscow City |         0          6          0 |         6 
+     50. Ontario Lake |         0          1          0 |         1 
+ 53. Picadilly Square |         0          2          0 |         2 
+    62. Silver Spring |         0          9          0 |         9 
+      68. Toledo Town |         0          7          0 |         7 
+    69. Union Station |       123          0          0 |       123 
+----------------------+---------------------------------+----------
+                Total |       123         27         23 |       173 
+
+

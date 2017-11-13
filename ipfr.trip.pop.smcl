@@ -1,6 +1,6 @@
 {com}. use trip_population, clear
 {txt}
-{com}. table board_id daypart , c(sum num_pass) cellwidth(10)
+{com}. table board_id daypart , c(sum num_pass) cellwidth(10) mi
 
 {txt}{hline 21}{c TT}{hline 59}
                      {c |}                          daypart                          
@@ -28,13 +28,13 @@
      {txt}68. Toledo Town {c |}       {res}5085          61         744         272         112
 {txt}{hline 21}{c BT}{hline 59}
 
-{com}. table alight_id daypart , c(sum num_pass) cellwidth(10)
+{com}. table alight_id daypart , c(sum num_pass) cellwidth(10) mi
 
 {txt}{hline 21}{c TT}{hline 59}
                      {c |}                          daypart                          
            alight_id {c |}    AM Peak      Midday  PM Reverse       Night     Weekend
 {hline 21}{c +}{hline 59}
-        2. Brookline {c |}         {res}19                       3           2            
+        2. Brookline {c |}         {res}19           .           3           2           .
         {txt}8. Carmenton {c |}        {res}492          18          56          23          15
         {txt}11. Dogville {c |}       {res}2475          42         423         153          80
         {txt}18. East End {c |}        {res}929          31         193          67          68
@@ -42,7 +42,7 @@
   {txt}26. Grand Junction {c |}        {res}576          20         147          42          41
       {txt}30. High Point {c |}       {res}2189          89         560         165         167
       {txt}36. Irvingtown {c |}        {res}288          10          91          21          18
-      {txt}39. Johnsville {c |}         {res}41                      11           2           1
+      {txt}39. Johnsville {c |}         {res}41           .          11           2           1
      {txt}40. King Street {c |}        {res}131           3          38           8           6
         {txt}44. Limerick {c |}        {res}277           9          87          20          18
      {txt}47. Moscow City {c |}       {res}1746          78         556         142         128

@@ -2,7 +2,6 @@
 {txt}
 {com}. wgtcellcollapse collapse, variables(daypart board_id) mincellsize(20) ///
 >         generate(dpston1) saving(dpston1.do) replace run
-{txt}(note: file dpston1.do not found)
 {txt}Pass {res}0{txt} through the data...
 {txt}  smallest count = {res}1{txt} in the cell {res}     2000039
 {txt}  Invoking rule {res}39:40=23940
@@ -209,7 +208,6 @@
 
 {com}. wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(20) ///
 >         generate(dpstoff1) saving(dpstoff1.do) replace run
-{txt}(note: file dpstoff1.do not found)
 {txt}Pass {res}0{txt} through the data...
 {txt}  smallest count = {res}1{txt} in the cell {res}     1000002
 {txt}  Invoking rule {res}2:8=20208

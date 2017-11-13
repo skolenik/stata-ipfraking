@@ -1,4 +1,4 @@
-*** Automatically created on 13 Nov 2017 at 11:35:50
+*** Automatically created on 13 Nov 2017 at 14:21:06
 * Source syntax: wgtcellcollapse collapse , variables(daypart alight_id) mincellsize(1)         zeroes(2 40 49 50 60) greedy maxcategory(99)         generate(dpstoff4) saving(dpstoff4.do) replace run
 
 generate long dpstoff4 = (daypart)*1000000 + alight_id
@@ -38,7 +38,7 @@ char dpstoff4[rule14] 5000049:5000050:5000053:5000055:5000060=5054960
 
 char dpstoff4[nrules] 14
 
-*** Automatically created on 13 Nov 2017 at 11:36:03
+*** Automatically created on 13 Nov 2017 at 14:21:17
 * Source syntax: wgtcellcollapse collapse , variables(daypart alight_id) mincellsize(20)         strict feed(dpstoff4) saving(dpstoff4.do) append run
 
 confirm variable dpstoff4

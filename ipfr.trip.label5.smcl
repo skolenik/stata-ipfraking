@@ -1,0 +1,64 @@
+{com}. wgtcellcollapse label, var(dpston5) 
+{txt}(language {res}default{txt} renamed {res}unlabeled_ccells{txt})
+(language {res}numbered_ccells{txt} now current language)
+(language {res}texted_ccells{txt} now current language)
+
+{txt}To attach the numeric labels (of the kind "{res}dpston5==1000001"{txt}), type:
+   {stata label language numbered_ccells}
+{txt}To attach the text labels (of the kind "{res}dpston5==AM Peak; 1. Alewife"{txt}), type:
+   {stata label language texted_ccells}
+{txt}The original state, which is also the current state, is:
+   {stata label language unlabeled_ccells}
+
+
+{com}. wgtcellcollapse label, var(dpstoff5) 
+
+{txt}To attach the numeric labels (of the kind "{res}dpstoff5==1000018"{txt}), type:
+   {stata label language numbered_ccells}
+{txt}To attach the text labels (of the kind "{res}dpstoff5==AM Peak; 18. East End"{txt}), type:
+   {stata label language texted_ccells}
+{txt}The original state, which is also the current state, is:
+   {stata label language unlabeled_ccells}
+
+
+{com}. label language numbered_ccells
+{txt}
+{com}. tab dpstoff5 if daypart==5
+
+   {txt}Long ID of the interaction {c |}      Freq.     Percent        Cum.
+{hline 30}{c +}{hline 35}
+    daypart==5, alight_id==69 {c |}{res}        123       71.10       71.10
+{txt} daypart==5, alight_id==94468 {c |}{res}         27       15.61       86.71
+{txt}daypart==5, alight_id==110140 {c |}{res}         23       13.29      100.00
+{txt}{hline 30}{c +}{hline 35}
+                        Total {c |}{res}        173      100.00
+{txt}
+{com}. label language texted_ccells
+{txt}
+{com}. tab dpstoff5 if daypart==5
+
+             {txt}Long ID of the interaction {c |}      Freq.     Percent        Cum.
+{hline 40}{c +}{hline 35}
+             Weekend; 69. Union Station {c |}{res}        123       71.10       71.10
+{txt}Weekend; 44. Limerick to 68. Toledo Tow {c |}{res}         27       15.61       86.71
+{txt} Weekend; 1. Alewife to 40. King Street {c |}{res}         23       13.29      100.00
+{txt}{hline 40}{c +}{hline 35}
+                                  Total {c |}{res}        173      100.00
+{txt}
+{com}. label language unlabeled_ccells
+{txt}
+{com}. tab dpstoff5 if daypart==5
+
+{txt}Interaction {c |}
+       s of {c |}
+    daypart {c |}
+ alight_id, {c |}
+  with some {c |}
+ collapsing {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+    5000069 {c |}{res}        123       71.10       71.10
+{txt}    5094468 {c |}{res}         27       15.61       86.71
+{txt}    5110140 {c |}{res}         23       13.29      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}        173      100.00
+{txt}
