@@ -1,0 +1,198 @@
+. use trip_sample_rules, clear
+{\smallskip}
+. wgtcellcollapse collapse, variables(daypart board_id) mincellsize(1) ///
+>         zeroes(39 44 49 60) greedy maxcategory(99) ///
+>         generate(dpston5) saving(dpston5.do) replace run
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+{\smallskip}
+Processing zero cells...
+{\smallskip}
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpston5 = 1024950 if inlist(dpston5, 1000049, 1000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 40:44=24044 to collapse zero cells
+  replace dpston5 = 2024044 if inlist(dpston5, 2000040, 2000044)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpston5 = 2024950 if inlist(dpston5, 2000049, 2000050)
+\smallskip
+\oom
+\smallskip
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 55:60=25560 to collapse zero cells
+  replace dpston5 = 5025560 if inlist(dpston5, 5000055, 5000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+Pass 10 through the data...
+  smallest count = 1 in the cell      2000039
+  Done collapsing! Exiting...
+{\smallskip}
+. wgtcellcollapse collapse, variables(daypart board_id) mincellsize(20) ///
+>         strict feed(dpston5) saving(dpston5.do) append run
+Pass 10 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 39:24044=33944
+  replace dpston5 = 2033944 if inlist(dpston5, 2000039, 2024044)
+Pass 11 through the data...
+  smallest count = 1 in the cell      2024950
+  Invoking rule 53:24950=34953
+  replace dpston5 = 2034953 if inlist(dpston5, 2000053, 2024950)
+\smallskip
+\oom
+\smallskip
+Pass 55 through the data...
+  smallest count = 19 in the cell      3025560
+  Invoking rule 62:25560=35562
+  replace dpston5 = 3035562 if inlist(dpston5, 3000062, 3025560)
+Pass 56 through the data...
+  smallest count = 20 in the cell      5026268
+  Done collapsing! Exiting...
+{\smallskip}
+. assert "`r(failed)'" == ""
+{\smallskip}
+. wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(1) ///
+>         zeroes(2 40 60) greedy maxcategory(99) ///
+>         generate(dpstoff5) saving(dpstoff5.do) replace run
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+{\smallskip}
+Processing zero cells...
+{\smallskip}
+  Invoking rule 39:40=23940 to collapse zero cells
+  replace dpstoff5 = 1023940 if inlist(dpstoff5, 1000039, 1000040)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 1:2:8=30108 to collapse zero cells
+  replace dpstoff5 = 2030108 if inlist(dpstoff5, 2000001, 2000002, 2000008)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 30:36:39:40:44=53044 to collapse zero cells
+  replace dpstoff5 = 2053044 if inlist(dpstoff5, 2000030, 2000036, 2000039, 2000040,
+>  2000044)
+\smallskip
+\oom
+\smallskip
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 53:55:60=35360 to collapse zero cells
+  replace dpstoff5 = 5035360 if inlist(dpstoff5, 5000053, 5000055, 5000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+Pass 12 through the data...
+  smallest count = 1 in the cell      1000002
+  Done collapsing! Exiting...
+{\smallskip}
+. wgtcellcollapse collapse if inlist(daypart,4,5) \& inrange(alight_id,49,50), ///
+>         variables(daypart alight_id) mincellsize(1) ///
+>         feed(dpstoff5) zeroes(49) maxcategory(99) saving(dpstoff5.do) append run
+Pass 12 through the data...
+  smallest count = 1 in the cell      1000002
+{\smallskip}
+Processing zero cells...
+{\smallskip}
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpstoff5 = 4024950 if inlist(dpstoff5, 4000049, 4000050)
+Pass 12 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpstoff5 = 5024950 if inlist(dpstoff5, 5000049, 5000050)
+Pass 12 through the data...
+  smallest count = 1 in the cell      1000002
+Pass 14 through the data...
+  smallest count = 1 in the cell      5024950
+  Done collapsing! Exiting...
+{\smallskip}
+. * special cells for weekend
+. wgtcellcollapse collapse if daypart==5 \& inrange(alight_id,1,36), ///
+>         variables(daypart alight_id) mincellsize(50) ///
+>         strict feed(dpstoff5) saving(dpstoff5.do) append run
+Pass 14 through the data...
+  smallest count = 1 in the cell      5000026
+  Invoking rule 24:26=22426
+  replace dpstoff5 = 5022426 if inlist(dpstoff5, 5000024, 5000026)
+Pass 15 through the data...
+  smallest count = 1 in the cell      5030108
+  Invoking rule 11:30108=40111
+  replace dpstoff5 = 5040111 if inlist(dpstoff5, 5000011, 5030108)
+Pass 16 through the data...
+  smallest count = 2 in the cell      5033640
+  Invoking rule 30:33640=43040
+  replace dpstoff5 = 5043040 if inlist(dpstoff5, 5000030, 5033640)
+Pass 17 through the data...
+  smallest count = 3 in the cell      5022426
+  Invoking rule 18:22426=31826
+  replace dpstoff5 = 5031826 if inlist(dpstoff5, 5000018, 5022426)
+Pass 18 through the data...
+  smallest count = 6 in the cell      5040111
+  Invoking rule 40111:31826=70126
+  replace dpstoff5 = 5070126 if inlist(dpstoff5, 5040111, 5031826)
+Pass 19 through the data...
+  smallest count = 10 in the cell      5043040
+  Invoking rule 70126:43040=110140
+  replace dpstoff5 = 5110140 if inlist(dpstoff5, 5070126, 5043040)
+Pass 20 through the data...
+  smallest count = 23 in the cell      5110140
+  WARNING: could not find any rules to collapse dpstoff5 == 5110140
+Pass 21 through the data...
+  smallest count = .i in the cell      1000002
+  Done collapsing! Exiting...
+{\smallskip}
+\cnp
+. wgtcellcollapse collapse if daypart==5 \& inrange(alight_id,44,68), ///
+>         variables(daypart alight_id) mincellsize(50) ///
+>         strict feed(dpstoff5) saving(dpstoff5.do) append run
+Pass 20 through the data...
+  smallest count = 1 in the cell      5024950
+  Invoking rule 24950:35360=54960
+  replace dpstoff5 = 5054960 if inlist(dpstoff5, 5024950, 5035360)
+Pass 21 through the data...
+  smallest count = 2 in the cell      5000044
+  Invoking rule 44:47=24447
+  replace dpstoff5 = 5024447 if inlist(dpstoff5, 5000044, 5000047)
+Pass 22 through the data...
+  smallest count = 3 in the cell      5054960
+  Invoking rule 24447:54960=74460
+  replace dpstoff5 = 5074460 if inlist(dpstoff5, 5024447, 5054960)
+Pass 23 through the data...
+  smallest count = 7 in the cell      5000068
+  Invoking rule 62:68=26268
+  replace dpstoff5 = 5026268 if inlist(dpstoff5, 5000062, 5000068)
+Pass 24 through the data...
+  smallest count = 11 in the cell      5074460
+  Invoking rule 74460:26268=94468
+  replace dpstoff5 = 5094468 if inlist(dpstoff5, 5074460, 5026268)
+Pass 25 through the data...
+  smallest count = 27 in the cell      5094468
+  WARNING: could not find any rules to collapse dpstoff5 == 5094468
+Pass 26 through the data...
+  smallest count = .i in the cell      1000002
+  Done collapsing! Exiting...
+{\smallskip}
+. * all other cells
+. wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(20) ///
+>         strict feed(dpstoff5) saving(dpstoff5.do) append run
+Pass 25 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 2:8=20208
+  replace dpstoff5 = 1020208 if inlist(dpstoff5, 1000002, 1000008)
+Pass 26 through the data...
+  smallest count = 1 in the cell      2000011
+  Invoking rule 11:18=21118
+  replace dpstoff5 = 2021118 if inlist(dpstoff5, 2000011, 2000018)
+\smallskip
+\oom
+\smallskip
+Pass 64 through the data...
+  smallest count = 15 in the cell      3054960
+  Invoking rule 62:54960=64962
+  replace dpstoff5 = 3064962 if inlist(dpstoff5, 3000062, 3054960)
+Pass 65 through the data...
+  smallest count = 21 in the cell      2200168
+  Done collapsing! Exiting...
+{\smallskip}
+. assert "`r(failed)'" == ""
+{\smallskip}

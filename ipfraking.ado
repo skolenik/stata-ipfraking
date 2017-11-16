@@ -1,4 +1,4 @@
-*! v.1.3.49 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.3.61 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -45,12 +45,12 @@ program define ipfraking, rclass
 	}	
 
 	// parse the trimming options
-	// dirty tricks: pushes back 
+	// dirty tricks: pushes back
 	// local trimopts `trimhiabs' `trimhirel' `trimloabs' `trimlorel'
 	// updates trimfrequency with the default "sometimes" value as needed
 	CheckTrimOptions , `trimhiabs' `trimhirel' `trimloabs' `trimlorel' trimfrequency(`trimfrequency')
 	
-	tempvar oldweight currweight prevweight 
+	tempvar oldweight currweight prevweight
 	
 	marksample touse, zeroweight
 
@@ -222,7 +222,7 @@ program define ipfraking, rclass
 		local thesecats : colnames `pass'
 		forvalues j=1/`=colsof(`pass')' {
 			if reldif(`pass'[1,`j'],`mrdmax')<c(epsfloat) {
-				* update the worst 
+				* update the worst
 				local worstvar `k'
 				local worstcat : word `j' of `thesecats'
 			}
@@ -480,10 +480,10 @@ program define my_total, eclass sortpreserve
 	
 	tempname bb ll
 	
-	sort `touse' `overx' 
+	sort `touse' `overx'
 	
 	* produce the matrix of totals in Mata
-	* li `y' `wexp' `touse' `overx' 
+	* li `y' `wexp' `touse' `overx'
 	qui mata : my_total("`y'","`wexp'","`touse'","`overx'","`bb'","`ll'")
 	
 	* beautify bb
@@ -678,8 +678,18 @@ program define ControlCheckParse
 				local bnames    : colfullnames `b'
 				display as error "This is what `mat`k'' gives: "  _n as res "  `matknames'"
 				display as error "This is what I found in data: " _n as res "  `bnames'"
-				display as error "This is what `mat`k'' has that data don't: "  _n as res "  `: list matknames - bnames'"
-				display as error "This is what data have that `mat`k'' doesn't: "  _n as res "  `: list bnames - matknames'"				
+				display as error "This is what `mat`k'' has that data don't: "  
+                if "  `: list matknames - bnames'" !== "" {
+                    display as res "  `: list matknames - bnames'"
+                }
+                else {
+                    display as text "  <none>"
+                }
+				display as error "This is what data have that `mat`k'' doesn't: "  
+                if "  `: list bnames - matknames'" != "" {
+                    display as res "  `: list bnames - matknames'"				
+                }
+                else display as text "  <none>"
 				exit 111
 			}
 			
@@ -1189,11 +1199,11 @@ program define ReportTrims, rclass
 	marksample touse
 	
 	qui {
-		count if `touse' & `newweight'/`trimhiabs' > 1 - 1e-6 
+		count if `touse' & `newweight'/`trimhiabs' > 1 - 1e-6
 		if r(N) noi di "{txt}Trimmed due to the upper absolute limit: {res}" r(N) "{txt} weights."
 		return scalar n_trimhiabs = r(N)
 		
-		count if `touse' & `newweight'/`trimloabs' < 1 + 1e-6 
+		count if `touse' & `newweight'/`trimloabs' < 1 + 1e-6
 		if r(N) noi di "{txt}Trimmed due to the lower absolute limit: {res}" r(N) "{txt} weights."
 		return scalar n_trimloabs = r(N)
 		
@@ -1285,5 +1295,5 @@ exit
 		minor version bumped to reflect the important changes in functionality: kinks are gone, linear is added
 1.3.46	Negative weights with linear calibration can still be used in CheckResults via my_total subroutine
 1.3.49	Debugging the interaction of CheckResults with mytotal
-
+1.3.61  Display <none> if the list of mismatch categories is empty (intermediate commits are SJ edits)
 */

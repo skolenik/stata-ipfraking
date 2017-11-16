@@ -1,0 +1,111 @@
+. use trip_population, clear
+{\smallskip}
+. run dpston5.do
+{\smallskip}
+. total num_pass , over(dpston5)
+{\smallskip}
+Total estimation                  Number of obs   =        719
+{\smallskip}
+      1000001: dpston5 = 1000001
+      1000002: dpston5 = 1000002
+\smallskip
+\oom
+\smallskip
+      5000011: dpston5 = 5000011
+      5026268: dpston5 = 5026268
+      5030108: dpston5 = 5030108
+      5051836: dpston5 = 5051836
+      5093960: dpston5 = 5093960
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{48}
+        Over {\VBAR}      Total   Std. Err.     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{48}
+num_pass     {\VBAR}
+     1000001 {\VBAR}       1423   967.7508     -476.9595    3322.959
+     1000002 {\VBAR}       7198    4895.91     -2414.011    16810.01
+\smallskip
+\oom
+\smallskip
+     5000011 {\VBAR}       1270    834.301      -367.961    2907.961
+     5026268 {\VBAR}        557   364.4324     -158.4805    1272.481
+     5030108 {\VBAR}        610   263.2061      93.25444    1126.746
+     5051836 {\VBAR}        622   215.5712      198.7749    1045.225
+     5093960 {\VBAR}        473   261.8954     -41.17225    987.1723
+\HLI{13}{\BOTT}\HLI{48}
+{\smallskip}
+. matrix dpston5 = e(b)
+{\smallskip}
+. matrix coleq dpston5 = _one
+{\smallskip}
+. matrix rownames dpston5 = dpston5
+{\smallskip}
+. run dpstoff5.do
+{\smallskip}
+. total num_pass , over(dpstoff5)
+{\smallskip}
+Total estimation                  Number of obs   =        719
+{\smallskip}
+      1000018: dpstoff5 = 1000018
+      1000030: dpstoff5 = 1000030
+\smallskip
+\oom
+\smallskip
+      5000069: dpstoff5 = 5000069
+      5094468: dpstoff5 = 5094468
+      5110140: dpstoff5 = 5110140
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{48}
+        Over {\VBAR}      Total   Std. Err.     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{48}
+num_pass     {\VBAR}
+     1000018 {\VBAR}        929   360.7303      220.7878    1637.212
+     1000030 {\VBAR}       2189   868.0319      484.8161    3893.184
+\smallskip
+\oom
+\smallskip
+     5000069 {\VBAR}       2677   895.7917       918.316    4435.684
+     5094468 {\VBAR}        432   87.57763      260.0612    603.9388
+     5110140 {\VBAR}        423   120.0254      187.3574    658.6426
+\HLI{13}{\BOTT}\HLI{48}
+{\smallskip}
+. matrix dpstoff5 = e(b)
+{\smallskip}
+. matrix coleq dpstoff5 = _one
+{\smallskip}
+. matrix rownames dpstoff5 = dpstoff5
+{\smallskip}
+. use trip_sample_rules, clear
+{\smallskip}
+. run dpston5
+{\smallskip}
+. run dpstoff5
+{\smallskip}
+. gen byte _one = 1
+{\smallskip}
+. ipfraking [pw=_one], ctotal(dpston5 dpstoff5) gen(raked_weight5)
+{\smallskip}
+ Iteration 1, max rel difference of raked weights = 37.856256
+ Iteration 2, max rel difference of raked weights = .06404821
+ Iteration 3, max rel difference of raked weights = .00891802
+ Iteration 4, max rel difference of raked weights = .00128619
+ Iteration 5, max rel difference of raked weights = .00018966
+ Iteration 6, max rel difference of raked weights = .00002818
+ Iteration 7, max rel difference of raked weights = 4.198e-06
+ Iteration 8, max rel difference of raked weights = 6.257e-07
+The worst relative discrepancy of  7.8e-08 is observed for dpstoff5 == 5110140
+Target value =        423; achieved value =        423
+{\smallskip}
+   Summary of the weight changes
+{\smallskip}
+              {\VBAR}    Mean    Std. dev.    Min        Max       CV
+\HLI{14}{\PLUS}\HLI{50}
+Orig weights  {\VBAR}        1          0         1           1       0
+Raked weights {\VBAR}   26.487      5.754    13.174      38.634   .2172
+Adjust factor {\VBAR}  26.4869              13.1743     38.6339
+{\smallskip}
+. whatsdeff raked_weight5
+{\smallskip}
+  Group   {\VBAR}   Min     {\VBAR}   Mean    {\VBAR}   Max     {\VBAR}    CV   {\VBAR}   DEFF  {\VBAR}   N   {\VBAR}  N eff
+\HLI{10}{\PLUS}\HLI{11}{\PLUS}\HLI{11}{\PLUS}\HLI{11}{\PLUS}\HLI{9}{\PLUS}\HLI{9}{\PLUS}\HLI{7}{\PLUS}\HLI{8}
+  Overall {\VBAR}     13.17 {\VBAR}     26.49 {\VBAR}     38.63 {\VBAR}  0.2172 {\VBAR}  1.0472 {\VBAR}  3654 {\VBAR} 3489.37
+{\smallskip}

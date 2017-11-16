@@ -1,0 +1,207 @@
+. use trip_sample_rules, clear
+{\smallskip}
+. wgtcellcollapse collapse, variables(daypart board_id) mincellsize(20) ///
+>         zeroes(39 40 44 49 55 60) ///
+>         generate(dpston2) saving(dpston2.do) replace run
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+{\smallskip}
+Processing zero cells...
+{\smallskip}
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpston2 = 1024950 if inlist(dpston2, 1000049, 1000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 40:44=24044 to collapse zero cells
+  replace dpston2 = 2024044 if inlist(dpston2, 2000040, 2000044)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpston2 = 2024950 if inlist(dpston2, 2000049, 2000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 55:60=25560 to collapse zero cells
+  replace dpston2 = 2025560 if inlist(dpston2, 2000055, 2000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 36:39=23639 to collapse zero cells
+  replace dpston2 = 4023639 if inlist(dpston2, 4000036, 4000039)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 40:44=24044 to collapse zero cells
+  replace dpston2 = 4024044 if inlist(dpston2, 4000040, 4000044)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpston2 = 4024950 if inlist(dpston2, 4000049, 4000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 53:55=25355 to collapse zero cells
+  replace dpston2 = 4025355 if inlist(dpston2, 4000053, 4000055)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 24950:53:55:60=54960 to collapse zero cells
+  replace dpston2 = 4054960 if inlist(dpston2, 4024950, 4000053, 4000055, 4000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 39:40=23940 to collapse zero cells
+  replace dpston2 = 5023940 if inlist(dpston2, 5000039, 5000040)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 49:50=24950 to collapse zero cells
+  replace dpston2 = 5024950 if inlist(dpston2, 5000049, 5000050)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 24950:25355:60=54960 to collapse zero cells
+  replace dpston2 = 5054960 if inlist(dpston2, 5024950, 5025355, 5000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      2000039
+Pass 12 through the data...
+  smallest count = 1 in the cell      2000039
+  Invoking rule 39:24044=33944
+  replace dpston2 = 2033944 if inlist(dpston2, 2000039, 2024044)
+\smallskip
+\oom
+\smallskip
+Pass 44 through the data...
+  smallest count = 10 in the cell      5020102
+  Invoking rule 8:20102=30108
+  replace dpston2 = 5030108 if inlist(dpston2, 5000008, 5020102)
+Pass 45 through the data...
+  smallest count = 10 in the cell      5055368
+  WARNING: could not find any rules to collapse dpston2 == 5055368
+Pass 46 through the data...
+  smallest count = 11 in the cell      2100844
+  Invoking rule 47:100844=110847
+  replace dpston2 = 2110847 if inlist(dpston2, 2000047, 2100844)
+\smallskip
+\oom
+\smallskip
+Pass 57 through the data...
+  smallest count = 18 in the cell      3054960
+  Invoking rule 62:54960=64962
+  replace dpston2 = 3064962 if inlist(dpston2, 3000062, 3054960)
+Pass 58 through the data...
+  smallest count = 18 in the cell      4055368
+  WARNING: could not find any rules to collapse dpston2 == 4055368
+Pass 59 through the data...
+  smallest count = 20 in the cell      2000030
+  Done collapsing! Exiting...
+{\smallskip}
+. return list
+{\smallskip}
+scalars:
+         r(arg_min_id) =  2000030
+                r(min) =  20
+{\smallskip}
+macros:
+            r(cfailed) : "5055368,4055368"
+             r(failed) : "5055368 4055368"
+{\smallskip}
+. wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(20) ///
+>         zeroes(2 8 36 39 40 44 47 49 50 55 60 62) ///
+>         generate(dpstoff2) saving(dpstoff2.do) replace run
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+{\smallskip}
+Processing zero cells...
+{\smallskip}
+  Invoking rule 39:40=23940 to collapse zero cells
+  replace dpstoff2 = 1023940 if inlist(dpstoff2, 1000039, 1000040)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 2:8=20208 to collapse zero cells
+  replace dpstoff2 = 2020208 if inlist(dpstoff2, 2000002, 2000008)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 30:36=23036 to collapse zero cells
+  replace dpstoff2 = 2023036 if inlist(dpstoff2, 2000030, 2000036)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 26:30:36:39=42639 to collapse zero cells
+  replace dpstoff2 = 2042639 if inlist(dpstoff2, 2000026, 2000030, 2000036, 2000039)
+\smallskip
+\oom
+\smallskip
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 24950:53:55:60=54960 to collapse zero cells
+  replace dpstoff2 = 5054960 if inlist(dpstoff2, 5024950, 5000053, 5000055, 5000060)
+Pass 0 through the data...
+  smallest count = 1 in the cell      1000002
+Pass 24 through the data...
+  smallest count = 1 in the cell      1000002
+  Invoking rule 2:8=20208
+  replace dpstoff2 = 1020208 if inlist(dpstoff2, 1000002, 1000008)
+\smallskip
+\oom
+\smallskip
+Pass 50 through the data...
+  smallest count = 3 in the cell      5022426
+  Invoking rule 18:22426=31826
+  replace dpstoff2 = 5031826 if inlist(dpstoff2, 5000018, 5022426)
+Pass 51 through the data...
+  smallest count = 4 in the cell      2023036
+  WARNING: could not find any rules to collapse dpstoff2 == 2023036
+Pass 52 through the data...
+  smallest count = 4 in the cell      2110244
+  WARNING: could not find any rules to collapse dpstoff2 == 2110244
+Pass 53 through the data...
+  smallest count = 4 in the cell      4031826
+  Invoking rule 30211:31826=60226
+  replace dpstoff2 = 4060226 if inlist(dpstoff2, 4030211, 4031826)
+Pass 54 through the data...
+  smallest count = 4 in the cell      5043644
+  Invoking rule 43644:64760=103660
+  replace dpstoff2 = 5103660 if inlist(dpstoff2, 5043644, 5064760)
+Pass 55 through the data...
+  smallest count = 5 in the cell      1000060
+  Invoking rule 24950:25355:60=54960
+  replace dpstoff2 = 1054960 if inlist(dpstoff2, 1024950, 1025355, 1000060)
+Pass 56 through the data...
+  smallest count = 5 in the cell      2074968
+  Invoking rule 72647:74968=142668
+  replace dpstoff2 = 2142668 if inlist(dpstoff2, 2072647, 2074968)
+Pass 57 through the data...
+  smallest count = 5 in the cell      3025560
+  Invoking rule 34953:25560=54960
+  replace dpstoff2 = 3054960 if inlist(dpstoff2, 3034953, 3025560)
+Pass 58 through the data...
+  smallest count = 6 in the cell      1000055
+  Invoking rule 53:55=25355
+  replace dpstoff2 = 1025355 if inlist(dpstoff2, 1000053, 1000055)
+\smallskip
+\oom
+\smallskip
+Pass 67 through the data...
+  smallest count = 10 in the cell      4060226
+  Invoking rule 30:60226=70230
+  replace dpstoff2 = 4070230 if inlist(dpstoff2, 4000030, 4060226)
+Pass 68 through the data...
+  smallest count = 11 in the cell      5103660
+  WARNING: could not find any rules to collapse dpstoff2 == 5103660
+Pass 69 through the data...
+  smallest count = 12 in the cell      1020208
+  Invoking rule 20208:21118:24=50224
+  replace dpstoff2 = 1050224 if inlist(dpstoff2, 1020208, 1021118, 1000024)
+\smallskip
+\oom
+\smallskip
+\cnp
+Pass 76 through the data...
+  smallest count = 15 in the cell      3054960
+  Invoking rule 62:54960=64962
+  replace dpstoff2 = 3064962 if inlist(dpstoff2, 3000062, 3054960)
+Pass 77 through the data...
+  smallest count = 21 in the cell      4070230
+  Done collapsing! Exiting...
+{\smallskip}
+. return list
+{\smallskip}
+scalars:
+         r(arg_min_id) =  4070230
+                r(min) =  21
+{\smallskip}
+macros:
+            r(cfailed) : "2023036,2110244,5103660"
+             r(failed) : "2023036 2110244 5103660"

@@ -1,0 +1,62 @@
+. clear
+{\smallskip}
+. set obs 4
+number of observations (_N) was 0, now 4
+{\smallskip}
+. gen byte x = _n
+{\smallskip}
+. label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
+{\smallskip}
+. label values x x_lbl
+{\smallskip}
+. wgtcellcollapse sequence, var(x) from(1 2 3 4) depth(3)
+{\smallskip}
+. wgtcellcollapse report, var(x)
+{\smallskip}
+Rule (1): collapse together
+  x == 1 (One)
+  x == 2 (Two)
+  into x == 212 (One to Two)
+\cnp
+Rule (2): collapse together
+  x == 2 (Two)
+  x == 3 (Three)
+  into x == 223 (Two to Three)
+{\smallskip}
+Rule (3): collapse together
+  x == 3 (Three)
+  x == 4 (Four)
+  into x == 234 (Three to Four)
+{\smallskip}
+Rule (4): collapse together
+  x == 1 (One)
+  x == 2 (Two)
+  x == 3 (Three)
+  into x == 313 (One to Three)
+{\smallskip}
+Rule (5): collapse together
+  x == 1 (One)
+  x == 223 (Two to Three)
+  into x == 313 (One to Three)
+{\smallskip}
+Rule (6): collapse together
+  x == 3 (Three)
+  x == 212 (One to Two)
+  into x == 313 (One to Three)
+{\smallskip}
+Rule (7): collapse together
+  x == 2 (Two)
+  x == 3 (Three)
+  x == 4 (Four)
+  into x == 324 (Two to Four)
+{\smallskip}
+Rule (8): collapse together
+  x == 2 (Two)
+  x == 234 (Three to Four)
+  into x == 324 (Two to Four)
+{\smallskip}
+Rule (9): collapse together
+  x == 4 (Four)
+  x == 223 (Two to Three)
+  into x == 324 (Two to Four)
+{\smallskip}

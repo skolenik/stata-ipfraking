@@ -1,0 +1,70 @@
+. use trip_population, clear
+{\smallskip}
+. run dpston1.do
+{\smallskip}
+. total num_pass , over(dpston1)
+{\smallskip}
+Total estimation                  Number of obs   =        719
+{\smallskip}
+      1000001: dpston1 = 1000001
+      1000002: dpston1 = 1000002
+\smallskip
+\oom
+\smallskip
+      5104068: dpston1 = 5104068
+      5161162: dpston1 = 5161162
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{48}
+        Over {\VBAR}      Total   Std. Err.     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{48}
+num_pass     {\VBAR}
+     1000001 {\VBAR}       1423   967.7508     -476.9595    3322.959
+     1000002 {\VBAR}       7198    4895.91     -2414.011    16810.01
+\smallskip
+\oom
+\smallskip
+     5104068 {\VBAR}        270   116.7702      40.74822    499.2518
+     5161162 {\VBAR}       1723   909.6551     -62.90172    3508.902
+\HLI{13}{\BOTT}\HLI{48}
+{\smallskip}
+. matrix dpston1 = e(b)
+{\smallskip}
+. matrix coleq dpston1 = _one
+{\smallskip}
+. matrix rownames dpston1 = dpston1
+{\smallskip}
+. run dpstoff1.do
+\cnp
+. total num_pass , over(dpstoff1)
+{\smallskip}
+Total estimation                  Number of obs   =        719
+{\smallskip}
+      1000011: dpstoff1 = 1000011
+      1000018: dpstoff1 = 1000018
+\smallskip
+\oom
+\smallskip
+      5000060: dpstoff1 = 5000060
+      5036269: dpstoff1 = 5036269
+      5140853: dpstoff1 = 5140853
+{\smallskip}
+\HLI{13}{\TOPT}\HLI{48}
+        Over {\VBAR}      Total   Std. Err.     [95\% Conf. Interval]
+\HLI{13}{\PLUS}\HLI{48}
+num_pass     {\VBAR}
+     1000011 {\VBAR}       2475   1468.807     -408.6691    5358.669
+     1000018 {\VBAR}        929   360.7303      220.7878    1637.212
+\smallskip
+\oom
+\smallskip
+     5000060 {\VBAR}          4          2      .0734531    7.926547
+     5036269 {\VBAR}       2880   980.8909      954.2428    4805.757
+     5140853 {\VBAR}        634   139.2172      360.6787    907.3213
+\HLI{13}{\BOTT}\HLI{48}
+{\smallskip}
+. matrix dpstoff1 = e(b)
+{\smallskip}
+. matrix coleq dpstoff1 = _one
+{\smallskip}
+. matrix rownames dpstoff1 = dpstoff1
+{\smallskip}

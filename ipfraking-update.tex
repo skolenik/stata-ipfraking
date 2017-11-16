@@ -322,7 +322,8 @@ raking from scratch. An example of linearly calibrated weights is given below
 in Section \ref{subsec:linear}.
 
 Option \stcmd{meta} saves more information in characteristics of the calibrated
-weight variables.
+weight variables. Using Example 3 from \citet{kolenikov:2014} with trimming options,
+we have:
 
 \begin{stlog}
 \input{ipfr.example5.log.tex}\nullskip
@@ -331,6 +332,7 @@ weight variables.
 The following characteristics are stored with the newly created weight variable
 (see \pref{char}).
 
+\noindent
 \begin{tabular}{ll}
     \stcmd{command} & The full command as typed by the user \\
     {\it matrix name} & The relative matrix difference from the corresponding \\
@@ -394,11 +396,12 @@ by(\varlist)
 \end{stsyntax}
 
 The utility program \stcmd{whatsdeff} calculates the apparent design effect due to unequal weighting,
-${\rm DEFF_{UWE}}=1 + {CV}^2_w = $ \stcmd{1 + r(Var)/(r(mean))\^2} from \stcmd{summarize} {\it weight\_variable}.
+${\rm DEFF_{UWE}}=1 + {CV}^2_w = $ \stcmd{1 + r(Var)/(r(mean))\^{}2} from \stcmd{summarize} {\it weight\_variable}.
 Additionally, it reports the effective sample size, $n/{\rm DEFF_{UWE}}$, and also returns
 the margins of error for the sample proportions that estimate the population proportions of
 10\% and 50\%.
 
+\noindent
 \begin{stlog}
 \input{ipfr.whatsdeff.log.tex}\nullskip
 \end{stlog}
@@ -407,7 +410,7 @@ the margins of error for the sample proportions that estimate the population pro
 
 Two new programs are added to the package: \stcmd{ipfraking\_report} and \stcmd{wgtcellcollapse},
 and are documented in the subsequent sections of this article. The former provides reports on the raked weights,
-including summaries of the unweighted data, data with the input weights, and data with the raked weights. 
+including summaries of the unweighted data, data with the input weights, and data with the raked weights.
 The latter creates a mostly automated flow of collapsing weighting cells that are too detailed
 (and hence have low sample sizes).
 
@@ -436,8 +439,6 @@ Along the way, \stcmd{ipfraking\_report} runs a regression of the log raking rat
 on the calibration variables. This regression is expected to have $R^2$ very close to 1,
 and the regression coefficients provide insights regarding which categories received
 greater vs. smaller adjustments.
-
-\cnp
 
 \begin{stlog}
 \input{ipfr.report1.log.tex}\nullskip
@@ -483,7 +484,7 @@ and especially other race individuals.
 The raking report file contains the following variables.
 
 \noindent
-\begin{tabular}{ll}
+\begin{tabular}{p{2.25in}p{3.25in}}
   \hline
   Variable name & Definition \\
   \hline
@@ -501,6 +502,13 @@ The raking report file contains the following variables.
         & with \stcmd{by()} option of \stcmd{ipfraking\_report} \\
   \stcmd{C\_Total\_Arg\_Variable\_Name} & The name of the multiplier variable \\
   \stcmd{C\_Total\_Arg\_Variable\_Label} & The label of the multiplier variable \\
+  \hline
+\end{tabular}
+
+\begin{tabular}{p{2.25in}p{3.25in}}
+  \hline
+  Variable name & Definition \\
+  \hline
   \stcmd{C\_Total\_Margin\_Category\_Number} & Numeric value of the control total category \\
   \stcmd{C\_Total\_Margin\_Category\_Label} &  Label of the control total category \\
   \stcmd{Category\_Total\_Target} & The control total to be calibrated to \\
@@ -544,6 +552,8 @@ For each of the input weights (\stcmd{SRCWGT} suffix), raked weights (\stcmd{RKD
   \stcmd{DEFF\_\textit{WEIGHT}} & Apparent UWE DEFF of source weights \\
   \hline
 \end{tabular}
+
+% \clearpage\newpage
 
 \subsection{Example}
 
@@ -680,7 +690,7 @@ depth(\num)
 Moderate length sequences of collapsing categories can be defined as follows.
 
 \begin{stlog}
-\input{ipfr.collapse3.log.tex}\nullskip
+\input{ipfr.collapse3.edited.log.tex}\nullskip
 \end{stlog}
 
 Note how \stcmd{wgtcellcollapse sequence} automatically created labels for the collapsed cells.
@@ -702,8 +712,8 @@ so that the length of resulting collapsed category value is always (\stnum of di
 twice (\stnum of digits of the largest original category).
 
 Note that \stcmd{wgtcellcollapse sequence} respects the order in which the categories are
-supplied in the \stcmd{from()} option, and does not sort them. If the categories are supplied 
-in the order 2, 4, 1 and 3, then \stcmd{wgtcellcollapse sequence} would collapse 2 with 4, 4 with 1, 
+supplied in the \stcmd{from()} option, and does not sort them. If the categories are supplied
+in the order 2, 4, 1 and 3, then \stcmd{wgtcellcollapse sequence} would collapse 2 with 4, 4 with 1,
 and 1 with 3:
 
 \begin{stlog}
@@ -736,13 +746,15 @@ see \pref{return}, as they are intended to stay in memory sufficiently long for
 with sequential collapses of depth 3, we can identify the following candidates
 for categories 2, 212 (collapsed values of 1 and 2), and a non-existent category of 55:
 
+\cnp
+
 \begin{stlog}
 \input{ipfr.collapse4.log.tex}\nullskip
 \end{stlog}
 
 In the second call to
 the option \stcmd{max(9)} was used to restrict the returned rules to the rules
-that deal with the original categories only (so rule 8 that involved a collapsed category 234 
+that deal with the original categories only (so rule 8 that involved a collapsed category 234
 was omitted). In the third call, a list of rules
 that involve a collapsed category \stcmd{cat(212)} was requested. Requests
 for nonexisting categories are not considered errors, but simply produce empty lists
@@ -857,14 +869,14 @@ the name of that variable is provided with the \stcmd{feed()} option.
 The algorithm \stcmd{wgtcellcollapse collapse} uses to identify the cells to be collapsed is
 a variation of greedy search.
 It first identifies the cells with the lowest (positive) counts; finds the candidate rules
-for the variable(s) to be collapsed; evaluates the counts of the collapsed cells across all 
+for the variable(s) to be collapsed; evaluates the counts of the collapsed cells across all
 these candidate rules; and uses the rule that has produces the smallest size of the
 collapsed cell across all applicable rules. So when it finds several rules that are applicable
 to the cell being currently processed that has a size of 5, and the candidate rules produce cells
 of sizes 7, 10 and 15, \stcmd{wgtcellcollapse collapse} will use the rule that produces the cell
 of size 7. The algorithm runs until all cells have sizes of at least
 \stcmd{mincellsize(\num)} or until \stcmd{maxpass(\num)} passes through the data are executed.
-It is a pretty dumb algorithm, actually, and it fails quite often. 
+It is a pretty dumb algorithm, actually, and it fails quite often.
 For that reason, a number of hooks are provided to modify its behavior.
 Section \ref{subsec:example} will demonstrate the typical failures, and the ways to overcome them.
 
@@ -916,6 +928,8 @@ simulated data set of trips along a metro line composed of 21 stations:
 \input{ipfr.trip.sta.log.tex}\nullskip
 \end{stlog}
 
+\cnp
+
 Turnstile counts were collected at entrances and exits of the stations, producing the following
 population figures.
 
@@ -924,15 +938,21 @@ population figures.
 \input{ipfr.trip.pop.log.tex}\nullskip
 \end{stlog}
 
+\clearpage\newpage
+
 A survey was administered to a sample of the metro line users, with the following counts
 of cases collected.
 
-% make this a table?
+\begin{table}
+
+\caption{Sample frequencies of the trips boardings and alightings. \label{tab:sample:xtab}}
 
 \noindent
 \begin{stlog}
 \input{ipfr.trip.samp.log.tex}\nullskip
 \end{stlog}
+
+\end{table}
 
 As only \input{sample.size.tex}\nullskip surveys were collected from a total of
 \input{pop.size.tex}\nullskip riders, we would reasonably expect
@@ -968,14 +988,16 @@ and collapsing stations within daypart to achieve the cell sizes of at least 20 
 Here is what a simple run of \stcmd{wgtcellcollapse collapse} might look like.
 
 \begin{stlog}
-\input{ipfr.trip.att1.log.tex}\nullskip
+\input{ipfr.trip.att1.edited.log.tex}\nullskip
 \end{stlog}
 
 The collapsed values of the variables \stcmd{dpston} (DayPart-STation-ON) and
 \stcmd{dpstoff} (DayPart-STation-OFF) combine the values of the parent variables. The value
-of \stcmd{dpston==1000003} indicates \stcmd{daypart==1} and station ID 3.
-The value of \stcmd{dpston==2065270} indicates \stcmd{daypart==2} and sequence of
-six stations from 52 to 70.
+of \stcmd{dpston==1000001} indicates \stcmd{daypart==1} and station ID 1.
+The value of \stcmd{dpston==2023940}, the very first collapsed cell, indicates
+\stcmd{daypart==2} and sequence of two stations from 39 to 40.
+The value of \stcmd{dpston==3064960} indicates \stcmd{daypart==3} and sequence of
+six stations from 49 to 60.
 \label{page:dpston:nomenclature}
 
 Note that \stcmd{wgtcellcollapse} returns a list of the cells that it could not
@@ -993,13 +1015,13 @@ commands to perform the cell collapsing. The point of creating these is that the
 can be run on the population data to create identical categories:
 
 \begin{stlog}
-\input{ipfr.trip.pop1.log.tex}\nullskip
+\input{ipfr.trip.pop1.edited.log.tex}\nullskip
 \end{stlog}
 
-Once that is done, we can go back to the sample data and try to create raking weights:
+We can then go back to the sample data and try creating raked weights:
 
 \begin{stlog}
-\input{ipfr.trip.rake1.log.tex}\nullskip
+\input{ipfr.trip.rake1.edited.log.tex}\nullskip
 \end{stlog}
 
 We see that raking failed, because survey nonresponse wiped out some of the smaller
@@ -1007,6 +1029,10 @@ stations from the sample. (Note also the informative error message with
 diagnostics of missing categories produced by \stcmd{ipfraking}. This is a functionality
 added since the first 2010 publication in \textit{The Stata Journal}. The message lists
 the categories found in the data, in the control totals, and in the mismatch.)
+We should have suspected
+as much from the full output of the population control totals, where e.g. the line
+for \stcmd{dpstoff==5000060} showed only 4 alightings at station Redline Circle (60)
+on the weekends.
 
 \subsubsection{The second pass of cell collapse and raking: \stcmd{zeroes()} option}
 
@@ -1023,8 +1049,10 @@ Carmenton (8), Irvingtown (36),
 Johnsville (39), King Street (40), Limerick (44), Moscow City (47), Ninth Street (49),
 Ontario Lake (50), Queens Zoo (55), Redline Circle (60), and Silver Spring (62).
 
+\cnp
+
 \begin{stlog}
-\input{ipfr.trip.att2.log.tex}\nullskip
+\input{ipfr.trip.att2.edited.log.tex}\nullskip
 \end{stlog}
 
 We will continue to disregard the cell counts of insufficient size for the time being.
@@ -1032,8 +1060,9 @@ Running the resulting do-files \stcmd{dpston.do} and \stcmd{dpstoff.do}
 on the population data to create control totals, and providing these control totals
 to \stcmd{ipfraking} program produces an apparently successful raking result:
 
+\noindent
 \begin{stlog}
-\input{ipfr.trip.rake2.log.tex}\nullskip
+\input{ipfr.trip.rake2.edited.log.tex}\nullskip
 \end{stlog}
 
 Note the use of utility program \stcmd{whatsdeff} to compute the design effect
@@ -1046,7 +1075,7 @@ cross-tab of original and collapsed stations (the first part of the \ifexp\ expr
 the daypart, AM Peak; the second part identifies collapsed stations, given the nomenclature
 of \stcmd{dpstoff} variable described on page \ref{page:dpston:nomenclature} as the concatenation
 of the first variable of the interaction, \stcmd{daypart}; the length of the collapsed sequence,
-and its starting and end points; station numbers take up to two characters, and hence the collapsed 
+and its starting and end points; station numbers take up to two characters, and hence the collapsed
 values would use categories of \stcmd{alight\_id} like 20102, and \stcmd{mod} by \stcmd{100*100}
 would be greater than the maximum two-digit number, 99).
 
@@ -1054,7 +1083,7 @@ would be greater than the maximum two-digit number, 99).
 \input{ipfr.trip.overlap2.log.tex}\nullskip
 \end{stlog}
 
-To the human eye, it is obvious that Picadilly Square (53) and Queens Zoo (55) should have been
+To human eye, it is obvious that Picadilly Square (53) and Queens Zoo (55) should have been
 a part of the six-station sequence 1064962 spanning from Ninth Street (49) to Silver Spring (62).
 Instead, \stcmd{wgtcellcollapse} decided to separate these two stations out into their own cell.
 How did that happen? The logic of \stcmd{wgtcellcollapse} is to collapse categories in such a way
@@ -1070,8 +1099,8 @@ the sequence of collapsing steps was as follows.
         (Ninth Street (49)) resulting in an intermediate cell of size 5.
     \item[Pass 47] The smallest cell of size 3, collapsed Johnsville (39) and King Street (40),
         was further collapsed with its neighbor Irvingtown (36) resulting in an intermediate cell of size .
-    \item[Pass 55] The smallest cell of size 5, Redline Circle (60), was collapsed by a three-way rule 
-        with a duo Picadilly Square (53) + Queens Zoo (55), which actually was empty, and a small cell 
+    \item[Pass 55] The smallest cell of size 5, Redline Circle (60), was collapsed by a three-way rule
+        with a duo Picadilly Square (53) + Queens Zoo (55), which actually was empty, and a small cell
         Ontario Lake (50) + Ninth Street (49), resulting in an intermediate cell of size 10.
 \end{description}
 
@@ -1081,17 +1110,17 @@ the sample could be collapsed with:
     \item Silver Spring (62), to form a cell of size 54;
     \item Queens Zoo (55), to form a cell of size 11;
     \item a sequence of Picadilly Square (53) and Queens Zoo (55), to form a cell of size 34;
-    \item \ldots and many other options
+    \item \ldots and a number of other options
 \end{enumerate}
 However, at pass 55, \stcmd{wgtcellcollapse} picked the rule 24950:25355:60=54960 which, at the time it was
 processed, had a count of 5 in the cell 24950, a count of zero in the cell 25355, and a count of 5 in the
-original station Redline Circle (60). (Note that the cell 25355 would actually form eventually at pass 58.)
+original station Redline Circle (60). (Note that the cell 25355 would actually form later at pass 58.)
 The problem lies with the zero count of the ghost of the cell 25355.
 
 To overcome this problem, \stcmd{wgtcellcollapse} have a \stcmd{strict} option that only allows the rules
-that have a non-zero count in every component of the rule (so 24950:25355:60=54960 would not be a legal
-merge under that option). As is easily seen, this option directly contradicts the \stcmd{zeroes()} option,
-and that necessitates separate runs.
+that have a non-zero count in every component of the rule (so the problematic rule 
+24950:25355:60=54960 would not be a legal one under that restriction). As is easily seen, 
+this option directly contradicts the \stcmd{zeroes()} option, and that necessitates separate runs.
 
 \subsubsection{The third pass of cell collapse and raking: \stcmd{strict} and \stcmd{feed} options}
 
@@ -1102,37 +1131,40 @@ created by the first run, the option to pass the variable name to be further mod
 \stcmd{feed()}. To make sure that the relevant variable exists in the data set,
 the option \stcmd{run} instructs \stcmd{wgtcellcollapse} to run the do-file it just created,
 thus creating or modifying the collapsed cell variable.
-Finally, instead of specifying \stcmd{replace} to overwrite the do-files that 
+Finally, instead of specifying \stcmd{replace} to overwrite the do-files that
 \stcmd{wgtcellcollapse} creates, we need to specify \stcmd{append} to keep adding to these files.
 
 \begin{stlog}
-\input{ipfr.trip.att3.log.tex}\nullskip
+\input{ipfr.trip.att3.edited.log.tex}\nullskip
 \end{stlog}
 
-The result still isn't satisfactory, as some collapsed rules still overlap:
+The result still isn't satisfactory, as some collapsed cells still overlap:
 
 \begin{stlog}
 \input{ipfr.trip.overlap3.log.tex}\nullskip
 \end{stlog}
 
 This overlap can be traced back to the collapsing of zero cells:
-first, the cell 2023036 came to being by a reasonable, at its face, collapsing 
+first, the cell 2023036 came to being by a reasonable, at its face, collapsing
 of the zero cell Irvingtown (36) with non-zero cell High Point (30);
 and then the cell 2042639 came to being by a long overreach for the zero cell
 Johnsville (39) to be collapsed with a non-zero cell Grand Junction (26).
 
 \subsubsection{The fourth pass of cell collapse and raking: \stcmd{greedy} and \stcmd{maxcat()} options}
 
-The process can be improved with an additional option \stcmd{greedy} that is applicable mostly
-to the collapsing of zero cells. It modifies behavior of \stcmd{wgtcellcollapse} to require that,
-among the possible candidate rules with the lowest count, the rule with the \textit{greatest} number 
+The next improvement I am going to demonstrate is to fix the problem of weak performance in
+collapsing the zero cells with an additional option \stcmd{greedy}.
+It modifies behavior of \stcmd{wgtcellcollapse} to require that,
+among the possible candidate rules with the lowest count, the rule with the \textit{greatest} number
 of components is preferred. That way, the long streaks of zeroes from Irvingtown (36) to Limerick (44) in
 midday part could be collapsed simultaneously into one cell. To support this option, and avoid complex collapses
 of zero cells with the already defined cells, option \stcmd{maxcategory()} specifies the greatest
 value of a component of a rule. By specifying \stcmd{maxcategory(99)}, we can instruct \stcmd{wgtcellcollapse}
-to only use rules that deal with individual stations, and do not use the rules that involve collapsed
+to only use rules that deal with individual stations (that have category numbers from 1 to 69, and thus
+are below 99), and do not use the rules that involve collapsed
 cells (which would have numbers of at least 20102 for the collapsed cell Alewife (1) and Brookline (2)).
-In the first run, those collapsed cells will always be empty ghosts, and they should not be used.
+In the first run, those collapsed cells will always be empty ghosts, and they should not be used
+in defining how the cells be collapsed.
 
 Note also that with the \stcmd{greedy} option, one would want to specify the zeroes somewhere in the middle
 of the streak, and possibly across multiple categories of the interacting variable. In our example,
@@ -1143,11 +1175,11 @@ However, specifying \stcmd{zeroes(40)} without \stcmd(zeroes(36)} would take car
 observed in Table \ref{tab:sample:xtab}.
 
 \begin{stlog}
-\input{ipfr.trip.att4.log.tex}\nullskip
+\input{ipfr.trip.att4.edited.log.tex}\nullskip
 \end{stlog}
 
-We have finally been able to produce a clean collapse of everything! Note the use of 
-\stcmd{assert "`r(failed)'"==""} in the above code snippet to make sure that all cells have 
+We have finally been able to produce a clean collapse of everything! Note the use of
+\stcmd{assert "`r(failed)'"==""} in the above code snippet to make sure that all cells have
 the minimal required size of 20.
 
 As a very minor point, we can see some room for improvement in collapsing the cells on the weekend:
@@ -1168,8 +1200,12 @@ day parts; without the separation, it is getting collapsed in a long overreach a
 Redline Circle (60).)
 
 \begin{stlog}
-\input{ipfr.trip.att5.log.tex}\nullskip
+\input{ipfr.trip.att5.edited.log.tex}\nullskip
 \end{stlog}
+
+The special missing value \stcmd{.i} that appears in the smallest count report is
+used internally to stop \stcmd{wgtcellcollapse} after all of the relevant cases
+selected by the \ifexp\ conditions have been processed.
 
 Checking on the last improvement, we see how the manual resolution succeeded:
 
@@ -1180,7 +1216,7 @@ Checking on the last improvement, we see how the manual resolution succeeded:
 The resulting do-files can now be applied to producing control totals, and eventually to raking:
 
 \begin{stlog}
-\input{ipfr.trip.rake5.log.tex}\nullskip
+\input{ipfr.trip.rake5.edited.log.tex}\nullskip
 \end{stlog}
 
 \subsubsection{Informative labels}
@@ -1202,7 +1238,7 @@ labels.
 \section{Linear calibrated weights}
 \label{subsec:linear}
 
-Using the existing example, let me demonstrate the linear calibration option of 
+Using the existing example, let me demonstrate the linear calibration option of
 \stcmd{ipfraking}.
 
 \begin{stlog}
@@ -1211,14 +1247,17 @@ Using the existing example, let me demonstrate the linear calibration option of
 
 \begin{figure}[h!]
     \begin{center}
-    \epsfig[scale=0.2]{file=raked_linear}
+    \epsfig{file=raked_linear,width=400}
     \end{center}
     \caption{Linear and raked weights}
     \label{fig:linear:raked}
 \end{figure}
 
-The speed advantages of \stcmd{linear} calibration are quite clear, even though
-convergence of raking in 8 iterations is lighting-fast, in author's experience. 
+The speed advantages of \stcmd{linear} calibration are quite clear (0.63 seconds vs. 2.16 seconds), 
+and raking convergence of raking in 8 iterations is lighting-fast, in author's experience;
+it is not unusual to see dozens and hundreds of iterations, especially when higher order 
+interactions with many cells and subtle correlations between them are being used as
+raking margins.
 The weights are very similar to one another, with the lowest of the linearly
 calibrated weights being slightly smaller than comparable raked weights.
 As mentioned before, in the extreme situations, linearly calibrated weights
@@ -1243,7 +1282,7 @@ may become negative.
 
 \section*{Acknowledgements}
 
-The author is grateful to Jason Brinkley and Tom Guterbock for bug reports and 
+The author is grateful to Jason Brinkley and Tom Guterbock for bug reports and
 functionality suggestions.
 The opinions stated in this paper
 are of the author only, and do not represent the position of Abt Associates.

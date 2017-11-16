@@ -1,5 +1,8 @@
 *** Examples for the 2017 update of ipfraking
 
+clear
+program drop _all
+
 sjlog using ipfr.whatsdeff, replace
 webuse nhanes2, clear
 whatsdeff finalwgt
@@ -495,8 +498,8 @@ tab dpstoff5 if daypart==5
 sjlog close, replace
 
 *  compare the speed
-sjlog using ipfr.trip.lin5, replace
 cap drop raked_weight5*
+sjlog using ipfr.trip.lin5, replace
 set rmsg on
 ipfraking [pw=_one], ctotal(dpston5 dpstoff5) nograph gen(raked_weight5)
 ipfraking [pw=_one], ctotal(dpston5 dpstoff5) nograph gen(raked_weight5l) linear
