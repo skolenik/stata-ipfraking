@@ -2,10 +2,31 @@ d ipfraking -- iterative proportional fitting aka raking
 d
 d Author: Stas Kolenikov
 d 
-d ipfraking performs iterative proportional fitting,
-d i.e., it adjusts the sampling weights to conform
-d to the specified control totals
+d ipfraking performs iterative proportional fitting, i.e., it 
+d adjusts the sampling weights to conform to the specified control totals.
+d
+d The first release of the package was documented in 
+d Kolenikov (2014, Stata Journal 14 vol 1), see 
+d https://ideas.repec.org/a/tsj/stataj/v14y2014i1p22-59.html.
+d A preliminary version of that paper also available as ipfraking-v32.pdf.
+d Updates of the package as of November 2017 are documented in 
+d ipfraking-v63.pdf.
+d Soem of the examples in the v63 update use simulated trips data.
+d The code for the examples is provided in *example*.do files.
+d
 
 f ipfraking.ado
 f ipfraking.sthlp
-
+f mat2do.ado
+f mat2do.sthlp
+f xls2row.ado
+f xls2row.sthlp
+f whatsdeff.ado
+f ipfraking_report.ado
+f wgtcellcollapse.ado
+f ipfraking-v32.pdf
+f ipfraking-v63.pdf
+f trip_population.dta
+f trip_sample.dta
+f ipfraking-example.do
+f wgtcollapse-example.do

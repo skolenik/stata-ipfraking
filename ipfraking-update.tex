@@ -1,6 +1,6 @@
 \inserttype[st0001]{article}
 \author{S. Kolenikov}{%
-  Stanislav Kolenikov\\Abt Associates\\stas\_kolenikovs@abtassoc.com
+  Stanislav Kolenikov\\Abt Associates\\stas\_kolenikov@abtassoc.com
 }
 \title[Raking survey data: updates]{Updates to the ipfraking ecosystem}
 \maketitle
@@ -182,7 +182,6 @@ The row and column names of the control total matrices
     \item \stcmd{coleq}: the name of the variable for which total is computed;
           typically it is identically equal to 1.
 \end{itemize}
-See examples in Section \ref{sec:examples}.
 \end{sttech}
 
 \hangpara
@@ -281,13 +280,14 @@ option should be generated as double type. See \dref{data types}.
 \hangpara
 \stcmd{meta} puts information taken by \stcmd{ipfraking} as inputs and produced
     throughout the process into characteristics stored with the variable specified in
-    \stcmd{generate()} option. See Section \ref{subsec:example:meta}.
+    \stcmd{generate()} option. See details in Section \ref{subsec:example:meta}.
 
 \hangpara
 \stcmd{nograph} omits the histogram of the calibrated weights, which can be
 used to speed up \stcmd{ipfraking} (e.g., in replicate weight production).
 
 \subsection{New features of \stcmd{ipfraking}}
+\label{subsec:example:meta}
 
 Since the first publication, the following features and options were added.
 
@@ -373,8 +373,8 @@ See \dref{notes}.
 \label{subsec:utility}
 
 The original package \stcmd{ipfraking} provided two additional utility programs,
-\stcmd{mat2do} and \stcmd{xls2row}. An additional utility program was added
-to compute the design effects and margins of error, common tasks associated
+\stcmd{mat2do} and \stcmd{xls2row}. An additional utility program \stcmd{whatsdeff} 
+was added to compute the design effects and margins of error, common tasks associated
 with describing survey weights. Specifically, the Transparency Initiative
 of the American Association for Public Opinion Research
 \citep{aapor:2014:ti:terms}
@@ -383,6 +383,8 @@ requires that
 \begin{quote}
 For probability samples, the estimates of sampling error will be reported, and the discussion will state whether or not the reported margins of sampling error or statistical analyses have been adjusted for the design effect due to weighting, clustering, or other factors.
 \end{quote}
+
+% \subsubsection{Syntax of \stcmd{whatsdeff}}
 
 \begin{stsyntax}
 whatsdeff
@@ -396,7 +398,7 @@ by(\varlist)
 \end{stsyntax}
 
 The utility program \stcmd{whatsdeff} calculates the apparent design effect due to unequal weighting,
-${\rm DEFF_{UWE}}=1 + {CV}^2_w = $ \stcmd{1 + r(Var)/(r(mean))\^{}2} from \stcmd{summarize} {\it weight\_variable}.
+${\rm DEFF_{UWE}}=1 + {CV}^2_w = $ \stcmd{1 + r(Var)/(r(mean))\^{}2} from \stcmd{summarize} {\it weight{\_}variable}.
 Additionally, it reports the effective sample size, $n/{\rm DEFF_{UWE}}$, and also returns
 the margins of error for the sample proportions that estimate the population proportions of
 10\% and 50\%.
