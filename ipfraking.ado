@@ -1,4 +1,4 @@
-*! v.1.3.61 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.3.62 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -678,14 +678,14 @@ program define ControlCheckParse
 				local bnames    : colfullnames `b'
 				display as error "This is what `mat`k'' gives: "  _n as res "  `matknames'"
 				display as error "This is what I found in data: " _n as res "  `bnames'"
-				display as error "This is what `mat`k'' has that data don't: "  
+				display as error "This is what `mat`k'' has that data don't: "
                 if "  `: list matknames - bnames'" !== "" {
                     display as res "  `: list matknames - bnames'"
                 }
                 else {
                     display as text "  <none>"
                 }
-				display as error "This is what data have that `mat`k'' doesn't: "  
+				display as error "This is what data have that `mat`k'' doesn't: "
                 if "  `: list bnames - matknames'" != "" {
                     display as res "  `: list bnames - matknames'"				
                 }
@@ -1296,4 +1296,5 @@ exit
 1.3.46	Negative weights with linear calibration can still be used in CheckResults via my_total subroutine
 1.3.49	Debugging the interaction of CheckResults with mytotal
 1.3.61  Display <none> if the list of mismatch categories is empty (intermediate commits are SJ edits)
+1.3.62  Version numbers are aligned with -ipfraking-, -ipfraking_report-, -wgtcellcollapse-
 */

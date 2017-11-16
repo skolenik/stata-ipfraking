@@ -1,4 +1,4 @@
-*! 1.2.6 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
+*! 1.3.62 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
 program define ipfraking_report, rclass
 
 	version 12
@@ -7,7 +7,7 @@ program define ipfraking_report, rclass
 	
 	* (i) extract everything we need from chars
 	local oldweight : char `raked_weight'[source]
-	local k=1 
+	local k=1
 	while "`: char `raked_weight'[over`k']'" != "" {
 		local over`k'    : char `raked_weight'[over`k']
 		if "`over`k''" == "" {
@@ -145,7 +145,7 @@ program define ipfraking_report, rclass
 		}
 
 		* (iv.c) cycle over categories
-		qui levelsof `over`k'' if !mi(`raked_weight') 
+		qui levelsof `over`k'' if !mi(`raked_weight')
 		di "{txt}categories: {res}`r(levels)'{txt})."		
 
 		foreach c of numlist `r(levels)' {
@@ -155,10 +155,10 @@ program define ipfraking_report, rclass
 			if r(N) local comment_cat `"`comment_cat' `=r(N)' missing values of `totalof`k'' encountered with `over`k''==`c'."'
 		
 			* fixed text: margin name, etc.
-			local topost ("`raked_weight'") ("`over`k''") ("`: var label `over`k'''") ("Raking margin") 
-			local topost `topost' ("`totalof`k''") ("`: var label `totalof`k'''") 
+			local topost ("`raked_weight'") ("`over`k''") ("`: var label `over`k'''") ("Raking margin")
+			local topost `topost' ("`totalof`k''") ("`: var label `totalof`k'''")
 			* category text
-			local topost `topost' (`c') ("`: label (`over`k'') `c' '") 
+			local topost `topost' (`c') ("`: label (`over`k'') `c' '")
 			
 			* category target
 			if !`lost`k'' {
@@ -211,7 +211,7 @@ program define ipfraking_report, rclass
 			* is this really a known matrix?
 			cap confirm matrix `thismat'
 			if _rc {
-				di "{err}Matrix `thismat' could not be found." 
+				di "{err}Matrix `thismat' could not be found."
 				continue
 			}
 		
@@ -255,7 +255,7 @@ program define ipfraking_report, rclass
 			mata : st_numscalar( "`overall_target'", sum( st_matrix( "`thismat'" ) ) )
 
 			* (v.c) cycle over categories
-			qui levelsof `over' if !mi(`raked_weight') 
+			qui levelsof `over' if !mi(`raked_weight')
 			di "{txt}categories: {res}`r(levels)'{txt})."		
 
 			foreach c of numlist `r(levels)' {
@@ -265,11 +265,11 @@ program define ipfraking_report, rclass
 				if r(N) local comment_cat `"`comment_cat' `=r(N)' missing values of `totalof' encountered with `over'==`c'."'
 			
 				* fixed text: margin name, etc.
-				local topost ("`raked_weight'") ("`over'") ("`: var label `over''") ("Other known target") 
-				local topost `topost' ("`totalof'") ("`: var label `totalof''") 
+				local topost ("`raked_weight'") ("`over'") ("`: var label `over''") ("Other known target")
+				local topost `topost' ("`totalof'") ("`: var label `totalof''")
 				* category text
 				local thiscatlab : label (`over') `c'
-				local topost `topost' (`c') ("`thiscatlab'") 
+				local topost `topost' (`c') ("`thiscatlab'")
 				cap confirm number `thiscatlab'
 				if _rc == 0 | `"`thiscatlab'"'==`""' {
 					di "{txt}NOTE: category {res}`thiscatlab'{txt} of variable {res}`over'{txt} appears unlabeled."
@@ -333,7 +333,7 @@ program define ipfraking_report, rclass
 		
 		di "{txt}Auxiliary variable {res}`byvar'{txt} " _c
 	
-		local comment_var 
+		local comment_var
 		
 		* (v.a) are there any missing values lurking around
 		qui count if mi(`byvar') & !mi(`raked_weight')
@@ -350,7 +350,7 @@ program define ipfraking_report, rclass
 		scalar `overall_target' = .
 
 		* (v.c) cycle over categories
-		qui levelsof `byvar' if !mi(`raked_weight') 
+		qui levelsof `byvar' if !mi(`raked_weight')
 		di "{txt}(categories: {res}`r(levels)'{txt})."
 		foreach c of numlist `r(levels)' {
 			local comment_cat
@@ -360,9 +360,9 @@ program define ipfraking_report, rclass
 		
 			* fixed text: margin name, etc.
 			local topost ("`raked_weight'") ("`byvar'") ("`: var label `byvar''") ("Auxiliary variable")
-			local topost `topost' ("Identically one") ("Identically one") 
+			local topost `topost' ("Identically one") ("Identically one")
 			* category text
-			local topost `topost' (`c') ("`: label (`byvar') `c' '") 
+			local topost `topost' (`c') ("`: label (`byvar') `c' '")
 			
 			* category target
 			scalar `cat_target'= .
@@ -505,4 +505,5 @@ History
 			Source variable provides the reference to the source / matrix
 1.2.5		Better treatment of continuous targets
 1.2.6		Summary statistics of raking ratio; regression of log raking ratio
+1.3.62      Version numbers are aligned with -ipfraking-, -ipfraking_report-, -wgtcellcollapse-
 */

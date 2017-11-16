@@ -1,4 +1,4 @@
-*! v.0.3 WgtCellCollapse: collapsing weighting cells; Stas Kolenikov
+*! v.0.3.62 wgtcellcollapse: collapsing weighting cells; Stas Kolenikov
 program define wgtcellcollapse, rclass
 
 	version 12
@@ -1140,4 +1140,5 @@ v.0.1	02/12/2016	converted from LIRR_Collapse_Cells
 v.0.2	08/22/2017	bugs found in Seq_Define (`fulist' was used where `from' was needed)
 					syntax of Collapse_Cells was changed to use -var()- option rather than input varlist
 v.0.3   10/26/2017  -strict- option of searching for label text was added in Report_Rules
+0.3.62  Version numbers are aligned with -ipfraking-, -ipfraking_report-, -wgtcellcollapse-
 					
