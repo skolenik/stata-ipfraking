@@ -1,0 +1,16 @@
+syntax: glob
+.dvi
+tr-eps-converted-to.pdf
+tl-eps-converted-to.pdf
+main.log
+main.blg
+main.out
+main.pp
+main.pp1
+main.synctex
+main.tag
+*.aux
+ipfraking.prj.bak
+ipfraking.prj
+.pdf
+collapse_x.do

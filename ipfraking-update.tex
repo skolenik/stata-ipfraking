@@ -373,7 +373,7 @@ See \dref{notes}.
 \label{subsec:utility}
 
 The original package \stcmd{ipfraking} provided two additional utility programs,
-\stcmd{mat2do} and \stcmd{xls2row}. An additional utility program \stcmd{whatsdeff} 
+\stcmd{mat2do} and \stcmd{xls2row}. An additional utility program \stcmd{whatsdeff}
 was added to compute the design effects and margins of error, common tasks associated
 with describing survey weights. Specifically, the Transparency Initiative
 of the American Association for Public Opinion Research
@@ -616,7 +616,7 @@ break
 \end{stsyntax}
 
 \hangpara
-\stcmd{\underbar{var}iables(\varlist)} is the list of variables for which the collapsing rule are to be reported
+\stcmd{\underbar{var}iables(\varlist)} is the list of variables for which the collapsing rules are to be reported
 
 \hangpara
 \stcmd{break} requires \stcmd{wgtcellcollapse report} to exit with error when technical inconsistencies are encountered
@@ -660,7 +660,7 @@ Individual collapsing rules can be defined as follows.
 \input{ipfr.collapse1.log.tex}\nullskip
 \end{stlog}
 
-Note how \stcmd{break} option of \stcmd{wgtcellcollapse} can be used to abort the execution
+Note how \stcmd{break} option of \stcmd{wgtcellcollapse report} can be used to abort the execution
 when technical deficiencies in the rules or in the data are encountered. In this case,
 the label of the new category 123 was not defined, and this is considered a serious
 enough deficiency to stop.
@@ -711,7 +711,7 @@ A numeric value of the collapsed category that reads like 50412 means
 ``the subsequence of length 5 that starts with category 4 and ends with category 12''.
 In that second example, \stcmd{wgtcellcollapse sequence} padded the value of 4 with an additional zero,
 so that the length of resulting collapsed category value is always (\stnum of digits of the sequence length) +
-twice (\stnum of digits of the largest original category).
+twice (\stnum of digits of the greatest source category).
 
 Note that \stcmd{wgtcellcollapse sequence} respects the order in which the categories are
 supplied in the \stcmd{from()} option, and does not sort them. If the categories are supplied
@@ -872,7 +872,7 @@ The algorithm \stcmd{wgtcellcollapse collapse} uses to identify the cells to be 
 a variation of greedy search.
 It first identifies the cells with the lowest (positive) counts; finds the candidate rules
 for the variable(s) to be collapsed; evaluates the counts of the collapsed cells across all
-these candidate rules; and uses the rule that has produces the smallest size of the
+these candidate rules; and uses the rule that produces the smallest size of the
 collapsed cell across all applicable rules. So when it finds several rules that are applicable
 to the cell being currently processed that has a size of 5, and the candidate rules produce cells
 of sizes 7, 10 and 15, \stcmd{wgtcellcollapse collapse} will use the rule that produces the cell
@@ -1120,8 +1120,8 @@ original station Redline Circle (60). (Note that the cell 25355 would actually f
 The problem lies with the zero count of the ghost of the cell 25355.
 
 To overcome this problem, \stcmd{wgtcellcollapse} have a \stcmd{strict} option that only allows the rules
-that have a non-zero count in every component of the rule (so the problematic rule 
-24950:25355:60=54960 would not be a legal one under that restriction). As is easily seen, 
+that have a non-zero count in every component of the rule (so the problematic rule
+24950:25355:60=54960 would not be a legal one under that restriction). As is easily seen,
 this option directly contradicts the \stcmd{zeroes()} option, and that necessitates separate runs.
 
 \subsubsection{The third pass of cell collapse and raking: \stcmd{strict} and \stcmd{feed} options}
@@ -1255,9 +1255,9 @@ Using the existing example, let me demonstrate the linear calibration option of
     \label{fig:linear:raked}
 \end{figure}
 
-The speed advantages of \stcmd{linear} calibration are quite clear (0.63 seconds vs. 2.16 seconds), 
+The speed advantages of \stcmd{linear} calibration are quite clear (0.63 seconds vs. 2.16 seconds),
 and raking convergence of raking in 8 iterations is lighting-fast, in author's experience;
-it is not unusual to see dozens and hundreds of iterations, especially when higher order 
+it is not unusual to see dozens and hundreds of iterations, especially when higher order
 interactions with many cells and subtle correlations between them are being used as
 raking margins.
 The weights are very similar to one another, with the lowest of the linearly
