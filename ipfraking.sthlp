@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 1.23  25jan2013}{...}
+{* *! version 1.63  16Nov2017}{...}
 {cmd:help ipfraking} {right: ({browse "http://web.missouri.edu/~kolenikovs/stata/":Stas Kolenikov's webpage})}
 {hline}
 
@@ -33,7 +33,6 @@
 {synopt:{cmdab:ctrltol:erance(}{it:#}{cmd:)}}required accuracy of the controls{p_end}
 {synopt:{cmd:trace}}produce the trace plot{p_end}
 {synopt:{cmdab:nodiv:ergence}}ignore divergence of the max difference of successive weights{p_end}
-{synopt:{cmdab:alpha(}{it:#}{cmd:)}}adjust the weights only by the fraction of alpha of the difference{p_end}
 {synopt:{cmd:nograph}}suppress the diagnostic histograms{p_end}
 {syntab:Trimming}
 {synopt:{cmd:trimhirel(}{it:#}{cmd:)}}the upper bound on the greatest factor by which the weights can increase{p_end}
@@ -44,6 +43,7 @@
 {syntab:Miscellaneous}
 {synopt:{cmd:loglevel(}{it:#}{cmd:)}}level of detail in the output{p_end}
 {synopt:{cmd:meta}}store some meta-info concerning the raking procedure{p_end}
+{synopt:{cmd:linear}}perform linear calibration instead of raking{p_end}
 
 
 {title:Description}
@@ -155,6 +155,9 @@ The weights that are smaller than this value will be increased.{p_end}
 {phang}{cmd:meta} puts the name(s) of the control vectors as a {help note}
 stored with the variable specified in {cmd:generate()} option.{p_end}
 
+{phang}{cmd:linear} performs linear calibration. As it is performed analytically,
+it is much, MUCH faster than raking, but may produce negative weights if the
+samples are way out of balance vis-a-vis the population.{p_end}
 
 {title:Returned values}
 
@@ -350,16 +353,25 @@ On a Least Squares Adjustment of a Sampled Frequency Table When the Expected Mar
 {it:Survey Methodology}, {bf:32} (2), pp. 133­142.
 {browse "http://www.statcan.gc.ca/pub/12-001-x/12-001-x2006002-eng.pdf":Statistics Canada website access}.
 
+{phang}Kolenikov, S. (2014). Calibrating survey data using iterative proportional fitting.
+{it:The Stata Journal}, {bf:14} (1), pp. 22--59.
+{browse "https://ideas.repec.org/a/tsj/stataj/v14y2014i1p22-59.html":Stata Journal website}
 
 {title:Author}
 
 {pstd}Stanislav Kolenikov{p_end}
-{pstd}Senior Survey Statistician{p_end}
-{pstd}Abt SRBI{p_end}
+{pstd}Senior Scientist{p_end}
+{pstd}Abt Associates{p_end}
 {pstd}skolenik at gmail dot com{p_end}
 
 
 {title:Also see}
 
+{psee}{help survey} -- official survey capabilities of Stata
+
+{psee}{help survwgt} package by N. Winter (weight calibration, jackknife and BRR weights)
+
 {psee}{help maxentropy} package by M. Wittenberg ({browse "http://www.stata-journal.com/article.html?article=st0196":The Stata Journal article})
+
+{psee}{help ipfweight} package by M. Bergmann
 
