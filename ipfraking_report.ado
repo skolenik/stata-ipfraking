@@ -1,4 +1,4 @@
-*! 1.3.63 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
+*! 1.3.70 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
 program define ipfraking_report, rclass
 
 	version 12
@@ -66,6 +66,7 @@ program define ipfraking_report, rclass
 		///
 		long( C_Total_Margin_Category_Number) ///
 		str240(C_Total_Margin_Category_Label) ///
+		byte(C_Total_Margin_Category_Cell) ///
 		///
 		double(Category_Total_Target) ///
 		double(Category_Total_Prop) ///
@@ -159,6 +160,33 @@ program define ipfraking_report, rclass
 			local topost `topost' ("`totalof`k''") ("`: var label `totalof`k'''") 
 			* category text
 			local topost `topost' (`c') ("`: label (`over`k'') `c' '") 
+			
+			* figure out if this came from wgtcellcollapse, and whether it is a collapsed cell
+			cap confirm number `: char `over`k''[nrules]'
+			if _rc==0 {
+				* has the footprint chars of -wgtcellcollapse- present, so it can be checked if collapsed
+				local sources : char `over`k''[sources]
+				if `: word count `sources'' == 2 {
+					local cellsof : word 2 of `sources'
+					cap confirm numeric variable `cellsof'
+					if _rc == 0 {
+						* the variable is still in the data set, we can parse it
+						local factor : char `cellsof'[factor]
+						sum `cellsof', mean
+						local cmax = 10^(ceil(log10(r(max))))
+						if mod(`c',`cmax'*`cmax')<`cmax' {
+							* uncollapsed!
+							local topost `topost' (0)
+						}
+						else {
+							* collapsed!
+							local topost `topost' (1)
+						}
+					}
+				}
+				else topost `topost' (.n)
+			}
+			else topost `topost' (.n)
 			
 			* category target
 			if !`lost`k'' {
@@ -275,6 +303,33 @@ program define ipfraking_report, rclass
 					di "{txt}NOTE: category {res}`thiscatlab'{txt} of variable {res}`over'{txt} appears unlabeled."
 				}				
 				
+				* figure out if this came from wgtcellcollapse, and whether it is a collapsed cell
+				cap confirm number `: char `over`k''[nrules]'
+				if _rc==0 {
+					* has the footprint chars of -wgtcellcollapse- present, so it can be checked if collapsed
+					local sources : char `over`k''[sources]
+					if `: word count `sources'' == 2 {
+						local cellsof : word 2 of `sources'
+						cap confirm numeric variable `cellsof'
+						if _rc == 0 {
+							* the variable is still in the data set, we can parse it
+							local factor : char `cellsof'[factor]
+							sum `cellsof', mean
+							local cmax = 10^(ceil(log10(r(max))))
+							if mod(`c',`cmax'*`cmax')<`cmax' {
+								* uncollapsed!
+								local topost `topost' (0)
+							}
+							else {
+								* collapsed!
+								local topost `topost' (1)
+							}
+						}
+					}
+					else topost `topost' (.n)
+				}
+				else topost `topost' (.n)
+
 				* category target
 				local where = colnumb("`thismat'","`c'")
 				if "`where'" == "." {
@@ -364,6 +419,33 @@ program define ipfraking_report, rclass
 			* category text
 			local topost `topost' (`c') ("`: label (`byvar') `c' '") 
 			
+			* figure out if this came from wgtcellcollapse, and whether it is a collapsed cell
+			cap confirm number `: char `over`k''[nrules]'
+			if _rc==0 {
+				* has the footprint chars of -wgtcellcollapse- present, so it can be checked if collapsed
+				local sources : char `over`k''[sources]
+				if `: word count `sources'' == 2 {
+					local cellsof : word 2 of `sources'
+					cap confirm numeric variable `cellsof'
+					if _rc == 0 {
+						* the variable is still in the data set, we can parse it
+						local factor : char `cellsof'[factor]
+						sum `cellsof', mean
+						local cmax = 10^(ceil(log10(r(max))))
+						if mod(`c',`cmax'*`cmax')<`cmax' {
+							* uncollapsed!
+							local topost `topost' (0)
+						}
+						else {
+							* collapsed!
+							local topost `topost' (1)
+						}
+					}
+				}
+				else topost `topost' (.n)
+			}
+			else topost `topost' (.n)
+			
 			* category target
 			scalar `cat_target'= .
 			local topost `topost' (`=scalar(`cat_target')') (`=scalar(`cat_target')/scalar(`overall_target')')
@@ -445,6 +527,13 @@ program define ipfraking_report, rclass
 			mata : b.close_book()
 		}
 	}
+	
+	lab def collapsed 0 "Not collapsed" 1 "Collapsed" .n "N/A"
+	lab val C_Total_Margin_Category_Cell collapsed
+	lab var C_Total_Margin_Category_Cell "Collapsed interaction cell?"
+	qui count if !mi(C_Total_Margin_Category_Cell)
+	if r(N) == 0 drop C_Total_Margin_Category_Cell
+	
 	lab data "Weighting report on `raked_weight'"
 	
 	qui compress
@@ -519,4 +608,5 @@ History
 1.2.6		Summary statistics of raking ratio
 1.3.62		Version numbers are unified
 1.3.63		Columns of the Excel file are formatted a bit better for Stata 14.2+
+1.3.70		Added "Collapsed cell" indicator variable
 */
