@@ -20,8 +20,10 @@
 {synopthdr}
 {synoptline}
 {synopt :{cmd:replace}}overwrite the existing file{p_end}
+{synopt :{cmd:append}}add to the existing file{p_end}
 {synopt :{cmd:list}}add {cmd:matrix list} command to the end of the do-file{p_end}
 {synopt :{cmd:type}}list the matrix and the resulting do-file{p_end}
+{synopt :{cmd:notimestamp}}omit the time stamp at the header of the file{p_end}
 
 
 {title:Description}
@@ -35,8 +37,8 @@ reproduced. The names of the matrix and the do-file are required.
 {title:Author}
 
 {pstd}Stanislav Kolenikov{p_end}
-{pstd}Senior Survey Statistician{p_end}
-{pstd}Abt SRBI{p_end}
+{pstd}Senior Scientist{p_end}
+{pstd}Abt Associates{p_end}
 {pstd}skolenik at gmail dot com{p_end}
 
 

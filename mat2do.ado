@@ -1,7 +1,7 @@
-*! v.0.8 convert matrices to do-files. Author: Stas Kolenikov
+*! v.0.9 convert matrices to do-files. Author: Stas Kolenikov
 program define mat2do
 	version 9
-	syntax name(name=thematrix) using/ , [replace append type list]
+	syntax name(name=thematrix) using/ , [replace append type list NOTIMEstamp]
 	
 	confirm matrix `thematrix'
 	
@@ -11,7 +11,13 @@ program define mat2do
 	tempname towr
 	
 	file open `towr' using `"`using'"', write text `replace' `append'
-	file write `towr' "* Produced automatically by mat2do on `=c(current_date)' at `=c(current_time)'" _n(2)
+	
+	if "`replace'" == "replace" {
+		file write `towr' "* Produced automatically by mat2do"
+		if "`timestamp'" != "notimestamp" file write `towr' "on `=c(current_date)' at `=c(current_time)'" 
+		file write `towr' _n
+	}
+	file write `towr' _n
 	
 	if `rows' * `cols' < 100 {
 		file write `towr' "matrix `thematrix' = ( ///" _n

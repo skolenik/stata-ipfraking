@@ -337,12 +337,12 @@ program define Find_Candidate_Rules, sclass
 	sreturn clear
 	sreturn local x `x'
 	sreturn local cat `cat'
-	if `loglevel' > 0 char li `x'[]
+	if `loglevel' > 1 char li `x'[]
 	
 	* cycle through the rules
 	forvalues k=1/`: char `x'[nrules]' {
 		local thisrule : char `x'[rule`k']
-		if `loglevel' > 0 di "  {txt}Rule ({res}`k'{txt}): looking for {res}`cat'{txt} in {res}`thisrule'{txt}"
+		if `loglevel' > 1 di "  {txt}Rule ({res}`k'{txt}): looking for {res}`cat'{txt} in {res}`thisrule'{txt}"
 		tokenize `thisrule', parse(":=")
 		local themax 0
 		local found 0
@@ -356,7 +356,7 @@ program define Find_Candidate_Rules, sclass
 		if `found' & `themax' < `maxcategory' {
 				local goodrule `goodrule' `k'
 				sreturn local rule`k' `thisrule'
-				if `loglevel' > 0 di "    {txt}Found it here!"
+				if `loglevel' > 1 di "    {txt}Found it here!"
 			}
 		
 	}
@@ -615,7 +615,8 @@ program define Collapse_Cells, sortpreserve rclass
 		* everything up to the factor
 		qui {
 			gen long `prefix' = floor(`this'/`lastfactor')
-			levelsof `prefix', local( allprefixes )
+			if `loglevel' > 0 table `touse' , c(count `prefix' min `prefix' max `prefix')
+			levelsof `prefix' if `touse', local( allprefixes )
 			foreach k of numlist `allprefixes' {
 				foreach z of numlist `zeroes' {
 					local thisval = `k'*`lastfactor' + `z'
@@ -696,7 +697,7 @@ program define Collapse_Cells, sortpreserve rclass
 			if "`s(goodrule)'" == "" {
 				di "{err}NOTE: no applicable collapsing rules were found for `lastx' == `thislast'"
 				local failed `failed' `=`this'[1]'
-				if `loglevel' char li `lastx'[]
+				if `loglevel'>1 char li `lastx'[]
 				Find_Candidate_Rules, var(`prevx') cat(`thisprev') loglevel(`loglevel') max(`maxcategory')
 				if `loglevel'> 0 sreturn list
 				file write `towr' _n "* skipping `generate' == `=`this'[1]'; " _n
@@ -736,7 +737,7 @@ program define Collapse_Cells, sortpreserve rclass
 				* could not find anything meaningful
 				di "{err}  WARNING: could not find any rules to collapse `generate' == `=`this'[1]'"
 				local failed `failed' `=`this'[1]'
-				if `loglevel' char li `lastx'[]
+				if `loglevel'>1 char li `lastx'[]
 				local thisprev = mod( floor(`this'[1]/`lastfactor'), `: char `prevx'[factor]')
 				Find_Candidate_Rules, var(`prevx') cat(`thisprev') loglevel(`loglevel') max(`maxcategory')
 				if `loglevel' > 0 sreturn list
@@ -755,7 +756,7 @@ program define Collapse_Cells, sortpreserve rclass
 			Find_Candidate_Rules, var(`prevx') cat(`thisprev') loglevel(`loglevel') max(`maxcategory')
 			if "`s(goodrule)'" == "" {
 				di "{err}NOTE: no applicable collapsing rules were found for `prevx' == `thisprev'; skipping"
-				if `loglevel' char li `lastx'[]
+				if `loglevel'>1 char li `lastx'[]
 				file write `towr' _n "* skipping `generate' == `=`this'[1]'; " _n
 				file write `towr' "* no good collapsing rule found for `prevx' == `thisprev'" _n
 				qui replace `thiscount' = .i if `this' == `=`this'[1]'
@@ -787,7 +788,7 @@ program define Collapse_Cells, sortpreserve rclass
 			else {
 				* could not find anything meaningful
 				di "{err}  WARNING: could not find any rules to collapse `generate' == `=`this'[1]'"
-				if `loglevel' char li `lastx'[]
+				if `loglevel'>1 char li `lastx'[]
 				file write `towr' _n "* skipping `generate' == `=`this'[1]'; " _n
 				file write `towr' "* no good collapsing rule found for `prevx' == `thisprev'" _n
 				qui replace `thiscount' = .i if `this' == `=`this'[1]'
@@ -883,6 +884,8 @@ program define FindBestRule, rclass
 	local cat `s(cat)'
 	local basecat = `longcat' - `cat'
 	if `loglevel' > 0 di "{txt}  Base category = {res}`basecat'{txt}; c.f. target small category {res}`longcat'{txt}"
+	
+	if `basecat' == 0 di "{err}  Warning: base category = 0 in {inp}FindBestRule `0'"
 
 	if "`zero'" != "" {
 		`qui' sum `countvar' if `longvar' == `longcat'
@@ -924,7 +927,20 @@ program define FindBestRule, rclass
 		local thiscount 0
 		foreach c of local thesecats {
 			if `loglevel' > 0 di "{txt}  Attempting {res}`longvar'{txt} == {res}" `basecat' + `c'
-			sum `countvar' if `longvar' == `basecat' + `c' , `mean'
+			
+			qui count if (`longvar' == `basecat' + `c') & (`countvar'==.i)
+			if r(N) > 0 {
+				* this category overlaps with the if/in conditions, better skip
+				if `loglevel' > 0 {
+					di "{txt}  Found {res}`=r(N)'{txt} cases out of scope:"
+					format `longvar' %15.0f
+					tab `x' `longvar' if (`longvar' == `basecat' + `c'), mi
+				}
+				local thiscount -1
+				continue, break
+			}
+			
+			sum `countvar' if (`longvar' == `basecat' + `c'), `mean'
 			if r(N) > 0 {
 				* expect `countvar' to not vary within `basecat' + `c', and to be equal to the # of cases
 				cap assert r(min) == r(max) & r(min) == r(N)
