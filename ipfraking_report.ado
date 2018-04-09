@@ -1,4 +1,4 @@
-*! 1.3.70 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
+*! 1.3.72 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
 program define ipfraking_report, rclass
 
 	version 12
@@ -162,8 +162,7 @@ program define ipfraking_report, rclass
 			local topost `topost' (`c') ("`: label (`over`k'') `c' '") 
 			
 			* figure out if this came from wgtcellcollapse, and whether it is a collapsed cell
-			cap confirm number `: char `over`k''[nrules]'
-			if _rc==0 {
+			if strpos("`: char `over`k''[]'","nrules") {
 				* has the footprint chars of -wgtcellcollapse- present, so it can be checked if collapsed
 				local sources : char `over`k''[sources]
 				if `: word count `sources'' == 2 {
@@ -184,9 +183,9 @@ program define ipfraking_report, rclass
 						}
 					}
 				}
-				else topost `topost' (.n)
+				else local topost `topost' (.n)
 			}
-			else topost `topost' (.n)
+			else local topost `topost' (.n)
 			
 			* category target
 			if !`lost`k'' {
@@ -304,10 +303,9 @@ program define ipfraking_report, rclass
 				}				
 				
 				* figure out if this came from wgtcellcollapse, and whether it is a collapsed cell
-				cap confirm number `: char `over`k''[nrules]'
-				if _rc==0 {
+				if strpos("`: char `over'[]'","nrules") {
 					* has the footprint chars of -wgtcellcollapse- present, so it can be checked if collapsed
-					local sources : char `over`k''[sources]
+					local sources : char `over'[sources]
 					if `: word count `sources'' == 2 {
 						local cellsof : word 2 of `sources'
 						cap confirm numeric variable `cellsof'
@@ -326,9 +324,9 @@ program define ipfraking_report, rclass
 							}
 						}
 					}
-					else topost `topost' (.n)
-				}
-				else topost `topost' (.n)
+					else local topost `topost' (.n)
+				} // end of treating -wgtcellcollapse-d variables
+				else local topost `topost' (.n)
 
 				* category target
 				local where = colnumb("`thismat'","`c'")
@@ -420,10 +418,9 @@ program define ipfraking_report, rclass
 			local topost `topost' (`c') ("`: label (`byvar') `c' '") 
 			
 			* figure out if this came from wgtcellcollapse, and whether it is a collapsed cell
-			cap confirm number `: char `over`k''[nrules]'
-			if _rc==0 {
+			if strpos("`: char `byvar'[]'","nrules") {
 				* has the footprint chars of -wgtcellcollapse- present, so it can be checked if collapsed
-				local sources : char `over`k''[sources]
+				local sources : char `byvar'[sources]
 				if `: word count `sources'' == 2 {
 					local cellsof : word 2 of `sources'
 					cap confirm numeric variable `cellsof'
@@ -442,9 +439,9 @@ program define ipfraking_report, rclass
 						}
 					}
 				}
-				else topost `topost' (.n)
+				else local topost `topost' (.n)
 			}
-			else topost `topost' (.n)
+			else local topost `topost' (.n)
 			
 			* category target
 			scalar `cat_target'= .
@@ -609,4 +606,5 @@ History
 1.3.62		Version numbers are unified
 1.3.63		Columns of the Excel file are formatted a bit better for Stata 14.2+
 1.3.70		Added "Collapsed cell" indicator variable
+1.3.72		fixed bugs with -else topost- and poor management of empty `: char `over'[]'
 */
