@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 1.63  16Nov2017}{...}
+{* *! version 1.3.74  29Apr2018}{...}
 {cmd:help ipfraking} {right: ({browse "http://web.missouri.edu/~kolenikovs/stata/":Stas Kolenikov's webpage})}
 {hline}
 

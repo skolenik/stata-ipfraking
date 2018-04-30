@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 1.3.65  13Dec2017}{...}
+{* *! version 1.3.74  29Apr2018}{...}
 {cmd:help wgtcellcollapse} {right: ({browse "http://staskolenikov.net/stata/":Stas Kolenikov's webpage})}
 {hline}
 

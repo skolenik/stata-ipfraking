@@ -1,4 +1,4 @@
-*! v.1.3.67 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.3.74 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -1298,4 +1298,5 @@ exit
 1.3.61  Display <none> if the list of mismatch categories is empty (intermediate commits are SJ edits)
 1.3.62  Version numbers are aligned with -ipfraking-, -ipfraking_report-, -wgtcellcollapse-
 1.3.67	Bugs in reporting mismatching categories
+1.3.74  version numbers are aligned
 */
