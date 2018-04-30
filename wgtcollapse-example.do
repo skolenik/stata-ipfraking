@@ -7,6 +7,9 @@ sjlog using ipfr.whatsdeff, replace
 webuse nhanes2, clear
 whatsdeff finalwgt
 return list
+sjlog close, replace
+
+sjlog using ipfr.whatsdeff.sex, replace
 whatsdeff finalwgt, by(sex)
 return list
 sjlog close, replace
@@ -198,12 +201,12 @@ drop t_getoff
 egen getoff = total(trip_getoff), by(alight_id daypart)
 
 * population
-drop size totsize 
+drop size totsize
 
 sort board_id daypart alight_id
 list, sepby(board_id daypart)
 
-sort alight_id daypart board_id 
+sort alight_id daypart board_id
 list, sepby(alight_id daypart)
 
 sum trip_getoff
@@ -294,7 +297,6 @@ wgtcellcollapse sequence , var(daypart) from(2 3 4) depth(3)
 levelsof board_id, local(stations_on)
 levelsof alight_id, local(stations_off)
 local all_stations : list stations_on | stations_off
-* relies on stations being in sequential order!!!
 wgtcellcollapse sequence , var(board_id alight_id) from(`all_stations') depth(20)
 save trip_sample_rules, replace
 sjlog close, replace
@@ -487,8 +489,8 @@ whatsdeff raked_weight5
 sjlog close, replace
 
 sjlog using ipfr.trip.label5, replace
-wgtcellcollapse label, var(dpston5) 
-wgtcellcollapse label, var(dpstoff5) 
+wgtcellcollapse label, var(dpston5)
+wgtcellcollapse label, var(dpstoff5)
 label language numbered_ccells
 tab dpstoff5 if daypart==5
 label language texted_ccells
@@ -513,7 +515,7 @@ twoway (scatter raked_weight5 raked_weight5l, msize(small) m(oh) ) ///
 	aspect(1) xsc(r(10 40)) ysc(r(10 40)) legend(off) xtitle("Linear calibrated weight") ///
 	ytitle("Raked weight")
 graph export raked_linear.png, replace width(1200)
-graph export raked_linear.eps, replace 
+graph export raked_linear.eps, replace
 
 	
 	
