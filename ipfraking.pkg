@@ -9,9 +9,9 @@ d The first release of the package was documented in
 d Kolenikov (2014, Stata Journal 14 vol 1), see 
 d https://ideas.repec.org/a/tsj/stataj/v14y2014i1p22-59.html.
 d A preliminary version of that paper also available as ipfraking-v32.pdf.
-d Updates of the package as of November 2017 are documented in 
-d ipfraking-v63.pdf.
-d Soem of the examples in the v63 update use simulated trips data.
+d Updates of the package as of April 2018 are documented in 
+d ipfraking-v74.pdf.
+d Some of the examples in the v74 update use simulated trips data.
 d The code for the examples is provided in *example*.do files.
 d
 
