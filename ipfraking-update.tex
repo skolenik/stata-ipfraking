@@ -11,7 +11,7 @@ for iterative proportional fitting (raking) weight calibration procedures
 for complex survey designs.
 This article briefly describes the original package and updates to the core program, 
 and documents additional programs that are used to support the process of creating
-survey weights in the authors' production code.
+survey weights in author's production code.
 
 \keywords{\inserttag, survey, calibration, weights, raking}
 \end{abstract}
@@ -49,7 +49,7 @@ in the previous paper.
 
 For a given finite population $\mathcal U$ of units indexed $i=1,\ldots,N$,
 the interests of survey statisticians often lie in estimating the
-population total of a variable $Y$
+population total of a variable $Y$:
 \begin{equation}
    T[Y] = \sum_{i \in \mathcal{U}} Y_i
    \label{eq:total:pop}
@@ -63,24 +63,28 @@ the inverse probability of selection:
    w_{di} = \pi_i^{-1}
    \label{eq:prob:weight}
 \end{equation}
+where subscript $d$ stands for \textit{design} probabilities of selection.
 With these weights, an unbiased
 (design-based, non-parametric) estimator
 of the total (\ref{eq:total:pop}) is \citep{horvitz:thompson:1952}
 \begin{equation}
    t[y] = \sum_{j \in \mathcal{S}} \frac{y_j}{\pi_j}
    \equiv \sum_{j \in \mathcal{S}} w_{dj} y_j
-   \label{eq:total:sample},
+   \label{eq:total:sample}
 \end{equation}
 Probability weights protect
 the end user from potentially informative sampling designs, in which
 the probabilities of selection are correlated with outcomes, and
-the design-based methods generally ensure that inference can be generalized
+relieve the user from the need to fully account for the sampling design
+variables in their analysis, as is required in methods such 
+as multilevel regression with post-stratification \citep{gelman:mrp}.
+Design-based methods generally ensure that inference can be generalized
 to the finite population even when the statistical models used
 by analysts and researchers are not specified correctly
 \citep{pfeff:1993,binder:roberts:2003}.
 
 Often, survey statisticians have auxiliary information on the units
-in the frame, and such information can be included it at the sampling stage
+in the frame, and such information can be included at the sampling stage
 to create more efficient designs. Unequal probabilities of selection
 are then controlled with probability weights, implemented
 as \stcmd{[pw=}{\it exp}\stcmd{]} in Stata (and can be permanently
@@ -111,8 +115,8 @@ weights $w_{cj}$, align with the known population totals:
     = T [ \mathbf{X}  ]
     \label{eq:control:totals}
 \end{equation}
-where the right hand side, the population totals of the control variables,
-is assumed to be known from a census or a higher quality survey.
+The population totals of the control variables in the right hand side
+of (\ref{eq:control:totals}) are assumed to be known from a census or a higher quality survey.
 \citet{deville:sarndal:1992} framed the problem of finding a suitable
 set of weights as that of constrained optimization with the control
 equations (\ref{eq:control:totals}) serving as constraints,
@@ -121,12 +125,14 @@ the design weights $w_{dj}$ and calibrated weights
 $w_{cj}$ as close as possible, in a suitable sense.
 
 The package \stcmd{ipfraking} \citep{kolenikov:2014} implements
-a popular calibration algorithm, known as \textit{iterated proportional fitting},
+a popular calibration algorithm, known as \textit{iterative proportional fitting},
 or \textit{raking}, which consists of iterative updating (post-stratification) of
 each of the margins. (For an in-depth discussion of distinctions between
 raking and post-stratification, see \citet{kolenikov:2016}.)
 Since 2014, the continuing code development resulted
 in additional features that this update documents.
+
+% REFEREE: COMPARE TO OTHER STATA PACKAGES, OTHER SOFTWARE TOOLS
 
 \section{Updates to \stcmd{ipfraking} program and package}
 
@@ -178,10 +184,18 @@ The row and column names of the control total matrices
 (see \pref{matrix rownames}) should be formatted as follows.
 \begin{itemize}
     \item \stcmd{rownames}: the name of the control variable
-    \item \stcmd{colnames}: the values the control variables takes
-    \item \stcmd{coleq}: the name of the variable for which total is computed;
-          typically it is identically equal to 1.
+    \item \stcmd{colnames}: the values of the control variable. The sets of values
+          must be identical in the control total matrix and in the data set.
+    \item \stcmd{coleq}: the name of the variable for which the weighted total is computed.
+          Typically it is identically equal to 1, and the examples below
+          use conventionally named variable \stcmd{\_one}. See however
+          \citet{kolenikov:hammer:2015} for other examples.
 \end{itemize}
+
+Detailed examples of the matrices created by manually entering the numbers,
+or using results of estimation commands with external, large scale survey data
+were given in \citet{kolenikov:2014}.
+
 \end{sttech}
 
 \hangpara
@@ -199,6 +213,9 @@ One and only one of \stcmd{generate()} or \stcmd{replace} must be specified.
 \hangpara
 \stcmd{\underbar{lin}ear}
 requests linear calibration of weights.
+
+See section \ref{sec:linear} for details, examples, and practical suggestions.
+
 
 \subsubsection{Options to control convergence}
 
@@ -327,6 +344,8 @@ Option \stcmd{meta} saves more information in characteristics of the calibrated
 weight variables. Using Example 3 from \citet{kolenikov:2014} with trimming options,
 we have:
 
+% TODO: edit the file to trim the output that goes over the right margin
+
 \begin{stlog}
 \input{ipfr.example5.log.tex}\nullskip
 \end{stlog}
@@ -362,7 +381,7 @@ meta-information is stored.
 
 \begin{tabular}{ll}
     \stcmd{mat\num} & the name of the control total matrix \\
-    \stcmd{totalof\num}& the multiplier variable (matrix' \stcmd{coleq}) \\
+    \stcmd{totalof\num}& the multiplier variable (matrix \stcmd{coleq}) \\
     \stcmd{over\num}& the margin associated with the matrix \\
                     & (i.e., the categories represented by the columns)
 \end{tabular}
@@ -373,6 +392,8 @@ See \dref{notes}.
 
 \subsection{Additional examples}
 
+% REFEREE: GET RID OF OR EXTEND
+
 \citet{kolenikov:hammer:2015} demonstrate how to solve the problem of creating
 weights that are constant within a larger unit (e.g., in a household survey,
 it may be desirable that all individuals within a household have the same weight).
@@ -382,7 +403,11 @@ They achieve this as follows:
     \item At the household level, the weighting multipliers are defined
         for each \textit{individual} level control category as the number 
         of individuals in a household that have the requisite demographic characteristics.
-    \item Raking is performed at the household level.
+        Within the syntax of \stcmd{ipfraking}, these are the variables
+        identified by the \stcmd{coleq} names of the control total matrices,
+        and they vary from household to household.
+    \item Raking is performed at the household level by using \stcmd{if household_head==1} 
+        subsetting of \stcmd{ipfraking}.
     \item The resulting weights are assigned to every individual in the household.
 \end{enumerate}
 
@@ -391,7 +416,7 @@ They achieve this as follows:
 
 The original package \stcmd{ipfraking} provided two additional utility programs,
 \stcmd{mat2do} and \stcmd{xls2row}. 
-The former was updated to provide \stcmd{notimestamp} option to omit the time stamps 
+The former was updated to provide the \stcmd{notimestamp} option to omit the time stamps 
 (which tend to unnecessarily throw off the project building and revision control systems).
 An additional utility program \stcmd{whatsdeff}
 was added to compute the design effects and margins of error, common tasks associated
@@ -435,6 +460,31 @@ Design effects can also be broken down by a categorical variable:
 \begin{stlog}
 \input{ipfr.whatsdeff.sex.log.tex}\nullskip
 \end{stlog}
+
+% REFEREE:
+% 4.	The author should note that whatsdeff produces a design effect due to unequal weighting 
+% that should be considered as an upper bound on this design effect (a worst case scenario), 
+% since this calculation assumes that the weights are completely independent of 
+% the survey variable of descriptive interest.
+
+The estimates of unequal weighting design effects that \stcmd{whatsdeff} produces
+should be considered as a typical magnitude of a design effect. 
+In many situations when survey variables are correlated with weights
+or with the variables that weight calibration is based upon, the actual
+design effects reported by \stcmd{estat effect} should be expected
+to be lower, provided that variance estimation methods take calibration
+into account properly (e.g., via replicate variance estimation, as described
+in \citet{kolenikov:2010}, or via \stcmd{svy, vce(calibrate)} functionality
+of the official Stata \stcmd{svy} suite available in Stata 15+).
+In other words, for most situations these estimates could be considered an upper bound 
+on this design effect, since this calculation assumes that the weights are independent of 
+the survey variable of descriptive interest. Situations can be envisioned, however,
+when weighting is counterproductive for efficiency of certain statistics,
+e.g., when a group that is oversampled by the sampling design requirements
+turns out to have the outcome variance smaller than that of the rest population;
+or when screening is applied within rare population sampling designs
+\citep{anderson:kalton:1984;kalton:h2r:2016}.
+
 
 \subsection{New programs in the package}
 
@@ -495,7 +545,7 @@ across the population or the sample or to assign the ``base'' variable,
 the absolute reported values of the adjustment factors may not be
 meaningful. In the example above, 1.798 figures both as the greatest adjustment
 factor of the region variable, and as the lowest adjustment factor
-for the race and sex-by-age interaction. As is easily seen from regression
+for the race the and sex-by-age interaction. As is easily seen from regression
 output, this value is the exponent of the intercept \stcmd{1.798=exp(0.586)}.
 Since all of the ``estimates'' of the region specific coefficients are negative,
 the lowest reported value is less than this baseline value. Since all of the
@@ -629,8 +679,7 @@ a glimpse of the raking report looks as follows.
 
 The last line, corresponding to the auxiliary variable \stcmd{\_one} identically
 equal to 1 (this variable was present in the data set as it was used by \stcmd{ipfraking}
-as a multiplier)do "C:\Users\kolenikovs\localtexmf\bibtex\bib\user\everything.bib"
-, contains summaries for the sample as a whole. It is always recommended
+as a multiplier), contains summaries for the sample as a whole. It is always recommended
 to include it (note the use of \stcmd{ipfraking\_report, ... by(\_one)} option 
 in the syntax in the previous section.)
 
@@ -733,11 +782,12 @@ Let us demonstrate the two subcommands introduced so far with the following toy 
 \input{ipfr.collapse1.log.tex}\nullskip
 \end{stlog}
 
-For automated quality control purposes, \stcmd{break} option 
+For automated quality control purposes, the \stcmd{break} option 
 of \stcmd{wgtcellcollapse report} can be used to abort the execution
-when technical deficiencies in the rules or in the data are encountered. In the above example,
-the label of the new category 123 was not defined. Should the \stcmd{break} option be specified, 
-this would be considered a serious enough deficiency to stop:
+when technical deficiencies in the rules or in the data are encountered. 
+In the above example, the label of the new category 123 was not defined. 
+Should the \stcmd{break} option be specified, 
+this would be considered a serious enough deficiency to stop with an error:
 
 \begin{stlog}
 \input{ipfr.collapse2.log.tex}\nullskip
@@ -855,7 +905,7 @@ wgtcellcollapse label
 \hangpara
 \stcmd{force} instructs \stcmd{wgtcellcollapse label} to only use categories present in the data.
 
-Example is given in section \ref{subsec:wgtcellcollapse:labels} below.
+An example is given in section \ref{subsec:wgtcellcollapse:labels} below.
 
 \subsection{Syntax of \stcmd{wgtcellcollapse collapse}}
 
@@ -989,7 +1039,19 @@ effort to collapse those cells. Since the resulting cell(s) will fall short of t
 with a complaint that this size could not be achieved,
 but hopefully the cells will be collapsed as needed.
 
-\subsection{Extended motivating example}
+\bigskip
+
+A referee noted that \stcmd{wgtcellcollapse} could also have utility in preparing for hotdeck imputation procedures.
+The textbook versions of hotdeck procedures impute missing data by assuming a MAR model \citep{rubin:mar:1976} 
+with conditioning on a set of categorical variables, i.e., cells of a multivariate table. As is in weighting procedures,
+hotdeck procedures are more stable with larger cells, so cell collapsing is often recommended to achieve
+minimal cell sizes (with an understanding of the bias-vs-variance tradeoff built into these collapsing decisions).
+% ADMIT IN THE RESPONSE LETTER THAT I DON'T USE THEM, AND USE MULTIPLE IMPUTATION INSTEAD.
+For a review of the hotdeck and related imputation methods, see \citet{andridge:2016}.
+
+% TODO: PROMOTE TO A SECTION
+
+\section{Extended motivating example}
 \label{subsec:example}
 
 The primary purpose of developing \stcmd{wgtcellcollapse} and adding it to the \stcmd{ipfraking} 
@@ -1073,7 +1135,7 @@ The number of collapsing rules for variables \stcmd{board\_id} and \stcmd{alight
 created by \stcmd{wgtcellcollapse sequence}
 is \input{station.nrules.tex}\nullskip each.
 
-\subsubsection{The first pass of cell collapse and raking}
+\subsection{The first pass of cell collapse and raking}
 
 Let us say that we want to define weighting cells with at least 20 cases in each.
 We will thus start with weighting cells defined as station-by-daypart interaction,
@@ -1104,7 +1166,7 @@ six stations from 49 to 60.
 Note that in passes 36 and 44 for the boarding counts, \stcmd{wgtcellcollapse}
 could not find any applicable rules to collapse the cells and improve the count,
 of which a warning was issued in the output. Additionally, the problematic value are returned to the user
-in \stcmd{r(failed)} macro as a space delimited list, and in \stcmd{r(cfailed)}, as a comma-delimited list.
+in the \stcmd{r(failed)} macro as a space delimited list, and in the \stcmd{r(cfailed)}, as a comma-delimited list.
 The content of the \stcmd{r(failed)} macro can be used in code that could read
 
 \begin{stlog}
@@ -1119,7 +1181,7 @@ read
 \begin{stlog}
 list ... if inlist(dpston,`r(cfailed)')
 \end{stlog}
-Also, these returned values should be used in production code by using \stcmd{assert} command
+Also, these returned values should be used in production code by using the \stcmd{assert} command
 \citep{gould:2003:tip3} to ascertain that these macros are empty (i.e., no errors
 were encountered):
 \begin{stlog}
@@ -1169,9 +1231,9 @@ the line in the output of the \stcmd{total} command
 for \stcmd{dpstoff==5000060} showed only 4 alightings at station Redline Circle (60)
 on the weekends, a much lower count than others.
 
-\subsubsection{The second pass of cell collapse and raking: \stcmd{zeroes()} option}
+\subsection{The second pass of cell collapse and raking: \stcmd{zeroes()} option}
 
-Having identified the issue, we can overcome it with \stcmd{zeroes()} option
+Having identified the issue, we can overcome it with the \stcmd{zeroes()} option
 of \stcmd{wgtcellcollapse collapse} whose purpose is specifically to add missing categories.
 This option provides the list of stations that may have zero sample counts
 in a given daypart.
@@ -1270,7 +1332,7 @@ that have a non-zero count in every component of the rule (so the problematic ru
 24950:25355:60=54960 would not be a legal one under that restriction). As is easily seen,
 this option directly contradicts the \stcmd{zeroes()} option, and that necessitates separate runs.
 
-\subsubsection{The third pass of cell collapse and raking: \stcmd{strict} and \stcmd{feed} options}
+\subsection{The third pass of cell collapse and raking: \stcmd{strict} and \stcmd{feed} options}
 
 We will separate the two runs of \stcmd{wgtcellcollapse} into a run that only deals with zeroes,
 and another run that deals with everything else. To prevent \stcmd{wgtcellcollapse} from any further
@@ -1302,7 +1364,7 @@ Johnsville (39) to be collapsed with a non-zero cell Grand Junction (26).
 The resulting cells can neither be collapsed together, nor added
 to the ``everything'' cell 2200269.
 
-\subsubsection{The fourth pass of cell collapse and raking: \stcmd{greedy} and \stcmd{maxcat()} options}
+\subsection{The fourth pass of cell collapse and raking: \stcmd{greedy} and \stcmd{maxcat()} options}
 
 The next improvement is to fix the problem of weak performance in
 collapsing the zero cells with an additional option \stcmd{greedy}.
@@ -1343,7 +1405,7 @@ As a very minor point, there is still some room for improvement in collapsing th
 Instead of two cells with sizes 141 and 32, it seems like we could produce three cells, with
 Union Station (69) being its own cell, and everything else split somewhere in the middle.
 
-\subsubsection{The fifth pass of cell collapse and raking: \ifexp\ conditions}
+\subsection{The fifth pass of cell collapse and raking: \ifexp\ conditions}
 
 We will now code the collapsing cells for the weekend at the lowest level
 allowed by \stcmd{wgtcellcollapse}, and we will put those
@@ -1372,10 +1434,10 @@ The resulting do-files can now be applied to producing control totals, and event
 \input{ipfr.trip.rake5.edited.log.tex}\nullskip
 \end{stlog}
 
-\subsubsection{Informative labels}
+\subsection{Informative labels}
 \label{subsec:wgtcellcollapse:labels}
 
-Once the collapsing rules are finalized, a variety of labels that can be attached to the resulting
+Once the collapsing rules are finalized, several types of category labels can be attached to the resulting
 collapsed cells.
 Using the mechanics of labels in multiple languages (see \rref{label language}),
 \stcmd{wgtcellcollapse label} defines three
@@ -1391,13 +1453,27 @@ so the user does not have to copy and paste the command, but can click it instea
 
 
 \section{Linear calibrated weights}
-\label{subsec:linear}
+\label{sec:linear}
 
 Using the final set of collapsed categories in the simulated transportation data example, 
 let us demonstrate the linear calibration option of
-\stcmd{ipfraking}, added since \citet{kolenikov:2014}. The main advantage of linear
-calibrated weights is a much faster time, so we will time the output by using 
+\stcmd{ipfraking}, added since \citet{kolenikov:2014}. In mathematical terms,
+linear weights explicitly solve the minimization problem of finding a set of weights 
+$\{ w_{li}, i=1,\ldots,n \}$, where the subscript $l$ stands for \textit{linear} calibration, such that
+\begin{equation}
+  \sum_{i=1}^n \frac{(w_{li} - w_{di})^2}{w_{di}} \to \min
+  \label{eq:linear:weights}
+\end{equation}
+\citet{deville:sarndal:1992} and \citet{sarndal:swensson:1991} provide 
+explicit treatment of the problem and the resulting analytical expressions
+coded in \stcmd{ipfraking, linear}.
+The main advantage of linear weight calibration is a much faster computing time.
+To demonstrate it, we will time the output by using 
 the immediate timing results, \stcmd{set rmsg on} (see \rref{set}).
+% REFEREE: 
+% Please add more description of the results in Figure 1. What is the user to infer from this plot? 
+% What should users do if this plot takes on other appearances (i.e., there are more discrepancies 
+% between the two adjusted weights)?
 
 \bigskip
 
@@ -1416,17 +1492,54 @@ the immediate timing results, \stcmd{set rmsg on} (see \rref{set}).
 \clearpage
 
 The speed advantages of \stcmd{linear} calibration are quite clear (0.63 seconds vs. 2.16 seconds),
-and raking convergence of raking in 8 iterations is quite fast, in the author's experience
+even though raking convergence in 8 iterations is quite fast, in the author's experience
 (it is not unusual to see dozens and hundreds of iterations, especially when higher order
 interactions with many cells and subtle correlations between them are being used as
 raking margins).
-Linear calibrated and raked weights are very similar to one another, and the lowest of the linearly
+% TODO: time/profile better -- most of the time is spent in parsing
+Linear calibrated and raked weights are very similar to one another, as Figure \ref{fig:linear:raked}
+demonstrates, albeit the lowest of the linearly
 calibrated weights are slightly smaller than comparable raked weights.
+As the two methods are distinct, the weights should be expected to agree in general,
+but the match along the diagonal line of the plot should not be expected to be ideal.
+
 As mentioned before, in the extreme situations, linearly calibrated weights
-may become negative, which creates additional issues.
+may become negative, which creates additional issues.  First, Stata's \stcmd{svy}
+commands or estimation commands with \stcmd{pweight} specifications do not accept
+negative weights, and produce error messages when such weights are encountered.
+(This is not a bug, but indeed a welcome behavior.) Second, negative weights are
+typically difficult to interpret; within a common, although not technically accurate,
+interpretation of sampling weights as the number of population units that a sampled
+unit represents, it is puzzling to find a negative number of such population units.
+The way the author uses the linear calibration functionality of \stcmd{ipfraking}
+is to produce ``preliminary'' sets of weights. If the weights at the low end
+satisfy the natural range restriction (greater than 0, so as not to produce
+input data check errors with estimation commands; or sometimes greater than 1,
+so as to satisfy the ``number of population units'' interpretation that is often
+desirable for the clinets), these weights can be ``accepted'' as final. If they do not,
+\stcmd{ipfraking} can be called with trimming syntax such as \stcmd{trimloabs(1)}.
+The linear weights can then be used as a starting point to accelerate convergence.
 
+% TODO: create an example where this is an issue, show the workaround
+% See if this is internalized properly by svy calibrate linear.
 
-
+While the general theory of calibrated estimation \citep{deville:sarndal:1992}
+ensures that linear calibrated weights (analyzed as Case 1 in that paper) and 
+raked weights (Case 2) are asymptotically equivalent, this equivalence implicitly
+requires that the scales of the population control matrices are identical.
+In practice, different control total variables may come from different sources,
+and some sources may have either different populations to which they can technically
+be generalized, or come at different scales such as proportions vs. population totals.
+Nearly every general population dual frame RDD survey that the present author had dealt
+with would use the American Community Survey data for demographic variables
+(that would come with the desirable population scaling), and National Health Interview Survey
+data for phone use variables (cell phone only, landline only, both, or none) that would
+come in the form of proportions. While the raking version of \stcmd{ipfraking} would not
+have any difficulty incorporating both (with the caveat that the final scale of weights
+will be determined by the \textit{last} variable in the \stcmd{ctotal()} list),
+the linear version of weights would try to find a middle point between the population
+totals that are on the scale of millions, and proportions that are on the scale of about 1.
+The results would likely be quite strange.
 
 
 
@@ -1444,8 +1557,10 @@ may become negative, which creates additional issues.
 
 \section*{Acknowledgements}
 
-The author is grateful to Tom Guterbock for bug reports and
-functionality suggestions, and to Jason Brinkley for extensive comments and critique.
+The author is grateful 
+to the anonymous referee for a thorough review and thoughtful suggestions,
+to Tom Guterbock for bug reports and functionality suggestions, 
+and to Jason Brinkley for extensive comments and critique.
 The opinions stated in this paper
 are of the author only, and do not represent the position of Abt Associates.
 
