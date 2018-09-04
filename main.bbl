@@ -1,6 +1,6 @@
-\ifnum 19=1 \def\bibname{Reference}
+\ifnum 26=1 \def\bibname{Reference}
 \else \def\bibname{References} \fi
-\begin{thebibliography}{19}
+\begin{thebibliography}{26}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -12,6 +12,11 @@
 \newblock The American Association for Public Opinion Research.
 \newblock Available at
   http://www.aapor.org/AAPOR{\_}Main/media/MainSiteFiles/TI-Terms-and-Conditions-10-4-17.pdf.
+
+\bibitem[{Andridge and Little(2010)}]{andridge:little:2010}
+Andridge, R.~R., and R.~J. Little. 2010.
+\newblock A Review of Hot Deck Imputation for Survey Non-response.
+\newblock \emph{International statistical review} 78(1): 40--64.
 
 \bibitem[{Binder and Roberts(2003)}]{binder:roberts:2003}
 Binder, D.~A., and G.~R. Roberts. 2003.
@@ -56,8 +61,26 @@ Horvitz, D.~G., and D.~J. Thompson. 1952.
 \newblock \emph{Journal of the American Statistical Association} 47(260):
   663--685.
 
+\bibitem[{Kalton(2009)}]{kalton:2009}
+Kalton, G. 2009.
+\newblock Methods for oversampling rare subpopulations in social surveys.
+\newblock \emph{Survey Methodology} 35(2): 125--141.
+\newblock
+  Https://www150.statcan.gc.ca/n1/en/pub/12-001-x/2009002/article/11036-eng.pdf?st=HXLvKAiS.
+
+\bibitem[{Kalton and Anderson(1986)}]{kalton:anderson:1986}
+Kalton, G., and D.~Anderson. 1986.
+\newblock Sampling rare populations.
+\newblock \emph{Journal of the Royal Statistical Society. Series A (General)}
+  149(1): 65--82.
+
+\bibitem[{Kolenikov(2010)}]{kolenikov:2010}
+Kolenikov, S. 2010.
+\newblock Resampling inference with complex survey data.
+\newblock \emph{The Stata Journal} 10: 165--199.
+
 \bibitem[{Kolenikov(2014)}]{kolenikov:2014}
-Kolenikov, S. 2014.
+---------. 2014.
 \newblock Calibrating survey data using iterative proportional fitting.
 \newblock \emph{The Stata Journal} 14(1): 22--59.
 
@@ -100,6 +123,12 @@ Kott, P.~S. 2006.
   and C.~R. Rao, vol. 29B of \emph{Handbook of Statistics}, chap.~25. Oxford,
   UK: Elsevier.
 
+\bibitem[{Park et~al.(2004)Park, Gelman, and Bafumi}]{park:gelman:bafumi:2004}
+Park, D.~K., A.~Gelman, and J.~Bafumi. 2004.
+\newblock Bayesian Multilevel Estimation with Poststratification: State-Level
+  Estimates from National Polls.
+\newblock \emph{Political Analysis} 12(4): 375--385.
+
 \bibitem[{{Pew Research Center}(2012)}]{pew:2012}
 {Pew Research Center}. 2012.
 \newblock Assessing the Representativeness of Public Opinion Surveys.
@@ -112,10 +141,21 @@ Pfeffermann, D. 1993.
 \newblock The role of sampling weights when modeling survey data.
 \newblock \emph{International Statistical Review} 61: 317--337.
 
+\bibitem[{Rubin(1976)}]{rubin:1976}
+Rubin, D.~B. 1976.
+\newblock Inference and missing data.
+\newblock \emph{Biometrika} 63(3): 581--592.
+
 \bibitem[{S{\"{a}}rndal(2007)}]{sarndal:2007}
 S{\"{a}}rndal, C.-E. 2007.
 \newblock The calibration approach in survey theory and practice.
 \newblock \emph{Survey Methodology} 33(2): 99--119.
+
+\bibitem[{S{\"a}rndal et~al.(1992)S{\"a}rndal, Swensson, and
+  Wretman}]{sarndal:swens:wret:1992}
+S{\"a}rndal, C.-E., B.~Swensson, and J.~Wretman. 1992.
+\newblock \emph{Model Assisted Survey Sampling}.
+\newblock New York: Springer.
 
 \bibitem[{Thompson(1997)}]{thompson:1997}
 Thompson, M.~E. 1997.
