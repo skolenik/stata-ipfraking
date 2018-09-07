@@ -46,9 +46,37 @@ generate sex_age = sex*10 + age_grp
 
 ipfraking [pw=finalwgt], gen( rakedwgt3 ) ///
     ctotal( ACS2011_sex_age Census2011_region Census2011_race ) ///
-    trimhiabs( 200000 ) trimloabs( 2000 ) meta
+    trimhiabs( 200000 ) trimloabs( 2000 ) meta nograph
 
 
+* vs. svycal
+cap matrix drop sctotals
+local tlist
+foreach mat in ACS2011_sex_age Census2011_region Census2011_race {
+	mat sc_`mat' = `mat'
+	local cnames : colnames `mat'
+	local which  : rownames `mat'
+	local scnames
+	foreach c of local cnames {
+		local scnames `scnames' `c'.`which'
+		local where = colnumb(`mat',"`c'")
+		local tlist `tlist' `c'.`which' = `=`mat'[1,`where']'
+		di `"`c'.`which' = `=`mat'[1,`where']'"'
+	}
+	mat coleq sc_`mat' = _
+	di "`scnames'"
+	mat colnames sc_`mat' = `scnames'
+	mat sctotals = nullmat(sctotals), sc_`mat'
+}
+mat list sctotals
+di `"`tlist'"'
+
+svyset psu [pw=rakedwgt3], strata(strata) rake(i.sex_age i.region i.race, totals( `tlist' ) nocons)
+
+svycal rake i.sex_age i.region i.race [pw=finalwgt], nocons gen( rakedwgt3a ) ///
+	totals( sctotals )
+
+	
 sjlog using ipfr.report1, replace
 ipfraking_report using rakedwgt3-report, raked_weight(rakedwgt3) replace by(_one)
 sjlog close, replace

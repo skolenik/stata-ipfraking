@@ -1,4 +1,4 @@
-* Examples for ipfraking article -- Stas Kolenikov
+* Examples for the ipfraking article -- Stas Kolenikov
 
 clear
 discard
