@@ -1,4 +1,4 @@
-*! v.1.3.74 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.3.79 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -6,7 +6,7 @@ program define ipfraking, rclass
 	syntax [pw/] [if] [in] , [ CTOTal( namelist )  ///
 		GENerate(name) quietly replace ITERate(int 2000) TOLerance(passthru) CTRLTOLerance(passthru) loglevel(int 0) meta double nograph ///
 		trimhirel(passthru) trimhiabs(passthru) trimlorel(passthru) trimloabs(passthru) TRIMFREQuency(string) trace one(varlist min=1 max=1 numeric) ///
-		selfcheck from(varname) noDIVergence alpha(passthru) LINear	* ]
+		selfcheck from(varname) noDIVergence alpha(passthru) LINear	nosvyset * ]
 
 	// syntax:
 	//   [pw=original weight variable]
@@ -20,6 +20,7 @@ program define ipfraking, rclass
 	//   linear        linear calibration
 	//   nodivergence  usually makes sense; sometimes, especially with trimming, the objective function fails to go down
 	//   trim[hi|lo][abs|rel]  trimming values: HI from above, LO from below; ABS in absolute values, REL in ratios
+	//   nosvyset		to not show the suggested svyset settings
 
 	if "`exp'"=="" & "`selfcheck'" == "" {
 		display as error "pweight is required"
@@ -292,10 +293,26 @@ program define ipfraking, rclass
 	
 		note `theweight' : Raking controls used: `ctotal'
 		forvalues k=1/`nvars' {
+			local svycal_raked `svycal_raked' i.`over`k''
+		}
+		if _caller() >= 15.1 & "`svyset'" != "nosvyset" di _n "{inp}svyset , rake( `svycal_raked , nocons totals( " _dup(3) char(47)
+		forvalues k=1/`nvars' {
 			char `theweight'[`mat`k''] `=return(mreldif`k')'
 			char `theweight'[totalof`k'] `var`k''
 			char `theweight'[over`k'] `over`k''
 			char `theweight'[mat`k'] `mat`k''
+			forvalues j=1/`=colsof(`mat`k'')' {
+				local cat : word `j' of `: colnames `mat`k'''
+				local svycal_totals `svycal_totals' `cat'.`over`k'' = `=`mat`k''[1,`j']'
+				if _caller() >= 15.1 & "`svyset'" != "nosvyset"  di "   `cat'.`over`k'' = `=`mat`k''[1,`j']' " _dup(3) char(47)
+			}
+		}
+		if _caller() >= 15.1 & "`svyset'" != "nosvyset" di "))"
+		char `theweight'[svyset] rake( `svycal_raked', totals( `svycal_totals' ) nocons ) 
+		if _caller() >= 15.1 {
+			di _n "{txt}Suggested {inp}svyset{txt} statements are available inside {inp}char `theweight'[svyset]{txt} characteristic."
+			di "{txt}To gain the benefits of weight calibration, type: " _c
+			di "{inp}svyset , " char(96) ": char `theweight'[svyset]" char(39) " noclear"
 		}
 		
 		tempname hash1
@@ -1299,4 +1316,5 @@ exit
 1.3.62  Version numbers are aligned with -ipfraking-, -ipfraking_report-, -wgtcellcollapse-
 1.3.67	Bugs in reporting mismatching categories
 1.3.74  version numbers are aligned
+1.3.79	svy settings are suggested for Stata 15.1+
 */
