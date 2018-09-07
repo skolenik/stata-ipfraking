@@ -1,4 +1,4 @@
-*! v.1.3.79 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.3.81 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -292,8 +292,11 @@ program define ipfraking, rclass
 	if "`meta'" != "" {
 	
 		note `theweight' : Raking controls used: `ctotal'
+		
+		* recommend svy settings
 		forvalues k=1/`nvars' {
-			local svycal_raked `svycal_raked' i.`over`k''
+			if "`var`k''" == "_one" local svycal_raked `svycal_raked' i.`over`k''
+			else local svycal_raked `svycal_raked' i.`over`k''#c.`var`k''
 		}
 		if _caller() >= 15.1 & "`svyset'" != "nosvyset" di _n "{inp}svyset , rake( `svycal_raked , nocons totals( " _dup(3) char(47)
 		forvalues k=1/`nvars' {
@@ -303,8 +306,10 @@ program define ipfraking, rclass
 			char `theweight'[mat`k'] `mat`k''
 			forvalues j=1/`=colsof(`mat`k'')' {
 				local cat : word `j' of `: colnames `mat`k'''
-				local svycal_totals `svycal_totals' `cat'.`over`k'' = `=`mat`k''[1,`j']'
-				if _caller() >= 15.1 & "`svyset'" != "nosvyset"  di "   `cat'.`over`k'' = `=`mat`k''[1,`j']' " _dup(3) char(47)
+				if "`var`k''" == "_one" local extra `cat'.`over`k'' = `=`mat`k''[1,`j']'
+				else local extra `cat'.`over`k''#c.`var`k'' = `=`mat`k''[1,`j']'
+				local svycal_totals `svycal_totals' `extra'
+				if _caller() >= 15.1 & "`svyset'" != "nosvyset"  di "   `extra' " _dup(3) char(47)
 			}
 		}
 		if _caller() >= 15.1 & "`svyset'" != "nosvyset" di "))"
@@ -315,6 +320,7 @@ program define ipfraking, rclass
 			di "{inp}svyset , " char(96) ": char `theweight'[svyset]" char(39) " noclear"
 		}
 		
+		* hash the weights
 		tempname hash1
 		
 		mata : st_view(w=.,.,"`theweight'")
@@ -322,6 +328,7 @@ program define ipfraking, rclass
 		
 		char `theweight'[hash1] `=scalar(`hash1')'
 		
+		* pass options as chars
 		foreach trimpar in trimfrequency trimhiabs trimloabs trimhirel trimlorel {
 			if "``trimpar''" != "" char `theweight'[`trimpar'] ``trimpar''
 		}
@@ -1316,5 +1323,5 @@ exit
 1.3.62  Version numbers are aligned with -ipfraking-, -ipfraking_report-, -wgtcellcollapse-
 1.3.67	Bugs in reporting mismatching categories
 1.3.74  version numbers are aligned
-1.3.79	svy settings are suggested for Stata 15.1+
+1.3.81	svy settings are suggested for Stata 15.1+
 */
