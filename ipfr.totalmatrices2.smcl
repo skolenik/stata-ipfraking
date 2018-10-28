@@ -1,0 +1,14 @@
+{com}. totalmatrices alltotals, ipfraking stub(totmat_) replace convert
+{txt}It appears that the matrix {res}alltotals{txt} is of the {inp}svycal{txt} format.
+{txt}Matrices created:
+{stata matrix list totmat_sex_age}
+{stata matrix list totmat_region}
+{stata matrix list totmat_race}
+
+{com}. matrix list totmat_region
+{res}
+{txt}totmat_region[1,4]
+            _one:     _one:     _one:     _one:
+               1         2         3         4
+region {res} 40679030  49205289  85024007  53385843
+{reset}

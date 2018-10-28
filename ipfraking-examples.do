@@ -4,6 +4,7 @@ clear
 discard
 set more off
 set rmsg off
+set type double
 
 version 10
 
@@ -163,6 +164,7 @@ sjlog close, replace
 
 ********************************************* UPDATE
 
+* whatsdeff example
 sjlog using ipfr.whatsdeff, replace
 webuse nhanes2, clear
 whatsdeff finalwgt
@@ -171,6 +173,14 @@ whatsdeff finalwgt, by(sex)
 return list
 sjlog close, replace
 
+* reproduce weight 2 and weight 3
+ipfraking [pw=finalwgt], gen( rakedwgt3 ) ///
+    ctotal( ACS2011_sex_age Census2011_region Census2011_race ) ///
+    trimhiabs( 200000 ) trimloabs( 2000 )
+ipfraking [pw=finalwgt], gen( rakedwgt2 ) ///
+    ctotal( ACS2011_sex_age Census2011_region Census2011_race ) 
+	
+* ipfraking report
 sjlog using ipfr.report1, replace
 ipfraking_report using rakedwgt3-report, raked_weight(rakedwgt3) replace by(_one)
 sjlog close, replace
@@ -182,7 +192,7 @@ list C_Total_Margin_Variable_Name C_Total_Margin_Category_Label ///
 	sepby( C_Total_Margin_Variable_Name )
 sjlog close, replace
 
-
+* whatsdeff examples
 sjlog using ipfr.whatsdeff, replace
 webuse nhanes2, clear
 whatsdeff finalwgt
@@ -194,12 +204,16 @@ whatsdeff finalwgt, by(sex)
 return list
 sjlog close, replace
 
+* self-contained piece from here down
 webuse nhanes2, clear
 gen byte _one = 1
 generate byte age_grp = 1 + (age>=40) + (age>=60) if !mi(age)
 generate sex_age = sex*10 + age_grp
 
-set rmsg on
+ipfraking [pw=finalwgt], gen( rakedwgt2 ) ///
+    ctotal( ACS2011_sex_age Census2011_region Census2011_race ) 
+
+* svyset syntax
 sjlog using ipfr.svyset, replace
 ipfraking [pw=finalwgt], gen( rakedwgt3 ) ///
     ctotal( ACS2011_sex_age Census2011_region Census2011_race ) ///
@@ -208,41 +222,39 @@ svyset , `: char rakedwgt3[svyset]' noclear
 sjlog close, replace
 
 * vs. svycal
-cap matrix drop sctotals
-local tlist
-foreach mat in ACS2011_sex_age Census2011_region Census2011_race {
-	mat sc_`mat' = `mat'
-	local cnames : colnames `mat'
-	local which  : rownames `mat'
-	local scnames
-	foreach c of local cnames {
-		local scnames `scnames' `c'.`which'
-		local where = colnumb(`mat',"`c'")
-		local tlist `tlist' `c'.`which' = `=`mat'[1,`where']'
-		di `"`c'.`which' = `=`mat'[1,`where']'"'
-	}
-	mat coleq sc_`mat' = _
-	di "`scnames'"
-	mat colnames sc_`mat' = `scnames'
-	mat sctotals = nullmat(sctotals), sc_`mat'
-}
-mat list sctotals
-di `"`tlist'"'
+sjlog using ipfr.totalmatrices, replace
+totalmatrices ACS2011_sex_age Census2011_region Census2011_race, ///
+	ipfraking stub(alltotals) replace convert
+sjlog close, replace
 
+* go back
+sjlog using ipfr.totalmatrices2, replace
+totalmatrices alltotals, ipfraking stub(totmat_) replace convert
+matrix list totmat_region
+sjlog close, replace
+
+
+
+* comparison with -svycal-
 sjlog using ipfr.svycal, replace
-svycal rake i.sex_age i.region i.race [pw=finalwgt], nocons gen( rakedwgt3a ) ///
-	totals( sctotals )
+svycal rake ibn.sex_age ibn.region ibn.race [pw=finalwgt], ///
+	generate(rakedwgt2a) totals(alltotals) nocons
+compare rakedwgt2 rakedwgt2a
+assert reldif(rakedwgt2, rakedwgt2a) < c(epsfloat)
 sjlog close
+
+* comparison with -sreweight-
+mat alltotals_t = alltotals'
+forvalues k=1/`=colsof(alltotals)' {
+	local thisname : word `k' of `: colnames alltotals'
+	local thisvar  : subinstr local thisname "." "_", all
+	gen byte _i_`thisvar' = `thisname'
+	local ilist `ilist' _i_`thisvar'
+}
+sreweight `ilist', sweight(finalwgt) nweight(rakedwgt2b) total(alltotals_t) dfunction(c)
+compare rakedwgt2 rakedwgt2b
+* in fact, -sreweight- is closer to -svycal-
+compare rakedwgt2a rakedwgt2b
+
 	
-sjlog using ipfr.report1, replace
-ipfraking_report using rakedwgt3-report, raked_weight(rakedwgt3) replace by(_one)
-sjlog close, replace
-
-sjlog using ipfr.report2, replace
-use rakedwgt3-report, clear
-list C_Total_Margin_Variable_Name C_Total_Margin_Category_Label ///
-	Category_Total_Target Category_Total_RKDWGT DEFF_SRCWGT DEFF_RKDWGT , ///
-	sepby( C_Total_Margin_Variable_Name )
-sjlog close, replace
-
 exit

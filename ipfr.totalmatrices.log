@@ -1,0 +1,13 @@
+. totalmatrices ACS2011_sex_age Census2011_region Census2011_race, ///
+>         ipfraking stub(alltotals) replace convert
+It appears that the matrix ACS2011_sex_age is of ipfraking format.
+It appears that the matrix Census2011_region is of ipfraking format.
+It appears that the matrix Census2011_race is of ipfraking format.
+You can now matrix list alltotals to check and then call svycal as:
+   svycal [regress|rake] 11.sex_age 12.sex_age 13.sex_age 21.sex_age 2
+> 2.sex_age 23.sex_age 1.region 2.region 3.region 4.region 1.race 2.ra
+> ce 3.race [pw=finalwgt], generate(...) totals(alltotals) nocons
+I suspect the following would be simpler and could work, too:
+   svycal [regress|rake] ibn.sex_age ibn.region ibn.race [pw=finalwgt]
+> , generate(...) totals(alltotals) nocons
+

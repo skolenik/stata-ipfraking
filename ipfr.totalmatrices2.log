@@ -1,0 +1,14 @@
+. totalmatrices alltotals, ipfraking stub(totmat_) replace convert
+It appears that the matrix alltotals is of the svycal format.
+Matrices created:
+matrix list totmat_sex_age
+matrix list totmat_region
+matrix list totmat_race
+
+. matrix list totmat_region
+
+totmat_region[1,4]
+            _one:     _one:     _one:     _one:
+               1         2         3         4
+region  40679030  49205289  85024007  53385843
+

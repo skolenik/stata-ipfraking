@@ -1,0 +1,19 @@
+{com}. svycal rake ibn.sex_age ibn.region ibn.race [pw=finalwgt], ///
+>         generate(rakedwgt2a) totals(alltotals) nocons
+{txt}note: 4.region omitted because of collinearity
+note: 3.race omitted because of collinearity
+{res}{txt}
+{com}. compare rakedwgt2 rakedwgt2a
+
+{txt}{col 41}{hline 10} difference {hline 10}
+{col 29}count{col 41}minimum{col 54}average{col 66}maximum
+{hline 72}
+rakedwgt2<rakedw~2a     {res}     6843     -.0057653    -.0001227   -3.27e-06
+{txt}rakedwgt2>rakedw~2a     {res}     3508      1.56e-07     .0002394    .0038718
+{txt}{col 24}{hline 10}
+jointly defined         {res}    10351     -.0057653     1.70e-13    .0038718
+{txt}{col 24}{hline 10}
+total                   {res}    10351
+{txt}
+{com}. assert reldif(rakedwgt2, rakedwgt2a) < c(epsfloat)
+{txt}
