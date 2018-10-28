@@ -132,6 +132,82 @@ raking and post-stratification, see \citet{kolenikov:2016}.)
 Since 2014, the continuing code development resulted
 in additional features that this update documents.
 
+\subsection{Other packages with similar functionality}
+
+There exist other packages that provide similar basic functionality 
+(i.e., raked weights without trimming).
+\citet{kolenikov:2014} provided comparisons with 
+\stcmd{survwgt} \citep{winter:2002}, \stcmd{ipfweight} \citep{bergmann:2011},
+\stcmd{maxentropy} \citep{wittenberg:2010}, and reported results that
+are identical within numeric accuracy. 
+
+Yet another weight calibration
+package that was published simultaneously with \citet{kolenikov:2014}
+was \stcmd{sreweight} \citep{pacifico:2014}. It implements a full range
+of objective functions from \citet{deville:sarndal:1992}, and does so faster
+than \stcmd{ipfraking} as the core iterative functionality is implemented in Mata.
+% Describe what Pacifico does
+Finally, Stata 15.1 now provides \stcmd{svycal} command,
+undocumented at the time of the writing of this paper, although described 
+and exemplified in detail in \citet{dever:valliant:2017}. Compared
+to \stcmd{svycal}, the core functionality of \stcmd{ipfraking} provides
+a richer set of trimming specifications. The author compared the weights
+produced by \stcmd{ipfraking} with those produced by \stcmd{sreweight}
+and \stcmd{svycal}
+in the case of basic raking procedure without trimming, and they agree within
+numeric accuracy. They also agree with those produced by R package
+\stcmd{survey}, namely \stcmd{survey::calibrate(...,calfun="raking")} function, 
+and those produced by SAS raking macro \stcmd{RAKE\_AND\_TRIM()} 
+\citep{izrael:batt:batt:ball:2017}.
+
+It is somewhat unfortunate that so much effort has gone into replicating
+the functionality by the different authors. The primary distinction of the current
+\stcmd{ipfraking} package is the rich ecosystem that goes along with it, aimed, 
+in its totality, at producing survey weights by a survey organization in 
+a way that is efficient, robust and flexible from coding perspective. 
+
+As a practicing survey statistician who needs to experiment
+with the weights a lot, the present author believes that \stcmd{ipfraking}
+is easier to experiment with than \stcmd{svycal} or \stcmd{sreweight}, for several reasons.
+First, \stcmd{ipfraking} relies on the control totals being carried over from \stcmd{svy: total} 
+with minimal modifications such as renaming row and column names; 
+passing control totals is more cumbersome with other packages.
+Second, \stcmd{ipfraking} produces detailed diagnostics of the problems and oddities
+it encounters along the way, assisting the survey statistician assess whether 
+the resulting weights are satisfactory. For relatively simpler tasks of producing
+replicate weights and calibrating them at the same time, \stcmd{survwgt} provides
+a much easier syntax. Coding the task with \stcmd{ipfraking} or any other package would 
+require explicit cycles.
+
+From code development perspective, the present author believes that relying 
+on matching the order of control
+totals and variables, as required by all other user-contributed packages,
+creates a potential for errors that are easy to make and difficult to catch.
+Both \stcmd{ipfraking} and the official \stcmd{svycal} pair the control total
+figures with the categories of calibration variables,
+albeit in different ways: \stcmd{ipfraking} does so via the names attached
+to the control total matrices, and \stcmd{svycal}, through explicit listing
+of control totals in the factor variable notation in the command call
+as one of the possible syntaxes, or through matrix column naming, in the other syntax.
+(A conversion tool, \stcmd{totalmatrices}, is provided in this update.)
+
+Additionally, \stcmd{ipfraking} can incorporate variables
+that sum up to different totals, e.g., totals from different sources
+or from different years, or totals and proportions, in case unified data 
+are not available, with the side effect of producing weights whose totals agree
+with the \textit{last} control total variable. Without trimming, doing so ensures
+that \textit{proportions} for each calibration variables are satisfied. 
+As \stcmd{maxentropy},
+\stcmd{sreweight} and \stcmd{svycal} produce weights by optimization,
+with the goal of satisfying all totals simultaneously, it is unclear
+what the properties of the resulting weight would be when the control totals
+differ between variables, and whether the resulting weights would produce 
+marginal proportions that agree between the control totals and calibrated weights.
+
+In the end of the day,
+the choice of the package is a matter of personal preference, package familiarity,
+and coding style. 
+
 % REFEREE: COMPARE TO OTHER STATA PACKAGES, OTHER SOFTWARE TOOLS
 
 \section{Updates to \stcmd{ipfraking} program and package}
@@ -300,7 +376,7 @@ option should be generated as double type. See \dref{data types}.
 \hangpara
 \stcmd{meta} puts information taken by \stcmd{ipfraking} as inputs and produced
     throughout the process into characteristics stored with the variable specified in
-    \stcmd{generate()} option. See details in Section \ref{subsec:example:meta}.
+    \stcmd{generate()} option.
 
 \hangpara
 \stcmd{nograph} omits the histogram of the calibrated weights, which can be
@@ -338,7 +414,7 @@ In many tasks, running linear weights first,
 pulling up the negative and small positive weights (\stcmd{replace weight = 1 if weight <= 1})
 and re-raking using the ``proper'' iterative proportional fitting runs faster than
 raking from scratch. An example of linearly calibrated weights is given below
-in Section \ref{subsec:linear}.
+in Section \ref{sec:linear}.
 
 Option \stcmd{meta} saves more information in characteristics of the calibrated
 weight variables. Using Example 3 from \citet{kolenikov:2014} with trimming options,
@@ -1492,10 +1568,10 @@ the immediate timing results, \stcmd{set rmsg on} (see \rref{set}).
 \clearpage
 
 The speed advantages of \stcmd{linear} calibration are quite clear (0.63 seconds vs. 2.16 seconds),
-even though raking convergence in 8 iterations is quite fast, in the author's experience
-(it is not unusual to see dozens and hundreds of iterations, especially when higher order
-interactions with many cells and subtle correlations between them are being used as
-raking margins).
+even though raking convergence in 8 iterations is quite fast, in author's experience.
+It is not unusual to see dozens iterations, and when higher order interactions are being used as
+raking margins, subtle correlations between the cells arise, slowing down convergence and requiring
+hundreds of iterations.
 % TODO: time/profile better -- most of the time is spent in parsing
 Linear calibrated and raked weights are very similar to one another, as Figure \ref{fig:linear:raked}
 demonstrates, albeit the lowest of the linearly
