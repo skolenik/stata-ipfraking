@@ -11,8 +11,8 @@ program define totalmatrices
 	
 	if "`ipfraking'`svycal'" != "" {
 		* an attempt will be made to convert the matrices
-		if ("`replace'"=="replace") + ("`stub'"!="") != 1 {
-			di "{err}One and only one of replace or stub() must be specified along with `ipfraking'`svycal'"
+		if ("`replace'"=="replace") + ("`stub'"!="") != 1 & "`ipfraking'" == "ipfraking" {
+			di "{err}One and only one of replace or stub() must be specified along with ipfraking"
 			exit (198)
 		}
 	}
@@ -136,6 +136,59 @@ program define totalmatrices
 				}
 			}
 		}
+	}
+	
+	if "`svycal'" == "svycal" {
+	
+		if "`stub'" == "" {
+			di "stub() must be specified with svycal"
+			exit (198)
+		}
+	
+		cap confirm matrix `stub'
+		if _rc == 0 & "`replace'" != "replace" {
+			di "{txt}Matrix {res}`stub'{txt} already exists; specyify {inp}replace{txt} to replace it."
+			exit
+		}
+		* cap in case the matrix does not exist, which should not bother anybody
+		cap mat drop `stub'
+	
+		* attempt to convert the ipfraking matrices to the svycal format
+		* place it to the matrix `stub'
+		
+		foreach mat of local namelist {
+			if "`type_`mat''" == "ipfraking" {
+				* append the matrix
+				matrix `stub' = nullmat( `stub' ), `mat'
+				local totcnames   : colnames `mat'
+				local totrname    : rownames `mat'
+				local totceqnames : coleq    `mat'
+				
+				* convert the names into factor variable notation
+				forvalues k=1/`=colsof(`mat')' {
+					if trim("`: word `k' of `totceqnames''") == "_one" local stubcname `stubcname' `: word `k' of `totcnames''.`totrname'
+					else local stubcname `stubcname' `: word `k' of `totcnames''.`totrname'#c.`: word `k' of `totceqnames''
+				}
+				if "`: word 1 of `totceqnames''" == "_one" local calibvars `calibvars' ibn.`totrname'
+				else local calibvars `calibvars' ibn.`totrname'#c.`: word 1 of `totceqnames''
+
+				// di "{txt}Current stubcname: {res}`stubcname'"
+			}
+		}
+		if `= colsof(`stub')' > 0 {
+			matrix coleq    `stub' = "_"
+			matrix rownames `stub' = "_"
+			matrix colnames `stub' = `stubcname'
+		}
+		
+		qui svyset
+		
+		// matrix list `stub'
+		
+		di "{txt}You can now {stata matrix list `stub'} to check and then call {inp}svycal{txt} as:"
+		di "   {inp}svycal [regress|rake] `stubcname' [pw=`r(wvar)'], generate(...) totals(`stub') nocons"
+		di "{txt}I suspect the following would be simpler and could work, too:"
+		di "   {inp}svycal [regress|rake] `calibvars' [pw=`r(wvar)'], generate(...) totals(`stub') nocons"
 	}
 	
 end // of totalmatrices
