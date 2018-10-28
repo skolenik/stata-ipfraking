@@ -1,0 +1,20 @@
+{com}. replace sex_age = 15 if sex_age == 21
+{txt}(2,056 real changes made)
+
+{com}. ipfraking [pw=finalwgt], gen( rakedwgt2d ) ///
+>     ctotal( ACS2011_sex_age Census2011_region Census2011_race ) 
+
+{err}categories of sex_age do not match in the control ACS2011_sex_age and in the data (nolab option)
+This is what ACS2011_sex_age gives: 
+{res}  _one:11 _one:12 _one:13 _one:21 _one:22 _one:23
+{err}This is what I found in data: 
+{res}  _one:11 _one:12 _one:13 _one:15 _one:22 _one:23
+{err}This is what ACS2011_sex_age has that data don't: 
+{res}  _one:21
+{err}This is what data have that ACS2011_sex_age doesn't: 
+{res}  _one:15
+{txt}{search r(111), local:r(111);}
+
+end of do-file
+
+{search r(111), local:r(111);}

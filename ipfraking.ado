@@ -1,4 +1,4 @@
-*! v.1.3.81 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.3.88 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -1324,4 +1324,5 @@ exit
 1.3.67	Bugs in reporting mismatching categories
 1.3.74  version numbers are aligned
 1.3.81	svy settings are suggested for Stata 15.1+
+1.3.88	version numbers are aligned with paper
 */

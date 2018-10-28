@@ -256,5 +256,12 @@ compare rakedwgt2 rakedwgt2b
 * in fact, -sreweight- is closer to -svycal-
 compare rakedwgt2a rakedwgt2b
 
+* bad categories
+sjlog using ipfr.badcat, replace
+replace sex_age = 15 if sex_age == 21
+ipfraking [pw=finalwgt], gen( rakedwgt2d ) ///
+    ctotal( ACS2011_sex_age Census2011_region Census2011_race ) 
+sjlog close, replace
+
 	
 exit
