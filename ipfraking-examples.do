@@ -182,53 +182,67 @@ list C_Total_Margin_Variable_Name C_Total_Margin_Category_Label ///
 	sepby( C_Total_Margin_Variable_Name )
 sjlog close, replace
 
-sjlog using ipfr.collapse1, replace
-clear
-set obs 4
-gen byte x = _n
-label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
-label values x x_lbl
-wgtcellcollapse define, var(x) from(1 2 3) to(123)
-wgtcellcollapse report, var(x)
+
+sjlog using ipfr.whatsdeff, replace
+webuse nhanes2, clear
+whatsdeff finalwgt
+return list
 sjlog close, replace
 
-sjlog using ipfr.collapse2, replace
-wgtcellcollapse report, var(x) break
-wgtcellcollapse define, var(x) clear
-wgtcellcollapse define, var(x) from(1 2 3) to(123) label("One through three")
-wgtcellcollapse report, var(x) break
+sjlog using ipfr.whatsdeff.sex, replace
+whatsdeff finalwgt, by(sex)
+return list
 sjlog close, replace
 
-sjlog using ipfr.collapse3, replace
-clear
-set obs 4
-gen byte x = _n
-label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
-label values x x_lbl
-wgtcellcollapse sequence, var(x) from(1 2 3 4) depth(3)
-wgtcellcollapse report, var(x)
+webuse nhanes2, clear
+gen byte _one = 1
+generate byte age_grp = 1 + (age>=40) + (age>=60) if !mi(age)
+generate sex_age = sex*10 + age_grp
+
+set rmsg on
+sjlog using ipfr.svyset, replace
+ipfraking [pw=finalwgt], gen( rakedwgt3 ) ///
+    ctotal( ACS2011_sex_age Census2011_region Census2011_race ) ///
+    trimhiabs( 200000 ) trimloabs( 2000 ) meta nograph
+svyset , `: char rakedwgt3[svyset]' noclear
 sjlog close, replace
 
-sjlog using ipfr.collapse4, replace
-wgtcellcollapse candidate, var(x) cat(2)
-sreturn list
-wgtcellcollapse candidate, var(x) cat(2) max(9)
-sreturn list
-wgtcellcollapse candidate, var(x) cat(212)
-sreturn list
-wgtcellcollapse candidate, var(x) cat(55)
-sreturn list
+* vs. svycal
+cap matrix drop sctotals
+local tlist
+foreach mat in ACS2011_sex_age Census2011_region Census2011_race {
+	mat sc_`mat' = `mat'
+	local cnames : colnames `mat'
+	local which  : rownames `mat'
+	local scnames
+	foreach c of local cnames {
+		local scnames `scnames' `c'.`which'
+		local where = colnumb(`mat',"`c'")
+		local tlist `tlist' `c'.`which' = `=`mat'[1,`where']'
+		di `"`c'.`which' = `=`mat'[1,`where']'"'
+	}
+	mat coleq sc_`mat' = _
+	di "`scnames'"
+	mat colnames sc_`mat' = `scnames'
+	mat sctotals = nullmat(sctotals), sc_`mat'
+}
+mat list sctotals
+di `"`tlist'"'
+
+sjlog using ipfr.svycal, replace
+svycal rake i.sex_age i.region i.race [pw=finalwgt], nocons gen( rakedwgt3a ) ///
+	totals( sctotals )
+sjlog close
+	
+sjlog using ipfr.report1, replace
+ipfraking_report using rakedwgt3-report, raked_weight(rakedwgt3) replace by(_one)
 sjlog close, replace
 
-clear
-set obs 4
-gen byte x = _n
-label define x_lbl 1 "One" 2 "Two" 3 "Three" 4 "Four"
-label values x x_lbl
-sjlog using ipfr.collapse5, replace
-wgtcellcollapse define, var(x) clear
-wgtcellcollapse sequence, var(x) from(2 4 1 3) depth(2)
-wgtcellcollapse report, var(x)
+sjlog using ipfr.report2, replace
+use rakedwgt3-report, clear
+list C_Total_Margin_Variable_Name C_Total_Margin_Category_Label ///
+	Category_Total_Target Category_Total_RKDWGT DEFF_SRCWGT DEFF_RKDWGT , ///
+	sepby( C_Total_Margin_Variable_Name )
 sjlog close, replace
 
 exit
