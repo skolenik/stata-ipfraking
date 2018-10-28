@@ -2,7 +2,7 @@
 program define totalmatrices
 	version 10
 
-	syntax namelist, [ svycal IPFRaking stub( namelist min=1 max=1 ) replace ]
+	syntax namelist, stub( namelist min=1 max=1 ) [ svycal IPFRaking replace convert ]
 
 	if "`svycal'" == "svycal" & "`ipfraking'" == "ipfraking" {
 		di "{err}Only one of svycal or ipfraking can be specified at a time"
@@ -11,10 +11,12 @@ program define totalmatrices
 	
 	if "`ipfraking'`svycal'" != "" {
 		* an attempt will be made to convert the matrices
+		/*
 		if ("`replace'"=="replace") + ("`stub'"!="") != 1 & "`ipfraking'" == "ipfraking" {
 			di "{err}One and only one of replace or stub() must be specified along with ipfraking"
 			exit (198)
 		}
+		*/
 	}
 	
 	tempname a
@@ -72,6 +74,7 @@ program define totalmatrices
 		if `ipfraking' {
 			di "{txt}It appears that the matrix {res}`mat'{txt} is of {inp}ipfraking{txt} format."
 			local type_`mat' ipfraking
+			local svycal 0
 			continue
 		}
 		
@@ -101,47 +104,85 @@ program define totalmatrices
 		
 	} // end of cycle over matrices to determine their type
 
-	if "`ipfraking'" == "ipfraking" {
+	if `svycal' & "`convert'" == "convert" {
 		* attempt to convert to ipfraking format
 		foreach mat of local namelist {
 			if "`type_`mat''" == "ipfraking" {
 				if "`replace'" == "replace" {
 					* do nothing 
 					di "{txt}Note: matrix {res}`mat'{txt} is already of the {inp}ipfraking{txt} format." 
+					local matlist `matlist' `mat'
 				}
 				else {
 					matrix `stub'`mat' = `mat'
+					local matlist `matlist' `stub'`mat'
 					di "{txt}Matrix {res}`stub'`mat'{txt} is copied from {res}`mat'{txt} which is of the {inp}ipfraking{txt} format."
 				}
 			}
 			if "`type_`mat''" == "svycal" {
+			
 				* convert the matrix, to the extent possible
+				
+				* check variable by variable
 				local cnames : colnames `mat'
 				fvrevar `cnames', list
 				local thevars `r(varlist)'
 				foreach x of varlist `thevars' {
-					cap confirm matrix `stub'`mat'_`x'
+					cap confirm matrix `stub'`x'
 					if _rc == 0 {
-						di "{err}Warning:{txt} matrix {res}`stub'`mat'_`x'{txt} already exists."
+						if "`replace'" == "replace" {
+							di "{txt}Warning:{txt} matrix {res}`stub'`x'{txt} already exists."
+							mat drop `stub'`x'
+						}
+						else {
+							di "{err}Error:{txt} matrix {res}`stub'`x'{txt} already exists."
+							exit (110)
+						}
 					}
 				}
 				
+				* column by column
 				foreach c of local cnames {
 					* parse the simple one, forfeit the interactions
 					if strpos("`c'","#") {
 						di "{err}Warning:{txt} I won't attempt to handle the interaction {res}`c'{txt}."
 						continue
 					}
-					
+					local where = colnumb(`mat',"`c'")
+					fvrevar `c', list
+					local x `r(varlist)'
+					matrix `stub'`x' = nullmat(`stub'`x'), `=`mat'[1,`where']'
+					gettoken num rest : c, parse(".")
+					local num = subinstr("`num'","bn","",.)
+					confirm number `num'
+					local cname`x' `cname`x'' _one:`num'
+					local matlist `matlist' `stub'`x'
 				}
+
+				* give accumulated names
+				foreach x of varlist `thevars' {
+					cap confirm matrix `stub'`x'
+					if _rc == 0 {
+						matrix colnames `stub'`x' = `cname`x''
+						matrix rownames `stub'`x' = `x'
+					}
+				}
+				
 			}
+		}
+		
+		local matlist : list uniq matlist
+		
+		di "{txt}Matrices created:"
+		foreach mm in `matlist' {
+			di "{stata matrix list `mm'}"
 		}
 	}
 	
-	if "`svycal'" == "svycal" {
+	if `ipfraking' & "`convert'" == "convert" {
 	
 		if "`stub'" == "" {
-			di "stub() must be specified with svycal"
+			di "stub() must be specified with ipfraking"
 			exit (198)
 		}
 	

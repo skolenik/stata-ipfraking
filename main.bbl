@@ -1,6 +1,6 @@
-\ifnum 26=1 \def\bibname{Reference}
+\ifnum 33=1 \def\bibname{Reference}
 \else \def\bibname{References} \fi
-\begin{thebibliography}{26}
+\begin{thebibliography}{33}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{\texttt{#1}}\fi
@@ -17,6 +17,13 @@
 Andridge, R.~R., and R.~J. Little. 2010.
 \newblock A Review of Hot Deck Imputation for Survey Non-response.
 \newblock \emph{International statistical review} 78(1): 40--64.
+
+\bibitem[{Bergmann(2011)}]{bergmann:2011}
+Bergmann, M. 2011.
+\newblock IPFWEIGHT: Stata module to create adjustment weights for surveys.
+\newblock Statistical Software Components, Boston College Department of
+  Economics.
+\newblock RePEc:boc:bocode:s457353.
 
 \bibitem[{Binder and Roberts(2003)}]{binder:roberts:2003}
 Binder, D.~A., and G.~R. Roberts. 2003.
@@ -60,6 +67,15 @@ Horvitz, D.~G., and D.~J. Thompson. 1952.
   Universe.
 \newblock \emph{Journal of the American Statistical Association} 47(260):
   663--685.
+
+\bibitem[{Izrael et~al.(2017)Izrael, Battaglia, Battaglia, and
+  Ball}]{izrael:batt:batt:ball:2017}
+Izrael, D., M.~P. Battaglia, A.~A. Battaglia, and S.~W. Ball. 2017.
+\newblock You Do Not Have To Step On The Same Rake: SAS Raking
+  Macro---Generation IV.
+\newblock In \emph{{SAS} Global Forum}.
+\newblock Available at
+  https://support.sas.com/resources/papers/proceedings17/0470-2017-poster.pdf.
 
 \bibitem[{Kalton(2009)}]{kalton:2009}
 Kalton, G. 2009.
@@ -123,6 +139,16 @@ Kott, P.~S. 2006.
   and C.~R. Rao, vol. 29B of \emph{Handbook of Statistics}, chap.~25. Oxford,
   UK: Elsevier.
 
+\bibitem[{Lumley(2018)}]{lumley:2018:svy334}
+Lumley, T.~S. 2018.
+\newblock Package `survey', v. 3.34.
+
+\bibitem[{Pacifico(2014)}]{pacifico:2014}
+Pacifico, D. 2014.
+\newblock sreweight: A Stata command to reweight survey data to external
+  totals.
+\newblock \emph{The Stata Journal} 14(1): 4--21.
+
 \bibitem[{Park et~al.(2004)Park, Gelman, and Bafumi}]{park:gelman:bafumi:2004}
 Park, D.~K., A.~Gelman, and J.~Bafumi. 2004.
 \newblock Bayesian Multilevel Estimation with Poststratification: State-Level
@@ -162,5 +188,23 @@ Thompson, M.~E. 1997.
 \newblock \emph{Theory of Sample Surveys}, vol.~74 of \emph{Monographs on
   Statistics and Applied Probability}.
 \newblock New York: Chapman \& Hall/CRC.
+
+\bibitem[{Vallian and Dever(2017)}]{valliant:dever:2017}
+Vallian, R., and J.~Dever. 2017.
+\newblock \emph{Survey Weights: A Step-by-step Guide to Calculation}.
+\newblock College Station, TX: Stata Press.
+
+\bibitem[{Winter(2002)}]{winter:2002}
+Winter, N. 2002.
+\newblock SURVWGT: Stata module to create and manipulate survey weights.
+\newblock Statistical Software Components, Boston College Department of
+  Economics.
+\newblock RePEc:boc:bocode:s427503.
+
+\bibitem[{Wittenberg(2010)}]{wittenberg:2010}
+Wittenberg, M. 2010.
+\newblock An introduction to maximum entropy and minimum cross-entropy
+  estimation using Stata.
+\newblock \emph{Stata Journal} 10(3): 315--330.
 
 \end{thebibliography}

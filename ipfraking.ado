@@ -298,7 +298,7 @@ program define ipfraking, rclass
 			if "`var`k''" == "_one" local svycal_raked `svycal_raked' i.`over`k''
 			else local svycal_raked `svycal_raked' i.`over`k''#c.`var`k''
 		}
-		if _caller() >= 15.1 & "`svyset'" != "nosvyset" di _n "{inp}svyset , rake( `svycal_raked , nocons totals( " _dup(3) char(47)
+		if _caller() >= 15.1 & "`svyset'" != "nosvyset" di _n "{inp}svyset , rake( `svycal_raked' , nocons totals( " _dup(3) char(47)
 		forvalues k=1/`nvars' {
 			char `theweight'[`mat`k''] `=return(mreldif`k')'
 			char `theweight'[totalof`k'] `var`k''
@@ -316,8 +316,8 @@ program define ipfraking, rclass
 		char `theweight'[svyset] rake( `svycal_raked', totals( `svycal_totals' ) nocons ) 
 		if _caller() >= 15.1 {
 			di _n "{txt}Suggested {inp}svyset{txt} statements are available inside {inp}char `theweight'[svyset]{txt} characteristic."
-			di "{txt}To gain the benefits of weight calibration, type: " _c
-			di "{inp}svyset , " char(96) ": char `theweight'[svyset]" char(39) " noclear"
+			di "{txt}To gain the benefits of weight calibration, copy and paste the code above, or type: "
+			di "{inp}    svyset , " char(96) ": char `theweight'[svyset]" char(39) " noclear"
 		}
 		
 		* hash the weights

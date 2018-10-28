@@ -132,87 +132,13 @@ raking and post-stratification, see \citet{kolenikov:2016}.)
 Since 2014, the continuing code development resulted
 in additional features that this update documents.
 
-\subsection{Other packages with similar functionality}
-
-There exist other packages that provide similar basic functionality 
-(i.e., raked weights without trimming).
-\citet{kolenikov:2014} provided comparisons with 
-\stcmd{survwgt} \citep{winter:2002}, \stcmd{ipfweight} \citep{bergmann:2011},
-\stcmd{maxentropy} \citep{wittenberg:2010}, and reported results that
-are identical within numeric accuracy. 
-
-Yet another weight calibration
-package that was published simultaneously with \citet{kolenikov:2014}
-was \stcmd{sreweight} \citep{pacifico:2014}. It implements a full range
-of objective functions from \citet{deville:sarndal:1992}, and does so faster
-than \stcmd{ipfraking} as the core iterative functionality is implemented in Mata.
-% Describe what Pacifico does
-Finally, Stata 15.1 now provides \stcmd{svycal} command,
-undocumented at the time of the writing of this paper, although described 
-and exemplified in detail in \citet{dever:valliant:2017}. Compared
-to \stcmd{svycal}, the core functionality of \stcmd{ipfraking} provides
-a richer set of trimming specifications. The author compared the weights
-produced by \stcmd{ipfraking} with those produced by \stcmd{sreweight}
-and \stcmd{svycal}
-in the case of basic raking procedure without trimming, and they agree within
-numeric accuracy. They also agree with those produced by R package
-\stcmd{survey}, namely \stcmd{survey::calibrate(...,calfun="raking")} function, 
-and those produced by SAS raking macro \stcmd{RAKE\_AND\_TRIM()} 
-\citep{izrael:batt:batt:ball:2017}.
-
-It is somewhat unfortunate that so much effort has gone into replicating
-the functionality by the different authors. The primary distinction of the current
-\stcmd{ipfraking} package is the rich ecosystem that goes along with it, aimed, 
-in its totality, at producing survey weights by a survey organization in 
-a way that is efficient, robust and flexible from coding perspective. 
-
-As a practicing survey statistician who needs to experiment
-with the weights a lot, the present author believes that \stcmd{ipfraking}
-is easier to experiment with than \stcmd{svycal} or \stcmd{sreweight}, for several reasons.
-First, \stcmd{ipfraking} relies on the control totals being carried over from \stcmd{svy: total} 
-with minimal modifications such as renaming row and column names; 
-passing control totals is more cumbersome with other packages.
-Second, \stcmd{ipfraking} produces detailed diagnostics of the problems and oddities
-it encounters along the way, assisting the survey statistician assess whether 
-the resulting weights are satisfactory. For relatively simpler tasks of producing
-replicate weights and calibrating them at the same time, \stcmd{survwgt} provides
-a much easier syntax. Coding the task with \stcmd{ipfraking} or any other package would 
-require explicit cycles.
-
-From code development perspective, the present author believes that relying 
-on matching the order of control
-totals and variables, as required by all other user-contributed packages,
-creates a potential for errors that are easy to make and difficult to catch.
-Both \stcmd{ipfraking} and the official \stcmd{svycal} pair the control total
-figures with the categories of calibration variables,
-albeit in different ways: \stcmd{ipfraking} does so via the names attached
-to the control total matrices, and \stcmd{svycal}, through explicit listing
-of control totals in the factor variable notation in the command call
-as one of the possible syntaxes, or through matrix column naming, in the other syntax.
-(A conversion tool, \stcmd{totalmatrices}, is provided in this update.)
-
-Additionally, \stcmd{ipfraking} can incorporate variables
-that sum up to different totals, e.g., totals from different sources
-or from different years, or totals and proportions, in case unified data 
-are not available, with the side effect of producing weights whose totals agree
-with the \textit{last} control total variable. Without trimming, doing so ensures
-that \textit{proportions} for each calibration variables are satisfied. 
-As \stcmd{maxentropy},
-\stcmd{sreweight} and \stcmd{svycal} produce weights by optimization,
-with the goal of satisfying all totals simultaneously, it is unclear
-what the properties of the resulting weight would be when the control totals
-differ between variables, and whether the resulting weights would produce 
-marginal proportions that agree between the control totals and calibrated weights.
-
-In the end of the day,
-the choice of the package is a matter of personal preference, package familiarity,
-and coding style. 
-
 % REFEREE: COMPARE TO OTHER STATA PACKAGES, OTHER SOFTWARE TOOLS
 
 \section{Updates to \stcmd{ipfraking} program and package}
 
-Listed below is the full syntax, and new features are discussed in a dedicated section.
+Listed below is the full syntax of \stcmd{ipfraking}, with the minimal description of options, 
+and new features are discussed in a dedicated section. For additional details,
+please refer to \citet{kolenikov:2014}.
 
 \subsection{Syntax of \stcmd{ipfraking}}
 \label{subsec:syntax}
@@ -482,7 +408,7 @@ They achieve this as follows:
         Within the syntax of \stcmd{ipfraking}, these are the variables
         identified by the \stcmd{coleq} names of the control total matrices,
         and they vary from household to household.
-    \item Raking is performed at the household level by using \stcmd{if household_head==1}
+    \item Raking is performed at the household level by using \stcmd{if household\_head==1}
         subsetting of \stcmd{ipfraking}.
     \item The resulting weights are assigned to every individual in the household.
 \end{enumerate}
@@ -490,12 +416,13 @@ They achieve this as follows:
 \subsection{Utility programs}
 \label{subsec:utility}
 
-The original package \stcmd{ipfraking} provided two additional utility programs,
-\stcmd{mat2do} and \stcmd{xls2row}.
-The former was updated to provide the \stcmd{notimestamp} option to omit the time stamps
-(which tend to unnecessarily throw off the project building and revision control systems).
-An additional utility program \stcmd{whatsdeff}
-was added to compute the design effects and margins of error, common tasks associated
+The original package \stcmd{ipfraking} provided additional utility programs:
+\stcmd{mat2do}, \stcmd{xls2row} and \stcmd{totalmatrices}.
+
+\subsubsection{Design effects}
+
+A new utility program \stcmd{whatsdeff}
+was added to compute the unequal weighting design effects and margins of error, common tasks associated
 with describing survey weights. Specifically, the Transparency Initiative
 of the American Association for Public Opinion Research
 \citep{aapor:2014:ti:terms}
@@ -545,13 +472,13 @@ Design effects can also be broken down by a categorical variable:
 
 The estimates of unequal weighting design effects that \stcmd{whatsdeff} produces
 should be considered as a typical magnitude of a design effect.
-In many situations when survey variables are correlated with weights
+As pointed out by a referee, in many situations when survey variables are correlated with weights
 or with the variables that weight calibration is based upon, the actual
-design effects reported by \stcmd{estat effect} should be expected
+design effects reported by postestimation command \stcmd{estat effect} should be expected
 to be lower, provided that variance estimation methods take calibration
 into account properly (e.g., via replicate variance estimation, as described
 in \citet{kolenikov:2010}, or via \stcmd{svy, vce(calibrate)} functionality
-of the official Stata \stcmd{svy} suite available in Stata 15+).
+of the official Stata \stcmd{svy} suite available in Stata 15.1+).
 In other words, for most situations these estimates could be considered an upper bound
 on this design effect, since this calculation assumes that the weights are independent of
 the survey variable of descriptive interest. Situations can be envisioned, however,
@@ -561,6 +488,61 @@ turns out to have the outcome variance smaller than that of the rest population;
 or when screening is applied within rare population sampling designs
 \citep{kalton:anderson:1986,kalton:2009}.
 
+\subsubsection{Conversion of the matrices}
+
+One of the utility programs available in \citet{kolenikov:2014}, \stcmd{mat2do},
+was updated to provide the \stcmd{notimestamp} option to omit the time stamps
+(which tend to unnecessarily throw off the project building and revision control systems).
+
+A new program \stcmd{totalmatrices} converts the control totals matrices between
+the formats expected by \stcmd{ipfraking} and \stcmd{svycal}. 
+
+\begin{stsyntax}
+totalmatrices
+{\it matrix\_list}
+,
+\optional{
+    svycal 
+    \underbar{ipfr}aking 
+    stub({\it name}) 
+    replace
+}
+\end{stsyntax}
+
+\hangpara
+\stcmd{svycal} checks that the supplied matrix or matrices are compatible with \stcmd{svycal} 
+specification of totals as a matrix.
+
+\hangpara
+\stcmd{ipfraking} checks that the supplied matrix or matrices are compatible with \stcmd{ipfraking}.
+
+\hangpara
+\stcmd{stub({\it name})} provides the naming convention for the converted control total matrices.
+If the conversion is from \stcmd{ipfraking} to \stcmd{svycal}, one matrix whose name is supplied in 
+the \stcmd{stub(...)} option will be created. If the conversion is from \stcmd{svycal} to 
+\stcmd{ipfraking}, matrices corresponding to each variable will be created and have their names
+set to concatenation of the stub and the variable name.
+
+To convert several matrices from \stcmd{ipfraking} format to a single matrix 
+in \stcmd{svycal} format:
+
+\begin{stlog}
+\input{ipfr.totalmatrices.log.tex}\nullskip
+\end{stlog}
+
+To convert a single matrix compatible with \stcmd{svycal} requirements for its 
+\stcmd{totals({\it matname})} format into a list of matrices compatible with
+\stcmd{ipfraking}:
+
+\begin{stlog}
+\input{ipfr.totalmatrices2.log.tex}\nullskip
+\end{stlog}
+
+Note that at the moment, \stcmd{totalmatrices} does not handle conversion
+of interactions, which is arguably one of the greatest strengths of \stcmd{svycal}.
+As noted in section \ref{subsec:compare}, for interactions to work out with \stcmd{ipfraking},
+standalone variables need to be created, and \stcmd{totalmatrices} would rather
+have the user do that.
 
 \subsection{New programs in the package}
 
@@ -606,8 +588,6 @@ little to the weight adjustment, and may be candidates for removal from the list
 Using the working example from \citet{kolenikov:2014}, the example regression output is:
 
 \begin{stlog}
-
-
 \input{ipfr.report1.edited.log.tex}\nullskip
 \end{stlog}
 
@@ -1145,6 +1125,9 @@ Example where such needs arise include:
     \item continuous age variables which can be collapsed into
         age groups differently for the different races.
 \end{itemize}
+A referee pointed out that an identical problem arises in creating cells
+for hot deck imputation procedures \citet{andridge:little:2010}, 
+so \stcmd{wgtcellcollapse} could also have utility in that application.
 
 The workflow of \stcmd{wgtcellcollapse} is demonstrated with the following
 simulated transportation data set of trips along a commuter metro line composed of 21 stations:
@@ -1617,9 +1600,99 @@ the linear version of weights would try to find a middle point between the popul
 totals that are on the scale of millions, and proportions that are on the scale of about 1.
 The results would likely be quite strange.
 
+\subsection{Other packages with similar functionality}
+\label{subsec:compare}
+
+There exist other packages that provide similar basic functionality
+(i.e., raked weights without trimming).
+\citet{kolenikov:2014} provided comparisons with
+\stcmd{survwgt} \citep{winter:2002}, \stcmd{ipfweight} \citep{bergmann:2011},
+\stcmd{maxentropy} \citep{wittenberg:2010}, and reported that the weights
+produced by these packages were identical within numeric accuracy.
+
+Yet another weight calibration
+package that was published simultaneously with \citet{kolenikov:2014}
+was \stcmd{sreweight} \citep{pacifico:2014}. It implements a full range
+of objective functions from \citet{deville:sarndal:1992}, and does so faster
+than \stcmd{ipfraking} as the core iterative functionality is implemented in Mata.
+% Describe what Pacifico does
+Finally, Stata 15.1 now provides \stcmd{svycal} command,
+undocumented at the time of the writing of this paper, although described
+and exemplified in detail in \citet{valliant:dever:2017}. Compared
+to \stcmd{svycal}, the core functionality of \stcmd{ipfraking} provides
+a richer set of trimming specifications. The author compared the weights
+produced by \stcmd{ipfraking} with those produced by \stcmd{sreweight}
+and \stcmd{svycal}
+in the case of basic raking procedure without trimming, and they agree within
+numeric accuracy:
+
+\begin{stlog}
+\input{ipfr.svycal.log.tex}\nullskip
+\end{stlog}
 
 
+Weights produced by \stcmd{ipfraking} also agree with those produced by R package
+\stcmd{survey} \citep{lumley:2018:svy334}, 
+namely \stcmd{survey::calibrate(...,calfun="raking")} function,
+and those produced by SAS raking macro \stcmd{RAKE\_AND\_TRIM()}
+\citep{izrael:batt:batt:ball:2017}. When trimming options are specified,
+the results from different packages diverge, as trimming operations can be 
+performed at different stages of raking.
 
+It is somewhat unfortunate that so much effort has gone into replicating
+the functionality by the different authors. The primary distinction of the current
+\stcmd{ipfraking} package is the rich ecosystem that goes along with it, aimed,
+in its totality, at producing survey weights by a survey organization in
+a way that is efficient, robust and flexible from coding perspective.
+
+As a practicing survey statistician who needs to experiment
+with the weights a lot, the present author believes that \stcmd{ipfraking}
+is easier to experiment with than \stcmd{svycal} or \stcmd{sreweight}, for several reasons.
+First, \stcmd{ipfraking} relies on the control totals being carried over from \stcmd{svy: total}
+with minimal modifications such as renaming row and column names;
+passing control totals is more cumbersome with other packages.
+Second, \stcmd{ipfraking} produces detailed diagnostics of the problems and oddities
+it encounters along the way, assisting the survey statistician assess whether
+the resulting weights are satisfactory. For relatively simpler tasks of producing
+replicate weights and calibrating them at the same time, \stcmd{survwgt} provides
+a much easier syntax. Coding the task with \stcmd{ipfraking} or any other package would
+require explicit cycles.
+
+From code development perspective, the present author believes that relying
+on matching the order of control
+totals and variables, as required by all other user-contributed packages,
+creates a potential for errors that are easy to make and difficult to catch.
+With either \stcmd{ipfraking} and the official \stcmd{svycal}, the risk
+that a control total figure would be associated with a wrong category of the control
+total variable is much lower, as they pair the values and the categories
+in a single object (via the names attached to the control total matrices)
+or a single syntax component \stcmd{value.variable = }{\it \#} specification
+of \stcmd{svycal}.
+(The matrix naming is different between \stcmd{ipfraking} and \stcmd{svycal}, though,
+so a conversion tool, \stcmd{totalmatrices}, is provided in this update.)
+
+Additionally, \stcmd{ipfraking} can incorporate variables
+that sum up to different totals, e.g., totals from different sources
+or from different years, or totals and proportions, in case unified data
+are not available, with the side effect of producing weights whose totals agree
+with the \textit{last} control total variable. Without trimming, doing so ensures
+that \textit{proportions} for each calibration variables are satisfied.
+As \stcmd{maxentropy},
+\stcmd{sreweight} and \stcmd{svycal} produce weights by optimization,
+with the goal of satisfying all totals simultaneously, it is unclear
+what the properties of the resulting weight would be when the control totals
+differ between variables, and whether the resulting weights would produce
+marginal proportions that agree between the control totals and calibrated weights.
+
+Compared to \stcmd{ipfraking}, the official \stcmd{svycal} command handles
+interactions far more graciously, and consistently with the Stata user experience
+of using factor variables in regression models. It creates the necessary interactions
+internally on the fly, while \stcmd{ipfraking} requires explicit creating of interaction
+variables.
+
+In the end of the day,
+the choice of the package is a matter of personal preference, package familiarity,
+and coding style.
 
 
 
@@ -1645,7 +1718,7 @@ are of the author only, and do not represent the position of Abt Associates.
 % \bibliography{ipfraking}
 
 \begin{aboutauthor}
-  Stanislav (Stas) Kolenikov is a Principal Scientist at Abt Associates.
+  Stanislav (Stas) Kolenikov is Principal Scientist at Abt Associates.
   His work involves applications of statistical methods in data collection
   for public opinion research, public health, transportation, and other disciplines
   that utilize collection of survey data.
