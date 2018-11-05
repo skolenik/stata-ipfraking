@@ -1,4 +1,4 @@
-*! 1.3.88 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
+*! 1.4.89 ipfraking_report: weight reports as a follow-up to ipfraking -- Stas Kolenikov
 program define ipfraking_report, rclass
 
 	version 12
@@ -608,5 +608,5 @@ History
 1.3.70		Added "Collapsed cell" indicator variable
 1.3.72		fixed bugs with -else topost- and poor management of empty `: char `over'[]'
 1.3.74      version numbers are aligned
-1.3.88		version numbers are aligned with paper
+1.4.89		version numbers are aligned with paper
 */

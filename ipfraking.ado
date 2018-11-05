@@ -1,4 +1,4 @@
-*! v.1.3.88 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
+*! v.1.4.89 iterative proportional fitting (raking) by Stas Kolenikov skolenik at gmail dot com
 program define ipfraking, rclass
 
 	version 10
@@ -313,7 +313,7 @@ program define ipfraking, rclass
 			}
 		}
 		if _caller() >= 15.1 & "`svyset'" != "nosvyset" di "))"
-		char `theweight'[svyset] rake( `svycal_raked', totals( `svycal_totals' ) nocons ) 
+		char `theweight'[svyset] rake( `svycal_raked', totals( `svycal_totals' ) nocons )
 		if _caller() >= 15.1 {
 			di _n "{txt}Suggested {inp}svyset{txt} statements are available inside {inp}char `theweight'[svyset]{txt} characteristic."
 			di "{txt}To gain the benefits of weight calibration, copy and paste the code above, or type: "
@@ -1324,5 +1324,5 @@ exit
 1.3.67	Bugs in reporting mismatching categories
 1.3.74  version numbers are aligned
 1.3.81	svy settings are suggested for Stata 15.1+
-1.3.88	version numbers are aligned with paper
+1.4.89	version numbers are aligned with paper
 */

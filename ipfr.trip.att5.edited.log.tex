@@ -1,11 +1,13 @@
 . use trip_sample_rules, clear
 {\smallskip}
+. * (1) Run 1
 . wgtcellcollapse collapse, variables(daypart board_id) mincellsize(1) ///
 >         zeroes(39 44 49 60) greedy maxcategory(99) ///
 >         generate(dpston5) saving(dpston5.do) replace run
 \smallskip
 \oom
 \smallskip
+. * (2) Run 2
 . wgtcellcollapse collapse, variables(daypart board_id) mincellsize(20) ///
 >         strict feed(dpston5) saving(dpston5.do) append run
 \smallskip
@@ -13,6 +15,7 @@
 \smallskip
 . assert "`r(failed)'" == ""
 {\smallskip}
+. * (3) Run 3
 . wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(1) ///
 >         zeroes(2 40 60) greedy maxcategory(99) ///
 >         generate(dpstoff5) saving(dpstoff5.do) replace run
@@ -45,6 +48,7 @@ Pass 12 through the data...
   smallest count = 1 in the cell      1000002
   Done collapsing! Exiting...
 {\smallskip}
+. * (4) Run 4
 . wgtcellcollapse collapse if inlist(daypart,4,5) \& inrange(alight_id,49,50), ///
 >         variables(daypart alight_id) mincellsize(1) ///
 >         feed(dpstoff5) zeroes(49) maxcategory(99) saving(dpstoff5.do) append run
@@ -65,6 +69,7 @@ Pass 14 through the data...
   smallest count = 1 in the cell      5024950
   Done collapsing! Exiting...
 {\smallskip}
+. * (5) Run 5
 . * special cells for weekend
 . wgtcellcollapse collapse if daypart==5 \& inrange(alight_id,1,36), ///
 >         variables(daypart alight_id) mincellsize(50) ///
@@ -91,6 +96,7 @@ Pass 21 through the data...
   smallest count = .i in the cell      1000002
   Done collapsing! Exiting...
 {\smallskip}
+. * (6) Run 6
 . wgtcellcollapse collapse if daypart==5 \& inrange(alight_id,44,68), ///
 >         variables(daypart alight_id) mincellsize(50) ///
 >         strict feed(dpstoff5) saving(dpstoff5.do) append run
@@ -112,6 +118,7 @@ Pass 26 through the data...
   smallest count = .i in the cell      1000002
   Done collapsing! Exiting...
 {\smallskip}
+. * (7) Run 7
 . * all other cells
 . wgtcellcollapse collapse, variables(daypart alight_id) mincellsize(20) ///
 >         strict feed(dpstoff5) saving(dpstoff5.do) append run

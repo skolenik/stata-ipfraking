@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 1.3.74  29Apr2018}{...}
+{* *! version 1.4.89  05Nov2018}{...}
 {cmd:help mat2do} {right: ({browse "http://staskolenikov.net/stata/":Stas Kolenikov's webpage})}
 {hline}
 

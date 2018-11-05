@@ -1,4 +1,4 @@
-*! v.0.3.74 wgtcellcollapse: collapsing weighting cells; Stas Kolenikov
+*! v.0.4.89 wgtcellcollapse: collapsing weighting cells; Stas Kolenikov
 program define wgtcellcollapse, rclass
 
 	version 12
@@ -1162,3 +1162,4 @@ v.0.3   10/26/2017  -strict- option of searching for label text was added in Rep
 0.3.62  Version numbers are aligned with -ipfraking-, -ipfraking_report-, -wgtcellcollapse-
 0.3.63	02/26/2018	`thiscount' is changed to .i before processing -zeroes- (so that it could respect -if- conditions better)
 0.3.74  04/29/2018  version numbers are aligned
+0.4.89  11/05/5018  version numbers are aligned
