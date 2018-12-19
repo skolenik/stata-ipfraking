@@ -1,5 +1,5 @@
 *! whatsdeff : compute 1+CV^2 approximation to the unequal weighting design effect 
-*! v.0.8.1 Stas Kolenikov skolenik at gmail.com
+*! v.0.9 Stas Kolenikov skolenik at gmail.com
 program define whatsdeff, rclass
 	version 10
 	
@@ -12,24 +12,23 @@ program define whatsdeff, rclass
 	qui gen `wgt2' = `wgt'*`wgt' if `touse'
 	
 	* header
-	di _n "{txt}    Group" _col(15) "{c |}   Min" _col(27) "{c |}   Mean" _col(39) "{c |}   Max"   _c 
-	di _col(51) "{c |}    CV" _col(61) "{c |}   DEFF" _col(71) "{c |}   N" _col(79) "{c |}  N eff"
-	di "{txt}{dup 14:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 9:{c -}}{c +}{dup 9:{c -}}{c +}{dup 7:{c -}}{c +}{dup 8:{c -}}"
+	di _n "{txt} " _col(8) "   Min" _col(19) "{c |}   Mean" _col(31) "{c |}   Max"   _c 
+	di _col(43) "{c |}    CV" _col(53) "{c |}   DEFF" _col(63) "{c |}   N" _col(71) "{c |}  N eff"
+	di "{txt}{dup 6:{c -}}{c BT}{dup 11:{c -}}{c BT}{dup 11:{c -}}{c BT}" _c
+	di "{txt}{dup 11:{c -}}{c BT}{dup 9:{c -}}{c BT}{dup 9:{c -}}{c BT}{dup 7:{c -}}{c BT}{dup 8:{c -}}"
 	
 	if "`by'" != "" {
 		qui levelsof `by' if `touse', local( allbys )
-		di "{res}`by'" _c
-		if length("`by'") < 15 di _col(15)"{txt}{c |}" _c
-		if length("`by'") < 27 di _col(27)"{txt}{c |}" _c
-		di _col(39) "{c |}" _col(51) "{c |}" _col(61) "{c |}" _col(71) "{c |}" _col(79) "{c |}"
 		foreach k of numlist `allbys' {
-			PrintDEFF `wgt' `wgt2' if `touse' & `by'==`k', caption("`: lab (`by') `k''")
+			local capt "{res}`by'{txt} == {res}`: lab (`by') `k''"
+			PrintDEFF `wgt' `wgt2' if `touse' & `by'==`k', caption(`capt')
 			return add
 		}
-		di "{txt}{dup 14:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}{dup 9:{c -}}{c +}{dup 9:{c -}}{c +}{dup 7:{c -}}{c +}{dup 8:{c -}}"
+		di "{txt}{dup 6:{c -}}{c BT}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}" _c
+		di "{txt}{dup 11:{c -}}{c +}{dup 9:{c -}}{c +}{dup 9:{c -}}{c +}{dup 7:{c -}}{c +}{dup 8:{c -}}"
 	}
 	
-	PrintDEFF `wgt' `wgt2' if `touse' , caption(Overall)
+	PrintDEFF `wgt' `wgt2' if `touse' , caption("{txt}Overall")
 	return add
 	
 end
@@ -55,13 +54,25 @@ program define PrintDEFF, rclass
 	
 	scalar `deff' = scalar(`N')*scalar(`sumw2')/( scalar(`sumw')*scalar(`sumw') )
 		
-	di "{txt}" %13s abbrev("`caption'",13) _c
-	di _col(15) "{txt}{c |}{res}" %10.2f r(min) _col(27) "{txt}{c |}{res}" %10.2f r(mean) _col(39) "{txt}{c |}{res}" %10.2f r(max) _c
-	di _col(51) "{txt}{c |}{res}" %8.4f r(sd)/r(mean) _col(61) "{txt}{c |}{res}" %8.4f scalar(`deff') _c
-	di _col(71) "{txt}{c |}{res}" %6.0f `N' _col(79) "{txt}{c |}{res}" %8.2f `N'/scalar(`deff')
-	
+	di "`caption'" _c
+
 	* strip eq signs from caption
-	local capeq = subinstr("`caption'","==","_eq_",1)
+	local capeq = subinstr("`caption'"," == ","_eq_",1)
+	* strip SMCL formatting directives
+	local capeq = subinstr("`capeq'","{txt}","",.)
+	local capeq = subinstr("`capeq'","{res}","",.)
+
+	foreach n of numlist 19 31 43 53 63 71 {
+		if length("`capeq'") < `n' di _col(`n') "{txt}{c |}" _c
+	}
+	
+	* final EOL
+	di
+	
+	di _col(8) "{res}" %10.2f r(min) _col(19) "{txt}{c |}{res}" %10.2f r(mean) _col(31) "{txt}{c |}{res}" %10.2f r(max) _c
+	di _col(43) "{txt}{c |}{res}" %8.4f r(sd)/r(mean) _col(53) "{txt}{c |}{res}" %8.4f scalar(`deff') _c
+	di _col(63) "{txt}{c |}{res}" %6.0f `N' _col(71) "{txt}{c |}{res}" %8.2f `N'/scalar(`deff')
+	
 	return scalar DEFF_`capeq' = scalar(`deff')
 	return scalar Neff_`capeq' = `N'/scalar(`deff')
 	return scalar MOE50 = invt(return(Neff_`capeq'),0.975)*sqrt(0.5*0.5/return(Neff_`capeq'))
@@ -76,3 +87,4 @@ History
 31-Mar-2015	v.0.7	produces DEFF by groups 
 22-Nov-2016 v.0.8	more space for summaries; MOEs returned
 02-Jun-2017	v.0.8.1	r(N) added
+19-Dec-2018	v.0.9	squeezed output to fit linesize == 80
