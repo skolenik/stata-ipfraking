@@ -48,8 +48,8 @@ a number of times.{p_end}
 {title:Author}
 
 {pstd}Stanislav Kolenikov{p_end}
-{pstd}Senior Survey Statistician{p_end}
-{pstd}Abt SRBI{p_end}
+{pstd}Principal Scientist{p_end}
+{pstd}Abt Associates{p_end}
 {pstd}skolenik at gmail dot com{p_end}
 
 

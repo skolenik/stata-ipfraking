@@ -1,4 +1,5 @@
 *! conversion of the matrices of totals from ipfraking to svycal formats
+*! v.0.1 Stas Kolenikov skоlenik at gmаil dоt cоm
 program define totalmatrices
 	version 10
 

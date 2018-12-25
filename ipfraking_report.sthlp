@@ -233,7 +233,7 @@ totals for it.
 {title:Author}
 
 {pstd}Stanislav Kolenikov{p_end}
-{pstd}Senior Scientist{p_end}
+{pstd}Principle Scientist{p_end}
 {pstd}Abt Associates{p_end}
 {pstd}skolenik at gmail dot com{p_end}
 
