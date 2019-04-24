@@ -14,8 +14,8 @@ program define whatsdeff, rclass
 	* header
 	di _n "{txt} " _col(8) "   Min" _col(19) "{c |}   Mean" _col(31) "{c |}   Max"   _c 
 	di _col(43) "{c |}    CV" _col(53) "{c |}   DEFF" _col(63) "{c |}   N" _col(71) "{c |}  N eff"
-	di "{txt}{dup 6:{c -}}{c BT}{dup 11:{c -}}{c BT}{dup 11:{c -}}{c BT}" _c
-	di "{txt}{dup 11:{c -}}{c BT}{dup 9:{c -}}{c BT}{dup 9:{c -}}{c BT}{dup 7:{c -}}{c BT}{dup 8:{c -}}"
+	di "{txt}{dup 6:{c -}}{c -}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}" _c
+	di "{txt}{dup 11:{c -}}{c +}{dup 9:{c -}}{c +}{dup 9:{c -}}{c +}{dup 7:{c -}}{c +}{dup 8:{c -}}"
 	
 	if "`by'" != "" {
 		qui levelsof `by' if `touse', local( allbys )
@@ -24,7 +24,7 @@ program define whatsdeff, rclass
 			PrintDEFF `wgt' `wgt2' if `touse' & `by'==`k', caption(`capt')
 			return add
 		}
-		di "{txt}{dup 6:{c -}}{c BT}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}" _c
+		di "{txt}{dup 6:{c -}}{c -}{dup 11:{c -}}{c +}{dup 11:{c -}}{c +}" _c
 		di "{txt}{dup 11:{c -}}{c +}{dup 9:{c -}}{c +}{dup 9:{c -}}{c +}{dup 7:{c -}}{c +}{dup 8:{c -}}"
 	}
 	
