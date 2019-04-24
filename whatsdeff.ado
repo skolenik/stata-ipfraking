@@ -61,6 +61,16 @@ program define PrintDEFF, rclass
 	* strip SMCL formatting directives
 	local capeq = subinstr("`capeq'","{txt}","",.)
 	local capeq = subinstr("`capeq'","{res}","",.)
+	* convert special symbols
+	local specials " ,.:-();[]@+"
+	forvalues k=1/`= length("`specials'")' {
+		local this_sym = substr("`specials'",`k',1)
+		local capeq = subinstr("`capeq'", "`this_sym'", "_", .)	
+	}
+	local capeq = subinstr("`capeq'", "___", "_", .)	
+	local capeq = subinstr("`capeq'", "__", "_", .)	
+	* may also need to limit the length of the name:
+	* local capeq = substr("`capeq'", 1, 31)
 
 	foreach n of numlist 19 31 43 53 63 71 {
 		if length("`capeq'") < `n' di _col(`n') "{txt}{c |}" _c
