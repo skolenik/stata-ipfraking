@@ -4,7 +4,7 @@ This package performs iterative proportional fitting, or raking, of survey weigh
 
 The two important documentation files are the two Stata Journal papers:
 
-* [ipfraking-v54.pdf](ipfraking-v54.pdf) _Iterative proportional fitting / raking_;
+* [ipfraking-v32.pdf](ipfraking-v32.pdf) _Iterative proportional fitting / raking_;
   the official reference is https://journals.sagepub.com/doi/10.1177/1536867X1401400104.
 * [ipfraking-v87.pdf](ipfraking-v87.pdf) _Updates to the `ipfraking` ecosystem_;
   the official reference is https://journals.sagepub.com/doi/10.1177/1536867X19830912.
